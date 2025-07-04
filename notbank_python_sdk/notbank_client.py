@@ -294,7 +294,7 @@ class NotbankClient:
             Product,
         )
 
-    def get_product_verification_level_config(
+    def get_verification_level_config(
         self,
         request: VerificationLevelConfigRequest,
     ) -> ProductVerificationLevelConfig:
