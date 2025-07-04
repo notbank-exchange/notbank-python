@@ -1,8 +1,6 @@
 from decimal import Decimal
 from typing import Any, Callable, List, Optional, Type, TypeVar, Dict
-
 import simplejson as json
-
 from notbank_python_sdk.client_connection import ClientConnection
 from notbank_python_sdk.core.endpoints import Endpoints, WebSocketEndpoint
 from notbank_python_sdk.core.converter import from_json_str, to_dict, from_dict
@@ -12,14 +10,13 @@ from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
 from notbank_python_sdk.models.cancel_order_reject_event import CancelOrderRejectEvent
 from notbank_python_sdk.models.cancel_replace_order_request import CancelReplaceOrderResponse
 from notbank_python_sdk.models.deposit_event import DepositEvent
-from notbank_python_sdk.models.oms_deposit_fee import OmsDepositFee
+from notbank_python_sdk.models.oms_fee import OmsFee
 from notbank_python_sdk.models.document import Document
 from notbank_python_sdk.models.document_slice import DocumentSlice
 from notbank_python_sdk.models.enums import EnumsResponse
 from notbank_python_sdk.models.activity_report import ActivityReport
 from notbank_python_sdk.models.account_trade import AccountTrade
 from notbank_python_sdk.models.withdraw_tickets import WithdrawTicket
-from notbank_python_sdk.models.deposit_fee import DepositFee
 from notbank_python_sdk.models.deposit_ticket import DepositTicket
 from notbank_python_sdk.models.instrument import Instrument
 from notbank_python_sdk.models.level2_ticker_snapshot import Level2TickerSnapshot
@@ -33,7 +30,7 @@ from notbank_python_sdk.models.user_report_tickets import UserReportTicket
 from notbank_python_sdk.models.report_writer_result_records import ReportWriterResultRecords
 from notbank_python_sdk.models.order import Order
 from notbank_python_sdk.models.ticker import Ticker
-from notbank_python_sdk.models.get_withdraw_fee import GetWithdrawFeeResponse
+from notbank_python_sdk.models.fee import Fee
 from notbank_python_sdk.models.level1_ticker import Level1Ticker
 from notbank_python_sdk.models.level2_ticker_feed import Level2TickerFeed, level_2_ticker_feed_list_from_json_str
 from notbank_python_sdk.models.order_book import OrderBook, OrderBookRaw, order_book_from_raw
@@ -44,7 +41,7 @@ from notbank_python_sdk.models.instrument_summary import InstrumentSummary
 from notbank_python_sdk.models.ticker_summary import TickerSummary
 from notbank_python_sdk.models.trade_summary import TradeSummary
 from notbank_python_sdk.models.user_devices import UserDevice
-from notbank_python_sdk.models.verification_level_config import VerificationLevelConfig
+from notbank_python_sdk.models.verification_level_config import InstrumentVerificationLevelConfig, ProductVerificationLevelConfig
 from notbank_python_sdk.models.web_authenticate_user import WebAuthenticateUser
 from notbank_python_sdk.models.account_transaction import AccountTransaction
 from notbank_python_sdk.models.account_positions import AccountPosition
@@ -65,9 +62,9 @@ from notbank_python_sdk.requests_models.generate_product_delta_activity_report i
 from notbank_python_sdk.requests_models.generate_trade_activity_report import GenerateTradeActivityReportRequest
 from notbank_python_sdk.requests_models.generate_transaction_activity_report import GenerateTransactionActivityReportRequest
 from notbank_python_sdk.requests_models.get_account_trades import GetAccountTradesRequest
-from notbank_python_sdk.requests_models.get_deposit_fee_request import GetDepositFeeRequest
+from notbank_python_sdk.requests_models.fee_request import FeeRequest
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
-from notbank_python_sdk.requests_models.get_instrument_verification_level_config_request import GetVerificationLevelConfigRequest
+from notbank_python_sdk.requests_models.verification_level_config_request import VerificationLevelConfigRequest
 from notbank_python_sdk.requests_models.get_instruments_request import GetInstrumentsRequest
 from notbank_python_sdk.requests_models.get_l2_snapshot import GetL2SnapshotRequest
 from notbank_python_sdk.requests_models.get_last_trades import GetLastTradesRequest
@@ -96,7 +93,6 @@ from notbank_python_sdk.requests_models.schedule_product_delta_activity_report i
 from notbank_python_sdk.requests_models.schedule_profit_and_loss_activity_report import ScheduleProfitAndLossActivityReportRequest
 from notbank_python_sdk.requests_models.schedule_trade_activity_report import ScheduleTradeActivityReportRequest
 from notbank_python_sdk.requests_models.schedule_transaction_activity_report import ScheduleTransactionActivityReportRequest
-from notbank_python_sdk.requests_models.set_oms_withdraw_fee import SetOmsWithdrawFeeRequest
 from notbank_python_sdk.requests_models.subscribe_account_events_request import SubscribeAccountEventsRequest
 from notbank_python_sdk.requests_models.subscribe_level1_request import SubscribeLevel1Request
 from notbank_python_sdk.requests_models.subscribe_level2_request import SubscribeLevel2Request
@@ -114,13 +110,12 @@ from notbank_python_sdk.requests_models.trades import TradesRequest
 from notbank_python_sdk.requests_models.user_accounts import GetUserAccountsRequest
 from notbank_python_sdk.requests_models.user_devices import GetUserDevicesRequest
 from notbank_python_sdk.requests_models.account_fees_request import AccountFeesRequest
-from notbank_python_sdk.requests_models.deposit_fees_request import DepositFeesRequest
+from notbank_python_sdk.requests_models.oms_fees_request import OmsFeesRequest
 from notbank_python_sdk.requests_models.web_authenticate_user_request import WebAuthenticateUserRequest
 from notbank_python_sdk.requests_models.get_account_transactions_request import GetAccountTransactionsRequest
 from notbank_python_sdk.requests_models.get_account_positions_request import GetAccountPositionsRequest
 from notbank_python_sdk.requests_models.get_account_instrument_statistics_request import GetAccountInstrumentStatisticsRequest
 from notbank_python_sdk.requests_models.get_account_info_request import GetAccountInfoRequest
-from notbank_python_sdk.requests_models.get_withdraw_fee_request import GetWithdrawFeeRequest
 from notbank_python_sdk.requests_models.get_product_request import GetProductRequest
 from notbank_python_sdk.requests_models.get_products_request import GetProductsRequest
 from notbank_python_sdk.notbank_client_cache import NotbankClientCache
@@ -170,11 +165,21 @@ class NotbankClient:
         """https://apidoc.notbank.exchange/#authenticate"""
         return self._client_connection.authenticate(authenticate_request)
 
-    def get_oms_deposit_fees(self, deposit_fees_request: DepositFeesRequest) -> List[OmsDepositFee]:
+    def get_oms_deposit_fees(self, deposit_fees_request: OmsFeesRequest) -> List[OmsFee]:
         """
         https://apidoc.notbank.exchange/#getomsdepositfees
         """
-        return self._get_data_list(Endpoints.GET_OMS_DEPOSIT_FEES, deposit_fees_request, OmsDepositFee)
+        return self._get_data_list(Endpoints.GET_OMS_DEPOSIT_FEES, deposit_fees_request, OmsFee)
+
+    def get_oms_withdraw_fees(self, request: OmsFeesRequest) -> List[OmsFee]:
+        """
+        https://apidoc.notbank.exchange/#getomswithdrawfees
+        """
+        return self._get_data_list(
+            Endpoints.GET_OMS_WITHDRAW_FEES,
+            request,
+            OmsFee
+        )
 
     def get_account_fees(self, account_fees_request: AccountFeesRequest) -> List[AccountFee]:
         """
@@ -240,28 +245,28 @@ class NotbankClient:
 
     def get_withdraw_fee(
         self,
-        request: GetWithdrawFeeRequest,
-    ) -> GetWithdrawFeeResponse:
+        request: FeeRequest,
+    ) -> Fee:
         """
         https://apidoc.notbank.exchange/#getwithdrawfee
         """
         return self._get_data(
             Endpoints.GET_WITHDRAW_FEE,
             request,
-            GetWithdrawFeeResponse,
+            Fee,
         )
 
     def get_deposit_fee(
         self,
-        request: GetDepositFeeRequest,
-    ) -> DepositFee:
+        request: FeeRequest,
+    ) -> Fee:
         """
         https://apidoc.notbank.exchange/#getdepositfee
         """
         return self._get_data(
             Endpoints.GET_DEPOSIT_FEE,
             request,
-            DepositFee,
+            Fee,
         )
 
     def get_product(
@@ -287,6 +292,19 @@ class NotbankClient:
             Endpoints.GET_PRODUCTS,
             GetProductsRequest(),
             Product,
+        )
+
+    def get_verification_level_config(
+        self,
+        request: VerificationLevelConfigRequest,
+    ) -> ProductVerificationLevelConfig:
+        """
+        https://apidoc.notbank.exchange/#getverificationlevelconfig
+        """
+        return self._get_data(
+            Endpoints.GET_VERIFICATION_LEVEL_CONFIG,
+            request,
+            ProductVerificationLevelConfig,
         )
 
     def get_instrument(
@@ -334,6 +352,19 @@ class NotbankClient:
     ) -> int:
         return self.get_instrument_by_symbol(symbol).instrument_id
 
+    def get_instrument_verification_level_config(
+        self,
+        request: VerificationLevelConfigRequest,
+    ) -> InstrumentVerificationLevelConfig:
+        """
+        https://apidoc.notbank.exchange/#getinstrumentverificationlevelconfig
+        """
+        return self._get_data(
+            Endpoints.GET_INSTRUMENT_VERIFICATION_LEVEL_CONFIG,
+            request,
+            InstrumentVerificationLevelConfig,
+        )
+
     def get_order_fee(
         self,
         request: GetOrderFeeRequest,
@@ -345,19 +376,6 @@ class NotbankClient:
             Endpoints.GET_ORDER_FEE,
             request,
             OrderFee,
-        )
-
-    def get_verification_level_config(
-        self,
-        request: GetVerificationLevelConfigRequest,
-    ) -> VerificationLevelConfig:
-        """
-        https://apidoc.notbank.exchange/#getverificationlevelconfig
-        """
-        return self._get_data(
-            Endpoints.GET_INSTRUMENT_VERIFICATION_LEVEL_CONFIG,
-            request,
-            VerificationLevelConfig,
         )
 
     def ping(self) -> Pong:
@@ -1176,14 +1194,4 @@ class NotbankClient:
             Endpoints.GET_USER_PERMISSIONS,
             request,
             parse_response_fn=lambda x: x
-        )
-
-    def set_oms_withdraw_fee(self, request: SetOmsWithdrawFeeRequest) -> FeeId:
-        """
-        https://apidoc.notbank.exchange/#getomswithdrawfees
-        """
-        return self._get_data(
-            Endpoints.SET_OMS_WITHDRAW_FEE,
-            request,
-            FeeId
         )

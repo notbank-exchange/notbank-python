@@ -3,9 +3,6 @@ from decimal import Decimal
 
 
 @dataclass
-class GetWithdrawFeeResponse:
-    """
-    Respuesta con el fee estimado para el retiro.
-    """
+class Fee:
     fee_amount: Decimal
     ticket_amount: Decimal

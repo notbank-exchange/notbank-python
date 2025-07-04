@@ -1,16 +1,12 @@
 from decimal import Decimal
 import unittest
-from typing import List
 
-from dacite import from_dict, Config
 from notbank_python_sdk.notbank_client import NotbankClient
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
 
 from notbank_python_sdk.requests_models.send_order import OrderType, PegPriceType, SendOrderRequest, Side, TimeInForce
 
 from tests import test_helper
-
-# TODO: fix
 
 
 class TestSendOrderList(unittest.TestCase):
@@ -39,7 +35,6 @@ class TestSendOrderList(unittest.TestCase):
         ]
 
         response = self.client.send_order_list(request)
-
 
     def test_empty_order_list(self):
         """Prueba inválida: Lista de órdenes vacía."""

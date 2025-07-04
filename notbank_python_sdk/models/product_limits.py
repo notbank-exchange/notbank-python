@@ -4,7 +4,7 @@ from typing import Optional
 
 
 @dataclass
-class ProductLimit:
+class ProductLimits:
     oms_id: int
     verification_level: int
     product_id: int

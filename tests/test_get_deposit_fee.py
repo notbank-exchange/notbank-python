@@ -3,7 +3,7 @@ import unittest
 
 from notbank_python_sdk.notbank_client import NotbankClient
 
-from notbank_python_sdk.requests_models.get_deposit_fee_request import GetDepositFeeRequest
+from notbank_python_sdk.requests_models.fee_request import FeeRequest
 from tests import test_helper
 
 
@@ -19,7 +19,7 @@ class TestGetDepositFee(unittest.TestCase):
         """
         Prueba exitosa: solicitud válida, devuelve el fee estimado.
         """
-        request = GetDepositFeeRequest(
+        request = FeeRequest(
             account_id=1,
             product_id=1,
             amount=Decimal(100),
@@ -36,7 +36,7 @@ class TestGetDepositFee(unittest.TestCase):
         """
         Prueba: solicitud con valores predeterminados, devuelve el fee estimado.
         """
-        request = GetDepositFeeRequest(
+        request = FeeRequest(
             account_id=1,
             product_id=1,
             amount=Decimal(50),
@@ -50,7 +50,7 @@ class TestGetDepositFee(unittest.TestCase):
         self.assertEqual(response.ticket_amount, 50)
 
     def test_get_deposit_fee_not_found(self):
-        request = GetDepositFeeRequest(
+        request = FeeRequest(
             account_id=999,  # account_id inválido
             product_id=1,
             amount=Decimal(100),

@@ -1,5 +1,5 @@
 import simplejson as json
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, Optional
 from notbank_python_sdk.core.endpoints import Endpoints
 from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
 from notbank_python_sdk.models.pong import Pong
@@ -8,13 +8,12 @@ from notbank_python_sdk.requests_models.authenticate_request import Authenticate
 
 from notbank_python_sdk.core.authenticator import Authenticator
 from notbank_python_sdk.client_connection import T
-from notbank_python_sdk.core.converter import from_dict, to_dict, to_json_str
+from notbank_python_sdk.core.converter import from_dict, to_dict
 from notbank_python_sdk.core.response_handler import ResponseHandler
 from notbank_python_sdk.websocket.callback_manager import CallbackManager
 from notbank_python_sdk.websocket.handler import WebsocketHandler
 from notbank_python_sdk.websocket.subscription import Subscription, Unsubscription
 from notbank_python_sdk.websocket.websocket_manager import WebsocketManager
-from notbank_python_sdk.websocket.subscription_handler import Callback
 from notbank_python_sdk.websocket.websocket_requester import WebsocketRequester
 from notbank_python_sdk.websocket.websocket_response_handler import WebsocketResponseHandler
 
@@ -99,7 +98,7 @@ class WebsocketClientConnection:
 
     def authenticate_user(self, authenticate_request: AuthenticateRequest) -> AuthenticateResponse:
         request_data = Authenticator.convert_data(authenticate_request)
-        return self.request("AuthenticateUser", to_dict(request_data), lambda data: from_dict(AuthenticateResponse, data))
+        return self.request(Endpoints.AUTHENTICATE_USER, to_dict(request_data), lambda data: from_dict(AuthenticateResponse, data))
 
     def ping(self) -> None:
         result = self.request(

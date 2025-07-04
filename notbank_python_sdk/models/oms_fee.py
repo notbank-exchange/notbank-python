@@ -3,7 +3,7 @@ from decimal import Decimal
 
 
 @dataclass
-class OmsDepositFee:
+class OmsFee:
     oms_id: int
     account_id: int
     account_provider_id: int
