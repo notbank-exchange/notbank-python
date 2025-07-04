@@ -7,7 +7,6 @@ from tests import test_helper
 
 
 class TestHealthCheck(unittest.TestCase):
-    # TODO: fix
     @classmethod
     def setUpClass(cls):
         connection = test_helper.new_rest_client_connection()

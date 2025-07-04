@@ -5,7 +5,7 @@ from notbank_python_sdk.requests_models.cancel_order_request import *
 from notbank_python_sdk.requests_models.cancel_order import *
 from notbank_python_sdk.requests_models.cancel_replace_order_request import *
 from notbank_python_sdk.requests_models.cancel_user_report import *
-from notbank_python_sdk.requests_models.deposit_fees_request import *
+from notbank_python_sdk.requests_models.oms_fees_request import *
 from notbank_python_sdk.requests_models.download_document_slice import *
 from notbank_python_sdk.requests_models.download_document import *
 from notbank_python_sdk.requests_models.enums import *
@@ -20,7 +20,7 @@ from notbank_python_sdk.requests_models.get_account_trades import *
 from notbank_python_sdk.requests_models.get_account_transactions_request import *
 from notbank_python_sdk.requests_models.get_deposit_fee_request import *
 from notbank_python_sdk.requests_models.get_instrument_request import *
-from notbank_python_sdk.requests_models.get_instrument_verification_level_config_request import *
+from notbank_python_sdk.requests_models.verification_level_config_request import *
 from notbank_python_sdk.requests_models.get_instruments_request import *
 from notbank_python_sdk.requests_models.get_l2_snapshot import *
 from notbank_python_sdk.requests_models.get_last_trades import *

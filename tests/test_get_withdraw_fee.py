@@ -2,8 +2,8 @@ from decimal import Decimal
 import unittest
 
 from notbank_python_sdk.notbank_client import NotbankClient
+from notbank_python_sdk.requests_models.fee_request import FeeRequest
 
-from notbank_python_sdk.requests_models.get_withdraw_fee_request import GetWithdrawFeeRequest
 from tests import test_helper
 
 
@@ -15,12 +15,11 @@ class TestGetWithdrawFee(unittest.TestCase):
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
 
-
     def test_get_withdraw_fee_success(self):
         """
         Prueba exitosa: solicitud válida, devuelve el fee estimado.
         """
-        request = GetWithdrawFeeRequest(
+        request = FeeRequest(
             account_id=1,
             product_id=1,
             amount=Decimal(100),
@@ -37,7 +36,7 @@ class TestGetWithdrawFee(unittest.TestCase):
         """
         Prueba: solicitud con valores predeterminados, devuelve el fee estimado.
         """
-        request = GetWithdrawFeeRequest(
+        request = FeeRequest(
             account_id=1,
             product_id=1,
             amount=Decimal(50),

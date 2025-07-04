@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Any, Callable, Generic, List, TypeVar
 
 from notbank_python_sdk.websocket.subscription_handler import Callback

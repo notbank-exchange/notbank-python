@@ -11,15 +11,20 @@ class TestOrderBook(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        connection = test_helper.new_rest_client_connection()
+        connection = test_helper.new_websocket_client_connection()
+        connection.connect()
         cls.credentials = test_helper.load_credentials()
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.close()
+
     def test_get_order_book(self):
         request = OrderBookRequest(
             market_pair="BTCUSD",
-            level=2,
+            level=-2,
             depth=10
         )
         orderbook = self.client.get_order_book(request)

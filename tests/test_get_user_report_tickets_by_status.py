@@ -4,8 +4,6 @@ from notbank_python_sdk.notbank_client import NotbankClient
 from notbank_python_sdk.requests_models.get_user_report_tickets_by_status import GetUserReportTicketsByStatusRequest
 from tests import test_helper
 
-# TODO: fix
-
 
 class TestGetUserReportTicketsByStatus(unittest.TestCase):
     @classmethod

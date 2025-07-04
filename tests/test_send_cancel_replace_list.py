@@ -6,8 +6,6 @@ from notbank_python_sdk.requests_models.cancel_replace_order_request import Canc
 
 from tests import test_helper
 
-# TODO: fix
-
 
 class TestSendCancelReplaceList(unittest.TestCase):
     @classmethod
