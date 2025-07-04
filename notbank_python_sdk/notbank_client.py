@@ -474,22 +474,25 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/#gettickerhistory
         """
+        def parse_ticker_list(data: Any) -> List[Ticker]:
+            return [Ticker(
+                end_date_time=ticker_raw[0],
+                high=Decimal(str(ticker_raw[1])),
+                low=Decimal(str(ticker_raw[2])),
+                open=Decimal(str(ticker_raw[3])),
+                close=Decimal(str(ticker_raw[4])),
+                volume=Decimal(str(ticker_raw[5])),
+                bid=Decimal(str(ticker_raw[6])),
+                ask=Decimal(str(ticker_raw[7])),
+                instrument_id=ticker_raw[8],
+                begin_date_time=ticker_raw[9]
+            ) for ticker_raw in data]
 
-        result = self._get_data_list(
-            Endpoints.GET_TICKER_HISTORY, request, List[int])
-
-        return list(map(lambda ticker_raw: Ticker(
-            end_date_time=ticker_raw[0],
-            high=Decimal(ticker_raw[1]),
-            low=Decimal(ticker_raw[2]),
-            open=Decimal(ticker_raw[3]),
-            close=Decimal(ticker_raw[4]),
-            volume=Decimal(ticker_raw[5]),
-            bid=Decimal(ticker_raw[6]),
-            ask=Decimal(ticker_raw[7]),
-            instrument_id=ticker_raw[8],
-            begin_date_time=ticker_raw[9]
-        ), result))
+        return self._client_connection.request(
+            Endpoints.GET_TICKER_HISTORY,
+            to_dict(request),
+            parse_ticker_list
+        )
 
     def get_last_trades(
         self,
@@ -514,7 +517,7 @@ class NotbankClient:
             ) for elem in data]
         return self._client_connection.request(
             Endpoints.GET_LAST_TRADES,
-            request,
+            to_dict(request),
             parse_trade_list,
         )
 
@@ -687,7 +690,7 @@ class NotbankClient:
         ) for item in data]
         return self._client_connection.request(
             endpoint=Endpoints.GET_L2_SNAPSHOT,
-            request_data=request,
+            request_data=to_dict(request),
             parse_response_fn=response_fn
         )
 
@@ -765,7 +768,7 @@ class NotbankClient:
 
         return self._client_connection.request(
             Endpoints.GET_USER_ACCOUNTS,
-            request,
+            to_dict(request),
             parse_response_fn=parse_response
         )
 
@@ -1192,6 +1195,6 @@ class NotbankClient:
         """
         return self._client_connection.request(
             Endpoints.GET_USER_PERMISSIONS,
-            request,
+            to_dict(request),
             parse_response_fn=lambda x: x
         )
