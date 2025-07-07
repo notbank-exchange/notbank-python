@@ -58,6 +58,7 @@ from notbank_python_sdk.requests_models.cancel_order import CancelOrder
 from notbank_python_sdk.requests_models.cancel_order_request import CancelOrderRequest
 from notbank_python_sdk.requests_models.cancel_replace_order_request import CancelReplaceOrderRequest
 from notbank_python_sdk.requests_models.cancel_user_report import CancelUserReportRequest
+from notbank_python_sdk.requests_models.delete_bank_account_request import DeleteBankAccountRequest
 from notbank_python_sdk.requests_models.download_document import DownloadDocumentRequest
 from notbank_python_sdk.requests_models.download_document_slice import DownloadDocumentSliceRequest
 from notbank_python_sdk.requests_models.generate_pnl_activity_report import GeneratePnlActivityReportRequest
@@ -1275,5 +1276,17 @@ class NotbankClient:
             request_data=None,
             parse_response_fn=parse_response_list_fn(
                 BankAccount, from_pascal_case=False),
+            request_type=RequestType.GET
+        )
+
+    def delete_bank_account(self, request: DeleteBankAccountRequest) -> None:
+        """
+        https://apidoc.notbank.exchange/?http#getbankaccount
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.BANK_ACCOUNTS + "/" + request.bank_account_id,
+            endpoint_category=EndpointCategory.NB,
+            request_data=None,
+            parse_response_fn=lambda x: None,
             request_type=RequestType.GET
         )

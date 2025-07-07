@@ -59,6 +59,11 @@ class RestClientConnection:
             self._get_endpoint_url(endpoint, endpoint_category), json=json_data, headers=headers)
         return self.handle_response(endpoint_category, response, parse_response)
 
+    def delete(self, endpoint: str, endpoint_category: EndpointCategory, params: Any, parse_response: ParseResponseFn[T]) -> T:
+        response = self._rest_session.delete(
+            self._get_endpoint_url(endpoint, endpoint_category))
+        return self.handle_response(endpoint_category, response, parse_response)
+
     def handle_response(self, endpoint_category: EndpointCategory, response: requests.Response, parse_response: ParseResponseFn[T]) -> T:
         if response.status_code < 200 or 300 <= response.status_code:
             raise NotbankException(

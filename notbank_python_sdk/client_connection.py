@@ -21,6 +21,7 @@ UnsubscribeFn = Callable[[Unsubscription[T]], T]
 class RequestType(Enum):
     POST = 0
     GET = 1
+    DELETE = 2
 
 
 class ClientConnection:
@@ -28,6 +29,7 @@ class ClientConnection:
         self,
         post_request: RequestMethodFn,
         get_request: RequestMethodFn,
+        delete_request: RequestMethodFn,
         subscribe: SubscribeFn,
         unsubscribe: UnsubscribeFn,
         authenticate_user: AuthenticateMethodFn,
@@ -37,6 +39,7 @@ class ClientConnection:
         self._request_methods: Dict[RequestType, RequestMethodFn] = {
             RequestType.POST: post_request,
             RequestType.GET: get_request,
+            RequestType.DELETE: delete_request,
         }
         self._subscribe = subscribe
         self._unsubscribe = unsubscribe
