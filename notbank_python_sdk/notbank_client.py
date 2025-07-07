@@ -61,6 +61,7 @@ from notbank_python_sdk.requests_models.cancel_order import CancelOrder
 from notbank_python_sdk.requests_models.cancel_order_request import CancelOrderRequest
 from notbank_python_sdk.requests_models.cancel_replace_order_request import CancelReplaceOrderRequest
 from notbank_python_sdk.requests_models.cancel_user_report import CancelUserReportRequest
+from notbank_python_sdk.requests_models.confirm_whitelisted_address_request import ConfirmWhiteListedAddressRequest
 from notbank_python_sdk.requests_models.delete_bank_account_request import DeleteBankAccountRequest
 from notbank_python_sdk.requests_models.download_document import DownloadDocumentRequest
 from notbank_python_sdk.requests_models.download_document_slice import DownloadDocumentSliceRequest
@@ -1355,3 +1356,15 @@ class NotbankClient:
             request,
             IdResponse
         ).id
+
+    def confirm_whitelisted_address(self, request: ConfirmWhiteListedAddressRequest) -> None:
+        """
+        https://apidoc.notbank.exchange/?http#addwhitelistedaddress
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.WHITELISTED_ADDRESSES + "/" + request.whitelisted_address_id,
+            endpoint_category=EndpointCategory.NB,
+            request_data=None,
+            parse_response_fn=lambda x: None,
+            request_type=RequestType.POST
+        )
