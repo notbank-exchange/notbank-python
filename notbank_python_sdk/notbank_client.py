@@ -94,6 +94,7 @@ from notbank_python_sdk.requests_models.get_orders import GetOrdersRequest
 from notbank_python_sdk.requests_models.get_orders_history import GetOrdersHistoryRequest
 from notbank_python_sdk.requests_models.get_ticker_history import GetTickerHistoryRequest
 from notbank_python_sdk.requests_models.get_trades_history import GetTradesHistoryRequest
+from notbank_python_sdk.requests_models.create_crypto_withdraw_request import CreateCryptoWithdrawRequest
 from notbank_python_sdk.requests_models.get_user_info import GetUserInfoRequest
 from notbank_python_sdk.requests_models.get_user_permissions import GetUserPermissionsRequest
 from notbank_python_sdk.requests_models.get_user_report_tickets import GetUserReportTicketsRequest
@@ -1393,5 +1394,18 @@ class NotbankClient:
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
             parse_response_fn=lambda x: None,
+            request_type=RequestType.POST
+        )
+
+    def create_crypto_withdraw(self, request: CreateCryptoWithdrawRequest) -> str:
+        """
+        https://apidoc.notbank.exchange/?http#createcriptowithdraw
+        """
+        # ! TODO: crypto, not cripto
+        return self._client_connection.request(
+            endpoint=Endpoints.CREATE_CRIPTO_WITHDRAW,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=lambda x: x,
             request_type=RequestType.POST
         )
