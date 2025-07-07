@@ -9,6 +9,7 @@ from notbank_python_sdk.error import ErrorCode, NotbankException
 from notbank_python_sdk.models.account_fee import AccountFee
 from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
 from notbank_python_sdk.models.bank import Bank
+from notbank_python_sdk.models.address import Address
 from notbank_python_sdk.models.bank_account import BankAccount
 from notbank_python_sdk.models.cancel_order_reject_event import CancelOrderRejectEvent
 from notbank_python_sdk.models.cancel_replace_order_request import CancelReplaceOrderResponse
@@ -97,6 +98,7 @@ from notbank_python_sdk.requests_models.get_user_report_writer_result_records im
 from notbank_python_sdk.requests_models.level1 import GetLevel1Request
 from notbank_python_sdk.requests_models.modify_order import ModifyOrderRequest
 from notbank_python_sdk.requests_models.order_book import OrderBookRequest
+from notbank_python_sdk.requests_models.get_white_listed_addresses_request import GetWhitelistedAddressesRequest
 from notbank_python_sdk.requests_models.remove_user_report_ticket import RemoveUserReportTicketRequest
 from notbank_python_sdk.requests_models.schedule_product_delta_activity_report import ScheduleProductDeltaActivityReportRequest
 from notbank_python_sdk.requests_models.schedule_profit_and_loss_activity_report import ScheduleProfitAndLossActivityReportRequest
@@ -1318,13 +1320,25 @@ class NotbankClient:
             request_type=RequestType.GET
         )
 
-    def create_deposit_addresses(self, request: DepositAddressRequest) -> str:
+    def create_deposit_address(self, request: DepositAddressRequest) -> str:
         """
         https://apidoc.notbank.exchange/?http#createdepositaddress
         """
         return self._client_connection.request(
-            endpoint=Endpoints.CREATE_DEPOSIT_ADDRESSES,
+            endpoint=Endpoints.CREATE_DEPOSIT_ADDRESS,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
             parse_response_fn=lambda x: x
+        )
+
+    def get_whitelisted_addresses(self, request: GetWhitelistedAddressesRequest) -> List[Address]:
+        """
+        https://apidoc.notbank.exchange/?http#getwhitelistedaddresses
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.GET_WHITELISTED_ADDRESSES,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_list_fn(Address),
+            request_type=RequestType.GET
         )
