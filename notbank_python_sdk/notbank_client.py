@@ -1351,7 +1351,6 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/?http#addwhitelistedaddress
         """
-        # ! TODO: example and description in docs are different types (int , str)
         return self._get_nb_data(
             Endpoints.WHITELISTED_ADDRESSES,
             request,
