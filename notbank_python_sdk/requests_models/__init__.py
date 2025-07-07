@@ -43,7 +43,6 @@ from notbank_python_sdk.requests_models.get_user_permissions import *
 from notbank_python_sdk.requests_models.get_user_report_tickets_by_status import *
 from notbank_python_sdk.requests_models.get_user_report_tickets import *
 from notbank_python_sdk.requests_models.get_user_report_writer_result_records import *
-from notbank_python_sdk.requests_models.get_withdraw_fee_request import *
 from notbank_python_sdk.requests_models.level1 import *
 from notbank_python_sdk.requests_models.modify_order import *
 from notbank_python_sdk.requests_models.order_book import *
@@ -70,4 +69,15 @@ from notbank_python_sdk.requests_models.unsubscribe_trades_request import *
 from notbank_python_sdk.requests_models.user_accounts import *
 from notbank_python_sdk.requests_models.user_devices import *
 from notbank_python_sdk.requests_models.web_authenticate_user_request import *
-from notbank_python_sdk.requests_models.web_authenticate_user_request import *
+from notbank_python_sdk.requests_models.get_banks_request import *
+from notbank_python_sdk.requests_models.create_bank_account_request import *
+from notbank_python_sdk.requests_models.get_bank_account_request import *
+from notbank_python_sdk.requests_models.get_bank_accounts_request import *
+from notbank_python_sdk.requests_models.delete_bank_account_request import *
+from notbank_python_sdk.requests_models.get_network_templates_request import *
+from notbank_python_sdk.requests_models.deposit_address_request import *
+from notbank_python_sdk.requests_models.get_whitelisted_addresses_request import *
+from notbank_python_sdk.requests_models.add_whitelisted_address_request import *
+from notbank_python_sdk.requests_models.confirm_whitelisted_address_request import *
+from notbank_python_sdk.requests_models.update_one_step_withdraw_request import *
+from notbank_python_sdk.requests_models.create_crypto_withdraw_request import *

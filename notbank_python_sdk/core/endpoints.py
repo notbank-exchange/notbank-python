@@ -10,8 +10,6 @@ class Endpoints(str, Enum):
     GET_ACCOUNT_INFO = "GetAccountInfo"
 
     # authentication
-    # TODO: missing: Authenticate
-    AUTHENTICATE = "Authenticate"
     AUTHENTICATE_USER = "AuthenticateUser"
     WEB_AUTHENTICATE_USER = "WebAuthenticateUser"
     LOGOUT = "LogOut"
@@ -90,6 +88,15 @@ class Endpoints(str, Enum):
     GET_USER_DEVICES = "GetUserDevices"
     GET_USER_INFO = "GetUserInfo"
     GET_USER_PERMISSIONS = "GetUserPermissions"
+
+    # wallet
+    BANKS = "banks"
+    BANK_ACCOUNTS = "bank-accounts"
+    GET_DEPOSIT_ADDRESSES = "wallet/crypto"
+    CREATE_DEPOSIT_ADDRESS = "crypto"
+    WHITELISTED_ADDRESSES = "whitelist-addresses"
+    UPDATE_ONE_STEP_WITHDRAW = "whitelist-addresses/one-step/status"
+    CREATE_CRIPTO_WITHDRAW = "wallet/crypto/withdrawal"
 
 
 class WebSocketEndpoint(str, Enum):

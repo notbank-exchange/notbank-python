@@ -28,10 +28,12 @@ def new_websocket_client_connection(
         10
     )
     return ClientConnection(
-        post_request=lambda endpoint, request_message, parse_response: client_restarter.get_connection(
-        ).request(endpoint, request_message, parse_response),
-        get_request=lambda endpoint, request_message, parse_response: client_restarter.get_connection(
-        ).request(endpoint, request_message, parse_response),
+        post_request=lambda endpoint, endpoint_category, request_message, parse_response: client_restarter.get_connection(
+        ).request(endpoint, endpoint_category, request_message, parse_response),
+        get_request=lambda endpoint, endpoint_category, request_message, parse_response: client_restarter.get_connection(
+        ).request(endpoint, endpoint_category, request_message, parse_response),
+        delete_request=_get_not_implemented(
+            "delete request", "WebsocketClientConnection"),
         subscribe=client_restarter.subscribe,
         unsubscribe=client_restarter.unsubscribe,
         authenticate_user=lambda request_message: client_restarter.get_connection(
@@ -47,6 +49,7 @@ def new_rest_client_connection(url: str = "api.notbank.exchange") -> ClientConne
     return ClientConnection(
         post_request=rest_client_connection.post,
         get_request=rest_client_connection.get,
+        delete_request=rest_client_connection.delete,
         subscribe=_get_not_implemented("subscription", "RestClientConnection"),
         unsubscribe=_get_not_implemented(
             "unsubscription", "RestClientConnection"),

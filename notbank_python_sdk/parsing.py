@@ -29,13 +29,13 @@ def build_subscription_handler(
     return subscription_handler_builder
 
 
-def parse_response_fn(response_cls: Type[T2], no_pascal_case: List[str] = []) -> ParseResponseFn[T2]:
+def parse_response_fn(response_cls: Type[T2], no_pascal_case: List[str] = [], from_pascal_case: bool = True) -> ParseResponseFn[T2]:
     def parse_data_fn(data: Any) -> T2:
-        return from_dict(response_cls, data, no_pascal_case)
+        return from_dict(response_cls, data, no_pascal_case, from_pascal_case)
     return parse_data_fn
 
 
-def parse_response_list_fn(response_cls: Type[T2], no_pascal_case: List[str] = []) -> ParseResponseListFn[T2]:
+def parse_response_list_fn(response_cls: Type[T2], no_pascal_case: List[str] = [], from_pascal_case: bool = True) -> ParseResponseListFn[T2]:
     def parse_data_fn(data: Any) -> List[T2]:
-        return [from_dict(response_cls, elem, no_pascal_case) for elem in data]
+        return [from_dict(response_cls, elem, no_pascal_case, from_pascal_case) for elem in data]
     return parse_data_fn
