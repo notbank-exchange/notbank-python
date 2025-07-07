@@ -1397,7 +1397,6 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/?http#createcriptowithdraw
         """
-        # ! TODO: crypto, not cripto
         return self._client_connection.request(
             endpoint=Endpoints.CREATE_CRIPTO_WITHDRAW,
             endpoint_category=EndpointCategory.NB,
