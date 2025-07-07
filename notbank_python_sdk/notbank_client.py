@@ -9,6 +9,7 @@ from notbank_python_sdk.error import ErrorCode, NotbankException
 from notbank_python_sdk.models.account_fee import AccountFee
 from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
 from notbank_python_sdk.models.bank import Bank
+from notbank_python_sdk.models.bank_account import BankAccount
 from notbank_python_sdk.models.cancel_order_reject_event import CancelOrderRejectEvent
 from notbank_python_sdk.models.cancel_replace_order_request import CancelReplaceOrderResponse
 from notbank_python_sdk.models.deposit_event import DepositEvent
@@ -65,6 +66,7 @@ from notbank_python_sdk.requests_models.generate_trade_activity_report import Ge
 from notbank_python_sdk.requests_models.generate_transaction_activity_report import GenerateTransactionActivityReportRequest
 from notbank_python_sdk.requests_models.get_account_trades import GetAccountTradesRequest
 from notbank_python_sdk.requests_models.fee_request import FeeRequest
+from notbank_python_sdk.requests_models.create_bank_account_request import CreateBankAccountRequest
 from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
 from notbank_python_sdk.requests_models.verification_level_config_request import VerificationLevelConfigRequest
@@ -159,6 +161,11 @@ class NotbankClient:
         request_data_dict = to_dict(request_data)
         return self._client_connection.request(
             endpoint, endpoint_category, request_data_dict, parse_response_fn(response_cls, no_pascal_case))
+
+    def _get_nb_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], endpoint_category: EndpointCategory = EndpointCategory.AP) -> T2:
+        request_data_dict = to_dict(request_data, as_snake_case_dict=True)
+        return self._client_connection.request(
+            endpoint, endpoint_category, request_data_dict, parse_response_fn(response_cls, no_pascal_case, from_pascal_case=False))
 
     def _do_request(self, endpoint: str, request_data: Any, endpoint_category: EndpointCategory = EndpointCategory.AP) -> None:
         request_data_dict = to_dict(request_data)
@@ -1232,3 +1239,12 @@ class NotbankClient:
             request_data=request,
             response_cls=Bank
         )
+
+    def create_bank_account(self, request: CreateBankAccountRequest) -> BankAccount:
+        return self._get_nb_data(
+            Endpoints.CREATE_BANK_ACCOUNT,
+            request,
+            BankAccount
+        )
+        
+      
