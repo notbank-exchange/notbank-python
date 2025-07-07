@@ -10,6 +10,7 @@ from notbank_python_sdk.core.authenticator import Authenticator
 from notbank_python_sdk.client_connection import T
 from notbank_python_sdk.core.converter import from_dict, to_dict
 from notbank_python_sdk.core.endpoint_category import EndpointCategory
+from notbank_python_sdk.error import NotbankException, ErrorCode
 from notbank_python_sdk.core.response_handler import ResponseHandler
 from notbank_python_sdk.websocket.callback_manager import CallbackManager
 from notbank_python_sdk.websocket.handler import WebsocketHandler
@@ -97,6 +98,9 @@ class WebsocketClientConnection:
             endpoint_category: EndpointCategory,
             request_message: Any,
             parse_response_fn: Callable[[Any], T]) -> T:
+        if endpoint_category != EndpointCategory.AP:
+            raise NotbankException(
+                ErrorCode.INVALID_REQUEST, "websocket server only supports ap endpoints")
         result_getter = self._websocket_requester.request(
             endpoint, request_message)
         result = result_getter()
@@ -115,4 +119,4 @@ class WebsocketClientConnection:
         if result.is_left():
             raise result.get_left()
         data_dict = json.loads(result.get(), use_decimal=True)
-        return ResponseHandler.handle_response_data(parse_response_fn, data_dict)
+        return ResponseHandler.handle_response_data(EndpointCategory.AP, parse_response_fn, data_dict)

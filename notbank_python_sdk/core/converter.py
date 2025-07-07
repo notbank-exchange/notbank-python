@@ -85,27 +85,37 @@ def to_json_str(data, cast: Dict[Type[Any], Any] = dict()) -> str:
     return json.dumps(json_dict, use_decimal=True)
 
 
-def to_dict(data, cast: Dict[Type[Any], Any] = {Decimal: lambda x: dec_to_str_stripped(x)}) -> dict:
+def to_dict(data, cast: Dict[Type[Any], Any] = {Decimal: lambda x: dec_to_str_stripped(x)}, as_snake_case_dict: bool = False) -> dict:
     if data is None:
         return {}
     dict_factory = _build_factory(cast)
     snake_case_dict = asdict(data, dict_factory=dict_factory)   # type: ignore
+    if as_snake_case_dict:
+        return snake_case_dict
     return {_to_pascal_case(key): snake_case_dict[key] for key in snake_case_dict}
 
 
-def from_dict(cls: Type[T1], data, no_pascal_case: List[str] = []) -> T1:
+def from_dict(cls: Type[T1], data, no_pascal_case: List[str] = [], from_pascal_case: bool = True) -> T1:
+    convert_key = get_convert_key_fn(no_pascal_case, from_pascal_case)
     return dacite_from_dict(
         cls,
         data,
         config=Config(
             cast=[Enum],
-            convert_key=lambda key: _to_pascal_case(key, no_pascal_case),
+            convert_key=convert_key,
             type_hooks={
                 Decimal: lambda x: Decimal(str(x)),
                 float: lambda x: Decimal(str(x))
             }
         )
     )
+
+
+def get_convert_key_fn(no_pascal_case: List[str], from_pascal_case: bool) -> Callable[[str], str]:
+    if from_pascal_case:
+        def convert_key(key): return _to_pascal_case(key, no_pascal_case)
+        return convert_key
+    return lambda x: x
 
 
 def from_json_str(cls: Type[T1], json_str: str) -> Either[NotbankException, T1]:

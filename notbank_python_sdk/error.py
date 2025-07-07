@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
+
 class ErrorCode(Enum):
     TIMED_OUT = -300
     CONFIGURATION_ERROR = -200
@@ -27,8 +28,6 @@ def _get_message(standard_error_response: StandardErrorResponse) -> str:
     message = standard_error_response.errormsg or ""
     detail = standard_error_response.detail or ""
     return message + ". " + detail
-
-
 
 
 class NotbankException(Exception):

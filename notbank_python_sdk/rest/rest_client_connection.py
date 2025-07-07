@@ -22,7 +22,7 @@ class RestClientConnection:
     VERSION = "0.0.1"
 
     def __init__(self, host: str, ap_token: Optional[str] = None):
-        self.host = self._build_url(host)
+        self.host = self._get_host_url(host)
         self._rest_session = requests.Session()
         self._rest_session.headers.update({
             'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ class RestClientConnection:
         self._update_headers(ap_token)
         self._two_factor_token: Optional[str] = None
 
-    def _build_url(self, host: str) -> str:
+    def _get_host_url(self, host: str) -> str:
         return "https://" + host
 
     def _update_headers(self, ap_token: Optional[str]) -> None:
@@ -43,26 +43,29 @@ class RestClientConnection:
     def close(self) -> None:
         self._rest_session.close()
 
-    def _get_url(self, endpoint: str, endpoint_category: EndpointCategory,) -> str:
-        return self.host + "/" + endpoint_category + "/" + endpoint
+    def _get_endpoint_url(self, endpoint: str, endpoint_category: EndpointCategory,) -> str:
+        url = self.host + "/" + endpoint_category + "/" + endpoint
+        print(url)
+        return url
 
     def get(self, endpoint: str, endpoint_category: EndpointCategory, params: Any, parse_response: ParseResponseFn[T]) -> T:
         response = self._rest_session.get(
-            self._get_url(endpoint, endpoint_category), params=params)
-        return self.handle_response(response, parse_response)
+            self._get_endpoint_url(endpoint, endpoint_category), params=params)
+        return self.handle_response(endpoint_category, response, parse_response)
 
     def post(self, endpoint: str, endpoint_category: EndpointCategory, json_data: Any, parse_response: ParseResponseFn[T], headers: Optional[Any] = None) -> T:
+        print("headers", self._rest_session.headers)
         response = self._rest_session.post(
-            self._get_url(endpoint, endpoint_category), json=json_data, headers=headers)
-        return self.handle_response(response, parse_response)
+            self._get_endpoint_url(endpoint, endpoint_category), json=json_data, headers=headers)
+        return self.handle_response(endpoint_category, response, parse_response)
 
-    def handle_response(self, response: requests.Response, parse_response: ParseResponseFn[T]) -> T:
+    def handle_response(self, endpoint_category: EndpointCategory, response: requests.Response, parse_response: ParseResponseFn[T]) -> T:
         if response.status_code < 200 or 300 <= response.status_code:
             raise NotbankException(
                 ErrorCode.CONFIGURATION_ERROR,
                 f"http error. (code={response.status_code}) " + response.text)
         response_data = response.json()
-        return ResponseHandler.handle_response_data(parse_response, response_data)
+        return ResponseHandler.handle_response_data(endpoint_category, parse_response, response_data)
 
     def authenticate_user(self, authenticate_request: AuthenticateRequest) -> AuthenticateResponse:
         request_data = Authenticator.convert_data(authenticate_request)

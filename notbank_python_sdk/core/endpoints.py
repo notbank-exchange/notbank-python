@@ -91,6 +91,9 @@ class Endpoints(str, Enum):
     GET_USER_INFO = "GetUserInfo"
     GET_USER_PERMISSIONS = "GetUserPermissions"
 
+    # wallet
+    GET_BANKS = "banks"
+
 
 class WebSocketEndpoint(str, Enum):
     SUBSCRIBE_LEVEL2 = "SubscribeLevel2"

@@ -43,7 +43,6 @@ from notbank_python_sdk.requests_models.get_user_permissions import *
 from notbank_python_sdk.requests_models.get_user_report_tickets_by_status import *
 from notbank_python_sdk.requests_models.get_user_report_tickets import *
 from notbank_python_sdk.requests_models.get_user_report_writer_result_records import *
-from notbank_python_sdk.requests_models.get_withdraw_fee_request import *
 from notbank_python_sdk.requests_models.level1 import *
 from notbank_python_sdk.requests_models.modify_order import *
 from notbank_python_sdk.requests_models.order_book import *
