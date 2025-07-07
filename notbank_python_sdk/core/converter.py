@@ -85,6 +85,10 @@ def to_json_str(data, cast: Dict[Type[Any], Any] = dict()) -> str:
     return json.dumps(json_dict, use_decimal=True)
 
 
+def to_nb_dict(data, cast: Dict[Type[Any], Any] = {Decimal: lambda x: dec_to_str_stripped(x)}) -> dict:
+    return to_dict(data, cast, as_snake_case_dict=True)
+
+
 def to_dict(data, cast: Dict[Type[Any], Any] = {Decimal: lambda x: dec_to_str_stripped(x)}, as_snake_case_dict: bool = False) -> dict:
     if data is None:
         return {}

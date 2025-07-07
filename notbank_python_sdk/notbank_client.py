@@ -4,7 +4,7 @@ import simplejson as json
 from notbank_python_sdk.client_connection import ClientConnection, RequestType
 from notbank_python_sdk.core.endpoint_category import EndpointCategory
 from notbank_python_sdk.core.endpoints import Endpoints, WebSocketEndpoint
-from notbank_python_sdk.core.converter import from_json_str, to_dict, from_dict
+from notbank_python_sdk.core.converter import from_json_str, to_dict, from_dict, to_nb_dict
 from notbank_python_sdk.error import ErrorCode, NotbankException
 from notbank_python_sdk.models.account_fee import AccountFee
 from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
@@ -70,7 +70,7 @@ from notbank_python_sdk.requests_models.fee_request import FeeRequest
 from notbank_python_sdk.requests_models.create_bank_account_request import CreateBankAccountRequest
 from notbank_python_sdk.requests_models.get_bank_account_request import GetBankAccountRequest
 from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
-from notbank_python_sdk.requests_models.get_deposit_address_request import GetDepositAddressRequest
+from notbank_python_sdk.requests_models.deposit_address_request import DepositAddressRequest
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
 from notbank_python_sdk.requests_models.get_network_templates_request import GetNetworksTemplatesRequest
 from notbank_python_sdk.requests_models.verification_level_config_request import VerificationLevelConfigRequest
@@ -154,7 +154,7 @@ class NotbankClient:
             parse_response_list_fn(response_cls, no_pascal_case))
 
     def _get_nb_data_list(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = []) -> List[T2]:
-        request_data_dict = to_dict(request_data, as_snake_case_dict=True)
+        request_data_dict = to_nb_dict(request_data)
         return self._client_connection.request(
             endpoint,
             EndpointCategory.AP,
@@ -167,7 +167,7 @@ class NotbankClient:
             endpoint, endpoint_category, request_data_dict, parse_response_fn(response_cls, no_pascal_case))
 
     def _get_nb_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], endpoint_category: EndpointCategory = EndpointCategory.AP) -> T2:
-        request_data_dict = to_dict(request_data, as_snake_case_dict=True)
+        request_data_dict = to_nb_dict(request_data)
         return self._client_connection.request(
             endpoint, endpoint_category, request_data_dict, parse_response_fn(response_cls, no_pascal_case, from_pascal_case=False))
 
@@ -1301,12 +1301,12 @@ class NotbankClient:
         return self._client_connection.request(
             endpoint=Endpoints.BANK_ACCOUNTS,
             endpoint_category=EndpointCategory.NB,
-            request_data=to_dict(request, as_snake_case_dict=True),
+            request_data=to_nb_dict(request),
             parse_response_fn=parse_response_list_fn(CurrencyNetworkTemplates),
             request_type=RequestType.GET
         )
 
-    def get_deposit_addresses(self, request: GetDepositAddressRequest) -> List[str]:
+    def get_deposit_addresses(self, request: DepositAddressRequest) -> List[str]:
         """
         https://apidoc.notbank.exchange/?http#getdepositaddresses
         """
@@ -1316,4 +1316,15 @@ class NotbankClient:
             request_data=None,
             parse_response_fn=lambda x: x,
             request_type=RequestType.GET
+        )
+
+    def create_deposit_addresses(self, request: DepositAddressRequest) -> str:
+        """
+        https://apidoc.notbank.exchange/?http#createdepositaddress
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.CREATE_DEPOSIT_ADDRESSES,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=lambda x: x
         )
