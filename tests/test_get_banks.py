@@ -16,7 +16,6 @@ class TestGetBanks(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_get_ticker_success(self):
-        # ! TODO: endpoint not found
         response = self.client.get_banks(GetBanksRequest("CL"))
         print(response)
 

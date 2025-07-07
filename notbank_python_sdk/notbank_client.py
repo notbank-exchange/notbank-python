@@ -8,7 +8,7 @@ from notbank_python_sdk.core.converter import from_json_str, to_dict, from_dict,
 from notbank_python_sdk.error import ErrorCode, NotbankException
 from notbank_python_sdk.models.account_fee import AccountFee
 from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
-from notbank_python_sdk.models.bank import Bank
+from notbank_python_sdk.models.bank import Bank, Banks
 from notbank_python_sdk.models.address import Address
 from notbank_python_sdk.models.bank_account import BankAccount
 from notbank_python_sdk.models.cancel_order_reject_event import CancelOrderRejectEvent
@@ -1241,15 +1241,15 @@ class NotbankClient:
 
     # wallet
 
-    def get_banks(self, request: GetBanksRequest) -> List[Bank]:
+    def get_banks(self, request: GetBanksRequest) -> Banks:
         """
         https://apidoc.notbank.exchange/?http#getbanks
         """
         return self._client_connection.request(
             endpoint=Endpoints.BANKS,
-            endpoint_category=EndpointCategory.NB,
+            endpoint_category=EndpointCategory.NB_PAGE,
             request_data=to_nb_dict(request),
-            parse_response_fn=parse_response_list_fn(Bank),
+            parse_response_fn=parse_response_fn(Banks),
             request_type=RequestType.GET
         )
 
@@ -1271,8 +1271,7 @@ class NotbankClient:
             endpoint=Endpoints.BANK_ACCOUNTS + "/" + request.bank_account_id,
             endpoint_category=EndpointCategory.NB,
             request_data=None,
-            parse_response_fn=parse_response_fn(
-                BankAccount, from_pascal_case=False),
+            parse_response_fn=parse_response_fn(BankAccount),
             request_type=RequestType.GET
 
         )
@@ -1285,8 +1284,7 @@ class NotbankClient:
             endpoint=Endpoints.BANK_ACCOUNTS,
             endpoint_category=EndpointCategory.NB,
             request_data=None,
-            parse_response_fn=parse_response_list_fn(
-                BankAccount, from_pascal_case=False),
+            parse_response_fn=parse_response_list_fn(BankAccount),
             request_type=RequestType.GET
         )
 

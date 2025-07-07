@@ -17,8 +17,9 @@ class NBResponseStatus(str, Enum):
 @dataclass
 class NBResponse(Generic[T]):
     status: NBResponseStatus
-    data: Optional[Any] = None
     message: Optional[str] = None
+    data: Optional[Any] = None
+    total: Optional[int] = None
 
 
 class ResponseHandler:
@@ -26,13 +27,13 @@ class ResponseHandler:
     def handle_response_data(endpoint_category: EndpointCategory, parse_response: Callable[[Any], T], response_data: Data) -> T:
         if endpoint_category == EndpointCategory.AP:
             return ResponseHandler.handle_ap_response_data(parse_response, response_data)
-        if endpoint_category == EndpointCategory.NB:
-            return ResponseHandler.handle_nb_response_data(response_data, parse_response)
+        if endpoint_category == EndpointCategory.NB or endpoint_category == EndpointCategory.NB_PAGE:
+            return ResponseHandler.handle_nb_response_data(response_data, parse_response, endpoint_category)
         raise NotbankException(ErrorCode.CONFIGURATION_ERROR,
                                f"unable to handle server response. handler for endpoint category {endpoint_category} not set")
 
     @staticmethod
-    def handle_nb_response_data(response_data: Data, parse_response: Callable[[Any], T]) -> T:
+    def handle_nb_response_data(response_data: Data, parse_response: Callable[[Any], T], endpoint_category: EndpointCategory) -> T:
         try:
             nb_response = dacite_from_dict(
                 NBResponse,
@@ -41,7 +42,10 @@ class ResponseHandler:
             if nb_response.status is NBResponseStatus.ERROR:
                 error_message = nb_response.message if nb_response.message else ""
                 raise NotbankException(ErrorCode.SERVER_ERROR, error_message)
-            return parse_response(nb_response.data)
+            data = response_data
+            if endpoint_category == EndpointCategory.NB:
+                data = response_data
+            return parse_response(data)
         except MissingValueError as e:
             raise NotbankException(
                 ErrorCode.CONFIGURATION_ERROR,
