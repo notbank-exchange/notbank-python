@@ -1304,7 +1304,6 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/?http#getnetworkstemplates
         """
-        # ! TODO: inconsistency request data in docs
         return self._client_connection.request(
             endpoint=Endpoints.BANK_ACCOUNTS,
             endpoint_category=EndpointCategory.NB,

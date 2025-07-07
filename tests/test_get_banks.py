@@ -10,7 +10,7 @@ class TestGetBanks(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        connection = new_rest_client_connection()
+        connection = test_helper.new_rest_client_connection()
         cls.credentials = test_helper.load_credentials()
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
