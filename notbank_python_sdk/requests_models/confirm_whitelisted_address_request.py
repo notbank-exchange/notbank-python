@@ -3,5 +3,5 @@ from dataclasses import dataclass
 
 
 @dataclass
-class ConfirmWhiteListedAddressRequest:
+class WhiteListedAddressRequest:
     whitelisted_address_id: str
