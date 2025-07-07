@@ -94,6 +94,7 @@ class Endpoints(str, Enum):
     # wallet
     BANKS = "banks"
     BANK_ACCOUNTS = "bank-accounts"
+    GET_DEPOSIT_ADDRESSES = "wallet/crypto"
 
 
 class WebSocketEndpoint(str, Enum):

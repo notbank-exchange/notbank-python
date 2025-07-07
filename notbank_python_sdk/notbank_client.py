@@ -70,6 +70,7 @@ from notbank_python_sdk.requests_models.fee_request import FeeRequest
 from notbank_python_sdk.requests_models.create_bank_account_request import CreateBankAccountRequest
 from notbank_python_sdk.requests_models.get_bank_account_request import GetBankAccountRequest
 from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
+from notbank_python_sdk.requests_models.get_deposit_address_request import GetDepositAddressRequest
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
 from notbank_python_sdk.requests_models.get_network_templates_request import GetNetworksTemplatesRequest
 from notbank_python_sdk.requests_models.verification_level_config_request import VerificationLevelConfigRequest
@@ -1289,12 +1290,12 @@ class NotbankClient:
             endpoint_category=EndpointCategory.NB,
             request_data=None,
             parse_response_fn=lambda x: None,
-            request_type=RequestType.GET
+            request_type=RequestType.DELETE
         )
 
     def get_networks_templates(self, request: GetNetworksTemplatesRequest) -> List[CurrencyNetworkTemplates]:
         """
-        https://apidoc.notbank.exchange/?http#getbankaccounts
+        https://apidoc.notbank.exchange/?http#getnetworkstemplates
         """
         # ! TODO: inconsistency request data in docs
         return self._client_connection.request(
@@ -1302,5 +1303,17 @@ class NotbankClient:
             endpoint_category=EndpointCategory.NB,
             request_data=to_dict(request, as_snake_case_dict=True),
             parse_response_fn=parse_response_list_fn(CurrencyNetworkTemplates),
+            request_type=RequestType.GET
+        )
+
+    def get_deposit_addresses(self, request: GetDepositAddressRequest) -> List[str]:
+        """
+        https://apidoc.notbank.exchange/?http#getdepositaddresses
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.GET_DEPOSIT_ADDRESSES,
+            endpoint_category=EndpointCategory.NB,
+            request_data=None,
+            parse_response_fn=lambda x: x,
             request_type=RequestType.GET
         )
