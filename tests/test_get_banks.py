@@ -1,9 +1,9 @@
 import unittest
 
-from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.client_connection_factory import new_rest_client_connection
-from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 from tests import test_helper
+
+from notbank_python_sdk.notbank_client import NotbankClient
+from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 
 
 class TestGetBanks(unittest.TestCase):

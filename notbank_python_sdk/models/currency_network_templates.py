@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+
 from notbank_python_sdk.models.network_template import NetworkTemplate
 
 
