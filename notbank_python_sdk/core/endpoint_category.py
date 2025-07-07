@@ -3,5 +3,5 @@ from enum import Enum
 
 class EndpointCategory(str, Enum):
     AP = 'ap'
-    NB = 'nb'
-    NB_PAGE = 'nb'
+    NB = 'api/nb'
+    NB_PAGE = 'api/nb'
