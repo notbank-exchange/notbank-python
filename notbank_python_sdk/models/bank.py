@@ -13,4 +13,4 @@ class Bank:
 @dataclass
 class Banks:
     total: int
-    banks: List[Bank]
+    data: List[Bank]

@@ -8,9 +8,9 @@ from notbank_python_sdk.core.converter import from_json_str, to_dict, from_dict,
 from notbank_python_sdk.error import ErrorCode, NotbankException
 from notbank_python_sdk.models.account_fee import AccountFee
 from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
-from notbank_python_sdk.models.bank import Bank, Banks
+from notbank_python_sdk.models.bank import Banks
 from notbank_python_sdk.models.address import Address
-from notbank_python_sdk.models.bank_account import BankAccount
+from notbank_python_sdk.models.bank_account import BankAccount, BankAccounts
 from notbank_python_sdk.models.cancel_order_reject_event import CancelOrderRejectEvent
 from notbank_python_sdk.models.cancel_replace_order_request import CancelReplaceOrderResponse
 from notbank_python_sdk.models.deposit_event import DepositEvent
@@ -73,6 +73,7 @@ from notbank_python_sdk.requests_models.get_account_trades import GetAccountTrad
 from notbank_python_sdk.requests_models.fee_request import FeeRequest
 from notbank_python_sdk.requests_models.create_bank_account_request import CreateBankAccountRequest
 from notbank_python_sdk.requests_models.get_bank_account_request import GetBankAccountRequest
+from notbank_python_sdk.requests_models.get_bank_accounts_request import GetBankAccountsRequest
 from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 from notbank_python_sdk.requests_models.deposit_address_request import DepositAddressRequest
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
@@ -1276,15 +1277,15 @@ class NotbankClient:
 
         )
 
-    def get_bank_accounts(self) -> List[BankAccount]:
+    def get_bank_accounts(self, request: GetBankAccountsRequest) -> BankAccounts:
         """
         https://apidoc.notbank.exchange/?http#getbankaccounts
         """
         return self._client_connection.request(
             endpoint=Endpoints.BANK_ACCOUNTS,
-            endpoint_category=EndpointCategory.NB,
-            request_data=None,
-            parse_response_fn=parse_response_list_fn(BankAccount),
+            endpoint_category=EndpointCategory.NB_PAGE,
+            request_data=request,
+            parse_response_fn=parse_response_fn(BankAccounts),
             request_type=RequestType.GET
         )
 
