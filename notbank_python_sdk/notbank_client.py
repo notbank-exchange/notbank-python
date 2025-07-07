@@ -164,7 +164,7 @@ class NotbankClient:
         request_data_dict = to_nb_dict(request_data)
         return self._client_connection.request(
             endpoint,
-            EndpointCategory.AP,
+            EndpointCategory.NB,
             request_data_dict,
             parse_response_list_fn(response_cls, no_pascal_case, from_pascal_case=False))
 
@@ -1245,10 +1245,12 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/?http#getbanks
         """
-        return self._get_nb_data_list(
+        return self._client_connection.request(
             endpoint=Endpoints.BANKS,
-            request_data=request,
-            response_cls=Bank
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_list_fn(Bank),
+            request_type=RequestType.GET
         )
 
     def create_bank_account(self, request: CreateBankAccountRequest) -> BankAccount:
