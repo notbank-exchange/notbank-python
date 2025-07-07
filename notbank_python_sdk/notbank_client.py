@@ -1253,7 +1253,7 @@ class NotbankClient:
 
     def get_bank_account(self, request: GetBankAccountRequest) -> BankAccount:
         """
-        https://apidoc.notbank.exchange/?http#createbankaccount
+        https://apidoc.notbank.exchange/?http#getbankaccount
         """
         return self._client_connection.request(
             endpoint=Endpoints.BANK_ACCOUNTS + "/" + request.bank_account_id,
@@ -1263,4 +1263,17 @@ class NotbankClient:
                 BankAccount, from_pascal_case=False),
             request_type=RequestType.GET
 
+        )
+
+    def get_bank_accounts(self, ) -> List[BankAccount]:
+        """
+        https://apidoc.notbank.exchange/?http#getbankaccounts
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.BANK_ACCOUNTS,
+            endpoint_category=EndpointCategory.NB,
+            request_data=None,
+            parse_response_fn=parse_response_list_fn(
+                BankAccount, from_pascal_case=False),
+            request_type=RequestType.GET
         )
