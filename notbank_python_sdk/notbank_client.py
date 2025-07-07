@@ -1385,8 +1385,6 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/?http#updateonestepwithdraw
         """
-        # ! TODO: example and description in docs are different types (int , str)
-        # ? TODO: white listed address inside endpoint ?
         return self._client_connection.request(
             endpoint=Endpoints.UPDATE_ONE_STEP_WITHDRAW,
             endpoint_category=EndpointCategory.NB,
