@@ -69,4 +69,15 @@ from notbank_python_sdk.requests_models.unsubscribe_trades_request import *
 from notbank_python_sdk.requests_models.user_accounts import *
 from notbank_python_sdk.requests_models.user_devices import *
 from notbank_python_sdk.requests_models.web_authenticate_user_request import *
-from notbank_python_sdk.requests_models.web_authenticate_user_request import *
+from notbank_python_sdk.requests_models.get_banks_request import *
+from notbank_python_sdk.requests_models.create_bank_account_request import *
+from notbank_python_sdk.requests_models.get_bank_account_request import *
+from notbank_python_sdk.requests_models.get_bank_accounts_request import *
+from notbank_python_sdk.requests_models.delete_bank_account_request import *
+from notbank_python_sdk.requests_models.get_network_templates_request import *
+from notbank_python_sdk.requests_models.deposit_address_request import *
+from notbank_python_sdk.requests_models.get_whitelisted_addresses_request import *
+from notbank_python_sdk.requests_models.add_whitelisted_address_request import *
+from notbank_python_sdk.requests_models.confirm_whitelisted_address_request import *
+from notbank_python_sdk.requests_models.update_one_step_withdraw_request import *
+from notbank_python_sdk.requests_models.create_crypto_withdraw_request import *
