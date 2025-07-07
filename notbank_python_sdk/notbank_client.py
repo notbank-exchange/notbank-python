@@ -39,7 +39,7 @@ from notbank_python_sdk.models.level2_ticker_feed import Level2TickerFeed, level
 from notbank_python_sdk.models.order_book import OrderBook, OrderBookRaw, order_book_from_raw
 from notbank_python_sdk.models.pong import Pong
 from notbank_python_sdk.models.send_order import SendOrderResponse
-from notbank_python_sdk.models.fee_id import FeeId
+from notbank_python_sdk.models.currency_network_templates import CurrencyNetworkTemplates
 from notbank_python_sdk.models.instrument_summary import InstrumentSummary
 from notbank_python_sdk.models.ticker_summary import TickerSummary
 from notbank_python_sdk.models.trade_summary import TradeSummary
@@ -71,6 +71,7 @@ from notbank_python_sdk.requests_models.create_bank_account_request import Creat
 from notbank_python_sdk.requests_models.get_bank_account_request import GetBankAccountRequest
 from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
+from notbank_python_sdk.requests_models.get_network_templates_request import GetNetworksTemplatesRequest
 from notbank_python_sdk.requests_models.verification_level_config_request import VerificationLevelConfigRequest
 from notbank_python_sdk.requests_models.get_instruments_request import GetInstrumentsRequest
 from notbank_python_sdk.requests_models.get_l2_snapshot import GetL2SnapshotRequest
@@ -1266,7 +1267,7 @@ class NotbankClient:
 
         )
 
-    def get_bank_accounts(self, ) -> List[BankAccount]:
+    def get_bank_accounts(self) -> List[BankAccount]:
         """
         https://apidoc.notbank.exchange/?http#getbankaccounts
         """
@@ -1288,5 +1289,18 @@ class NotbankClient:
             endpoint_category=EndpointCategory.NB,
             request_data=None,
             parse_response_fn=lambda x: None,
+            request_type=RequestType.GET
+        )
+
+    def get_networks_templates(self, request: GetNetworksTemplatesRequest) -> List[CurrencyNetworkTemplates]:
+        """
+        https://apidoc.notbank.exchange/?http#getbankaccounts
+        """
+        # ! TODO: inconsistency request data in docs
+        return self._client_connection.request(
+            endpoint=Endpoints.BANK_ACCOUNTS,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_dict(request, as_snake_case_dict=True),
+            parse_response_fn=parse_response_list_fn(CurrencyNetworkTemplates),
             request_type=RequestType.GET
         )
