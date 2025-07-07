@@ -10,8 +10,6 @@ class Endpoints(str, Enum):
     GET_ACCOUNT_INFO = "GetAccountInfo"
 
     # authentication
-    # TODO: missing: Authenticate
-    AUTHENTICATE = "Authenticate"
     AUTHENTICATE_USER = "AuthenticateUser"
     WEB_AUTHENTICATE_USER = "WebAuthenticateUser"
     LOGOUT = "LogOut"
