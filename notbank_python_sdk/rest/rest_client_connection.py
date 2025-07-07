@@ -8,6 +8,7 @@ from notbank_python_sdk.requests_models.authenticate_request import Authenticate
 from notbank_python_sdk.core.authenticator import Authenticator
 from notbank_python_sdk.core.converter import from_dict, to_dict
 from notbank_python_sdk.core.response_handler import ResponseHandler
+from notbank_python_sdk.core.endpoint_category import EndpointCategory
 
 T = TypeVar('T')
 ParseResponseFn = Callable[[Any], T]
@@ -31,7 +32,7 @@ class RestClientConnection:
         self._two_factor_token: Optional[str] = None
 
     def _build_url(self, host: str) -> str:
-        return "https://" + host + "/ap/"
+        return "https://" + host
 
     def _update_headers(self, ap_token: Optional[str]) -> None:
         if ap_token is not None:
@@ -42,17 +43,17 @@ class RestClientConnection:
     def close(self) -> None:
         self._rest_session.close()
 
-    def _get_url(self, endpoint: str) -> str:
-        return self.host + endpoint
+    def _get_url(self, endpoint: str, endpoint_category: EndpointCategory,) -> str:
+        return self.host + "/" + endpoint_category + "/" + endpoint
 
-    def get(self, endpoint: str, params: Any, parse_response: ParseResponseFn[T]) -> T:
+    def get(self, endpoint: str, endpoint_category: EndpointCategory, params: Any, parse_response: ParseResponseFn[T]) -> T:
         response = self._rest_session.get(
-            self._get_url(endpoint), params=params)
+            self._get_url(endpoint, endpoint_category), params=params)
         return self.handle_response(response, parse_response)
 
-    def post(self, endpoint: str, json_data: Any, parse_response: ParseResponseFn[T], headers: Optional[Any] = None) -> T:
+    def post(self, endpoint: str, endpoint_category: EndpointCategory, json_data: Any, parse_response: ParseResponseFn[T], headers: Optional[Any] = None) -> T:
         response = self._rest_session.post(
-            self._get_url(endpoint), json=json_data, headers=headers)
+            self._get_url(endpoint, endpoint_category), json=json_data, headers=headers)
         return self.handle_response(response, parse_response)
 
     def handle_response(self, response: requests.Response, parse_response: ParseResponseFn[T]) -> T:
@@ -68,6 +69,7 @@ class RestClientConnection:
         self._rest_session.headers.update(to_dict(request_data))
         auth_response = self.get(
             AUTHENTICATE_USER_ENDPOINT,
+            EndpointCategory.AP,
             {},
             lambda response_data: from_dict(AuthenticateResponse, response_data))
         self._rest_session.headers.clear()

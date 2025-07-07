@@ -28,10 +28,10 @@ def new_websocket_client_connection(
         10
     )
     return ClientConnection(
-        post_request=lambda endpoint, request_message, parse_response: client_restarter.get_connection(
-        ).request(endpoint, request_message, parse_response),
-        get_request=lambda endpoint, request_message, parse_response: client_restarter.get_connection(
-        ).request(endpoint, request_message, parse_response),
+        post_request=lambda endpoint, endpoint_category, request_message, parse_response: client_restarter.get_connection(
+        ).request(endpoint, endpoint_category, request_message, parse_response),
+        get_request=lambda endpoint, endpoint_category, request_message, parse_response: client_restarter.get_connection(
+        ).request(endpoint, endpoint_category, request_message, parse_response),
         subscribe=client_restarter.subscribe,
         unsubscribe=client_restarter.unsubscribe,
         authenticate_user=lambda request_message: client_restarter.get_connection(

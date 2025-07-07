@@ -9,6 +9,7 @@ from notbank_python_sdk.requests_models.authenticate_request import Authenticate
 from notbank_python_sdk.core.authenticator import Authenticator
 from notbank_python_sdk.client_connection import T
 from notbank_python_sdk.core.converter import from_dict, to_dict
+from notbank_python_sdk.core.endpoint_category import EndpointCategory
 from notbank_python_sdk.core.response_handler import ResponseHandler
 from notbank_python_sdk.websocket.callback_manager import CallbackManager
 from notbank_python_sdk.websocket.handler import WebsocketHandler
@@ -90,7 +91,12 @@ class WebsocketClientConnection:
         result = unsubscription_result_getter()
         return self.handle_result(unsubscription.parse_response_fn, result)
 
-    def request(self, endpoint: str, request_message: Any, parse_response_fn: Callable[[Any], T]) -> T:
+    def request(
+            self,
+            endpoint: str,
+            endpoint_category: EndpointCategory,
+            request_message: Any,
+            parse_response_fn: Callable[[Any], T]) -> T:
         result_getter = self._websocket_requester.request(
             endpoint, request_message)
         result = result_getter()
@@ -98,11 +104,11 @@ class WebsocketClientConnection:
 
     def authenticate_user(self, authenticate_request: AuthenticateRequest) -> AuthenticateResponse:
         request_data = Authenticator.convert_data(authenticate_request)
-        return self.request(Endpoints.AUTHENTICATE_USER, to_dict(request_data), lambda data: from_dict(AuthenticateResponse, data))
+        return self.request(Endpoints.AUTHENTICATE_USER, EndpointCategory.AP, to_dict(request_data), lambda data: from_dict(AuthenticateResponse, data))
 
     def ping(self) -> None:
         result = self.request(
-            Endpoints.PING, None, parse_response_fn(Pong, ["msg"]))
+            Endpoints.PING, EndpointCategory.AP, None, parse_response_fn(Pong, ["msg"]))
         return
 
     def handle_result(self, parse_response_fn: Callable[[Any], T], result: Any) -> T:

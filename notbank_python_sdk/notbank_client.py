@@ -2,6 +2,7 @@ from decimal import Decimal
 from typing import Any, Callable, List, Optional, Type, TypeVar, Dict
 import simplejson as json
 from notbank_python_sdk.client_connection import ClientConnection
+from notbank_python_sdk.core.endpoint_category import EndpointCategory
 from notbank_python_sdk.core.endpoints import Endpoints, WebSocketEndpoint
 from notbank_python_sdk.core.converter import from_json_str, to_dict, from_dict
 from notbank_python_sdk.error import ErrorCode, NotbankException
@@ -136,19 +137,19 @@ class NotbankClient:
         self._client_connection = client_connection
         self._notbank_client_cache = NotbankClientCache()
 
-    def _get_data_list(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = []) -> List[T2]:
+    def _get_data_list(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], endpoint_category: EndpointCategory = EndpointCategory.AP) -> List[T2]:
         request_data_dict = to_dict(request_data)
         return self._client_connection.request(
-            endpoint, request_data_dict, parse_response_list_fn(response_cls, no_pascal_case))
+            endpoint, endpoint_category, request_data_dict, parse_response_list_fn(response_cls, no_pascal_case))
 
-    def _get_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = []) -> T2:
+    def _get_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], endpoint_category: EndpointCategory = EndpointCategory.AP) -> T2:
         request_data_dict = to_dict(request_data)
         return self._client_connection.request(
-            endpoint, request_data_dict, parse_response_fn(response_cls, no_pascal_case))
+            endpoint, endpoint_category, request_data_dict, parse_response_fn(response_cls, no_pascal_case))
 
-    def _do_request(self, endpoint: str, request_data: Any) -> None:
+    def _do_request(self, endpoint: str, request_data: Any, endpoint_category: EndpointCategory = EndpointCategory.AP) -> None:
         request_data_dict = to_dict(request_data)
-        return self._client_connection.request(endpoint, request_data_dict, lambda x: None)
+        return self._client_connection.request(endpoint, endpoint_category, request_data_dict, lambda x: None)
 
     def _subscribe(self, endpoint: str, request_data: Any, callbacks: List[Callback], parse_response_fn: Callable[[Any], T2]) -> T2:
         request_data_dict = to_dict(request_data)
@@ -490,6 +491,7 @@ class NotbankClient:
 
         return self._client_connection.request(
             Endpoints.GET_TICKER_HISTORY,
+            EndpointCategory.AP,
             to_dict(request),
             parse_ticker_list
         )
@@ -517,6 +519,7 @@ class NotbankClient:
             ) for elem in data]
         return self._client_connection.request(
             Endpoints.GET_LAST_TRADES,
+            EndpointCategory.AP,
             to_dict(request),
             parse_trade_list,
         )
@@ -529,6 +532,7 @@ class NotbankClient:
         """
         result: List[str] = self._client_connection.request(
             Endpoints.GET_LEVEL1_SUMMARY,
+            EndpointCategory.AP,
             to_dict(GetLevel1SummaryRequest()),
             parse_response_fn=lambda data: data,
         )
@@ -543,6 +547,7 @@ class NotbankClient:
         """
         return self._client_connection.request(
             Endpoints.GET_LEVEL1_SUMMARY_MIN,
+            EndpointCategory.AP,
             to_dict(request),
             parse_response_fn=level1_ticker_summary_min_list_from_json_list_str,
         )
@@ -654,6 +659,7 @@ class NotbankClient:
             **value) for key, value in data.items()}
         return self._client_connection.request(
             endpoint=Endpoints.TICKER,
+            endpoint_category=EndpointCategory.AP,
             request_data=None,
             parse_response_fn=response_fn
         )
@@ -690,6 +696,7 @@ class NotbankClient:
         ) for item in data]
         return self._client_connection.request(
             endpoint=Endpoints.GET_L2_SNAPSHOT,
+            endpoint_category=EndpointCategory.AP,
             request_data=to_dict(request),
             parse_response_fn=response_fn
         )
@@ -768,6 +775,7 @@ class NotbankClient:
 
         return self._client_connection.request(
             Endpoints.GET_USER_ACCOUNTS,
+            EndpointCategory.AP,
             to_dict(request),
             parse_response_fn=parse_response
         )
@@ -1195,6 +1203,7 @@ class NotbankClient:
         """
         return self._client_connection.request(
             Endpoints.GET_USER_PERMISSIONS,
+            EndpointCategory.AP,
             to_dict(request),
             parse_response_fn=lambda x: x
         )
