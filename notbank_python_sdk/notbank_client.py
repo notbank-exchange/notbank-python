@@ -77,6 +77,7 @@ from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 from notbank_python_sdk.requests_models.deposit_address_request import DepositAddressRequest
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
 from notbank_python_sdk.requests_models.get_network_templates_request import GetNetworksTemplatesRequest
+from notbank_python_sdk.requests_models.update_one_step_withdraw_request import UpdateOneStepWithdrawRequest
 from notbank_python_sdk.requests_models.verification_level_config_request import VerificationLevelConfigRequest
 from notbank_python_sdk.requests_models.get_instruments_request import GetInstrumentsRequest
 from notbank_python_sdk.requests_models.get_l2_snapshot import GetL2SnapshotRequest
@@ -1379,4 +1380,18 @@ class NotbankClient:
             request_data=None,
             parse_response_fn=lambda x: None,
             request_type=RequestType.DELETE
+        )
+
+    def update_one_step_withdraw(self, request: UpdateOneStepWithdrawRequest) -> None:
+        """
+        https://apidoc.notbank.exchange/?http#updateonestepwithdraw
+        """
+        # ! TODO: example and description in docs are different types (int , str)
+        # ? TODO: white listed address inside endpoint ?
+        return self._client_connection.request(
+            endpoint=Endpoints.UPDATE_ONE_STEP_WITHDRAW,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=lambda x: None,
+            request_type=RequestType.POST
         )

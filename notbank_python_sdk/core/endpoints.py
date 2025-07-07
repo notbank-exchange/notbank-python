@@ -97,6 +97,7 @@ class Endpoints(str, Enum):
     GET_DEPOSIT_ADDRESSES = "wallet/crypto"
     CREATE_DEPOSIT_ADDRESS = "crypto"
     WHITELISTED_ADDRESSES = "whitelist-addresses"
+    UPDATE_ONE_STEP_WITHDRAW = "whitelist-addresses/one-step/status"
 
 
 class WebSocketEndpoint(str, Enum):
