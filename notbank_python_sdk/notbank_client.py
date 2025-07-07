@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Any, Callable, List, Optional, Type, TypeVar, Dict
 import simplejson as json
-from notbank_python_sdk.client_connection import ClientConnection
+from notbank_python_sdk.client_connection import ClientConnection, RequestType
 from notbank_python_sdk.core.endpoint_category import EndpointCategory
 from notbank_python_sdk.core.endpoints import Endpoints, WebSocketEndpoint
 from notbank_python_sdk.core.converter import from_json_str, to_dict, from_dict
@@ -67,6 +67,7 @@ from notbank_python_sdk.requests_models.generate_transaction_activity_report imp
 from notbank_python_sdk.requests_models.get_account_trades import GetAccountTradesRequest
 from notbank_python_sdk.requests_models.fee_request import FeeRequest
 from notbank_python_sdk.requests_models.create_bank_account_request import CreateBankAccountRequest
+from notbank_python_sdk.requests_models.get_bank_account_request import GetBankAccountRequest
 from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
 from notbank_python_sdk.requests_models.verification_level_config_request import VerificationLevelConfigRequest
@@ -1235,16 +1236,31 @@ class NotbankClient:
         https://apidoc.notbank.exchange/?http#getbanks
         """
         return self._get_nb_data_list(
-            endpoint=Endpoints.GET_BANKS,
+            endpoint=Endpoints.BANKS,
             request_data=request,
             response_cls=Bank
         )
 
     def create_bank_account(self, request: CreateBankAccountRequest) -> BankAccount:
+        """
+        https://apidoc.notbank.exchange/?http#createbankaccount
+        """
         return self._get_nb_data(
-            Endpoints.CREATE_BANK_ACCOUNT,
+            Endpoints.BANK_ACCOUNTS,
             request,
             BankAccount
         )
-        
-      
+
+    def get_bank_account(self, request: GetBankAccountRequest) -> BankAccount:
+        """
+        https://apidoc.notbank.exchange/?http#createbankaccount
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.BANK_ACCOUNTS + "/" + request.bank_account_id,
+            endpoint_category=EndpointCategory.NB,
+            request_data=None,
+            parse_response_fn=parse_response_fn(
+                BankAccount, from_pascal_case=False),
+            request_type=RequestType.GET
+
+        )

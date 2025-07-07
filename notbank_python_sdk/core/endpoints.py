@@ -92,8 +92,8 @@ class Endpoints(str, Enum):
     GET_USER_PERMISSIONS = "GetUserPermissions"
 
     # wallet
-    GET_BANKS = "banks"
-    CREATE_BANK_ACCOUNT = "bank-accounts"
+    BANKS = "banks"
+    BANK_ACCOUNTS = "bank-accounts"
 
 
 class WebSocketEndpoint(str, Enum):
