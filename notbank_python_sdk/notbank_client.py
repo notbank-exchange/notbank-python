@@ -15,6 +15,7 @@ from notbank_python_sdk.models.cancel_order_reject_event import CancelOrderRejec
 from notbank_python_sdk.models.cancel_replace_order_request import CancelReplaceOrderResponse
 from notbank_python_sdk.models.deposit_event import DepositEvent
 from notbank_python_sdk.models.oms_fee import OmsFee
+from notbank_python_sdk.models.id_response import IdResponse
 from notbank_python_sdk.models.document import Document
 from notbank_python_sdk.models.document_slice import DocumentSlice
 from notbank_python_sdk.models.enums import EnumsResponse
@@ -53,6 +54,7 @@ from notbank_python_sdk.models.instrument_statistic import InstrumentStatistic
 from notbank_python_sdk.models.account_info import AccountInfo
 from notbank_python_sdk.models.product import Product
 from notbank_python_sdk.parsing import build_subscription_handler, parse_response_fn, parse_response_list_fn
+from notbank_python_sdk.requests_models.add_whitelisted_address_request import AddWhitelistedAddressRequest
 from notbank_python_sdk.requests_models.authenticate_request import AuthenticateRequest
 from notbank_python_sdk.requests_models.cancel_all_orders import CancelAllOrdersRequest
 from notbank_python_sdk.requests_models.cancel_order import CancelOrder
@@ -1336,9 +1338,20 @@ class NotbankClient:
         https://apidoc.notbank.exchange/?http#getwhitelistedaddresses
         """
         return self._client_connection.request(
-            endpoint=Endpoints.GET_WHITELISTED_ADDRESSES,
+            endpoint=Endpoints.WHITELISTED_ADDRESSES,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
             parse_response_fn=parse_response_list_fn(Address),
             request_type=RequestType.GET
         )
+
+    def add_whitelisted_addresses(self, request: AddWhitelistedAddressRequest) -> str:
+        """
+        https://apidoc.notbank.exchange/?http#addwhitelistedaddress
+        """
+        # ! TODO: example and description in docs are different types (int , str)
+        return self._get_nb_data(
+            Endpoints.WHITELISTED_ADDRESSES,
+            request,
+            IdResponse
+        ).id
