@@ -90,7 +90,6 @@ class TestSendOrder(unittest.TestCase):
             # order was accepted
             order_id = response.order_id
 
-        # disconnect
         client.close()
 
 

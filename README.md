@@ -60,8 +60,8 @@ from notbank_python_sdk.client_connection_factory import new_rest_client_connect
 account_id: int = 13  # must be user account id
 
 # instantiate client
-websocket_connection = new_rest_client_connection()
-client = NotbankClient(websocket_connection)
+connection = new_rest_client_connection()
+client = NotbankClient(connection)
 
 # authentication (same for rest client or websocket client)
 authenticate = client.authenticate(
@@ -121,6 +121,6 @@ else:
     order_id = response.order_id
     print(order_id)
 
-# disconnect
+# close client
 client.close()
 ```
