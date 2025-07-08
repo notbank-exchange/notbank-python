@@ -24,14 +24,13 @@ class TestSendOrder(unittest.TestCase):
         import random
 
         from notbank_python_sdk.notbank_client import NotbankClient
-        from notbank_python_sdk.client_connection_factory import new_websocket_client_connection
+        from notbank_python_sdk.client_connection_factory import new_rest_client_connection
 
         account_id: int = 13  # must be user account id
 
         # connect to notbank
         test_url = "stgapi.notbank.exchange"
-        websocket_connection = new_websocket_client_connection(test_url)
-        websocket_connection.connect()
+        websocket_connection = new_rest_client_connection(test_url)
         client = NotbankClient(websocket_connection)
 
         # authentication (same for rest client or websocket client)
