@@ -24,17 +24,12 @@ There are two communication protocols supported by the Notbank client. Communica
 
 ```python
 from notbank_python_sdk.requests_models import *
-from notbank_python_sdk.client_connection_factory import new_websocket_client_connection, new_rest_client_connection
+from notbank_python_sdk.client_connection_factory import new_rest_client_connection
 from notbank_python_sdk.error import NotbankException
 from notbank_python_sdk.notbank_client import NotbankClient
 
-# a websocket client
 try:
-    websocket_connection = new_websocket_client_connection()
-    websocket_connection.connect()
-    client = NotbankClient(websocket_connection)
-
-    # an http client
+    # an rest client via http
     rest_connection = new_rest_client_connection()
     client = NotbankClient(rest_connection)
 except NotbankException as e:
@@ -60,13 +55,12 @@ import random
 from decimal import Decimal
 
 from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.client_connection_factory import new_websocket_client_connection
+from notbank_python_sdk.client_connection_factory import new_rest_client_connection
 
 account_id: int = 13  # must be user account id
 
-# connect to notbank
-websocket_connection = new_websocket_client_connection()
-websocket_connection.connect()
+# instantiate client
+websocket_connection = new_rest_client_connection()
 client = NotbankClient(websocket_connection)
 
 # authentication (same for rest client or websocket client)
@@ -130,11 +124,3 @@ else:
 # disconnect
 client.close()
 ```
-
-## Websocket reconnection
-
-The websocket client reconnects automatically in case of unexpected disconnection.
-
-On reconnection the client resubscribes to what it was already subscribed before the reconnection. This means that the on_snapshot handler of subscriptions will be called once per reconnection, and on_update handlers will be continuoslly called before and after reconnections.
-
-authentication is also kept on reconnection, by re-authenticating the new connection with the last authentication request instance
