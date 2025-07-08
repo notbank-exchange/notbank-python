@@ -1,9 +1,4 @@
-from decimal import Decimal
-import random
 import unittest
-from notbank_python_sdk.client_connection_factory import new_rest_client_connection
-from notbank_python_sdk.models.account_positions import AccountPosition
-from notbank_python_sdk.notbank_client import NotbankClient
 
 from notbank_python_sdk.models.send_order import SendOrderStatus
 from notbank_python_sdk.requests_models.get_account_positions_request import GetAccountPositionsRequest
@@ -30,8 +25,8 @@ class TestSendOrder(unittest.TestCase):
 
         # instantiate client
         test_url = "stgapi.notbank.exchange"
-        websocket_connection = new_rest_client_connection(test_url)
-        client = NotbankClient(websocket_connection)
+        rest_connection = new_rest_client_connection(test_url)
+        client = NotbankClient(rest_connection)
 
         # authentication (same for rest client or websocket client)
         authenticate = client.authenticate(
