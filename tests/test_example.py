@@ -28,7 +28,7 @@ class TestSendOrder(unittest.TestCase):
 
         account_id: int = 13  # must be user account id
 
-        # connect to notbank
+        # instantiate client
         test_url = "stgapi.notbank.exchange"
         websocket_connection = new_rest_client_connection(test_url)
         client = NotbankClient(websocket_connection)
