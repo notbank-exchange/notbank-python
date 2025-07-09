@@ -697,13 +697,16 @@ class NotbankClient:
             parse_response_fn=response_fn
         )
 
-    def get_order_book(self, request: OrderBookRequest) -> OrderBook:
+    def get_orderbook(self, request: OrderBookRequest) -> OrderBook:
         """
         https://apidoc.notbank.exchange/#orderbook
         """
         raw_orderbook = self._get_data(
             Endpoints.ORDER_BOOK, request, OrderBookRaw, no_pascal_case=["timestamp", "bids", "asks"])
         return order_book_from_raw(raw_orderbook)
+
+    def get_order_book(self, request: OrderBookRequest) -> OrderBook:
+        return self.get_orderbook(request)
 
     def get_trades(self, request: TradesRequest) -> List[TradeSummary]:
         """
@@ -1262,7 +1265,8 @@ class NotbankClient:
         return self._get_nb_data(
             Endpoints.BANK_ACCOUNTS,
             request,
-            BankAccount
+            BankAccount,
+            endpoint_category=EndpointCategory.NB,
         )
 
     def get_bank_account(self, request: GetBankAccountRequest) -> BankAccount:
