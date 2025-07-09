@@ -61,7 +61,7 @@ class RestClientConnection:
 
     def delete(self, endpoint: str, endpoint_category: EndpointCategory, params: Any, parse_response: ParseResponseFn[T]) -> T:
         response = self._rest_session.delete(
-            self._get_endpoint_url(endpoint, endpoint_category))
+            self._get_endpoint_url(endpoint, endpoint_category), params=params)
         return self.handle_response(endpoint_category, response, parse_response)
 
     def handle_response(self, endpoint_category: EndpointCategory, response: requests.Response, parse_response: ParseResponseFn[T]) -> T:
