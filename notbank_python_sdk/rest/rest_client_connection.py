@@ -45,7 +45,6 @@ class RestClientConnection:
 
     def _get_endpoint_url(self, endpoint: str, endpoint_category: EndpointCategory,) -> str:
         url = self.host + "/" + endpoint_category + "/" + endpoint
-        print(url)
         return url
 
     def get(self, endpoint: str, endpoint_category: EndpointCategory, params: Any, parse_response: ParseResponseFn[T]) -> T:
@@ -54,7 +53,6 @@ class RestClientConnection:
         return self.handle_response(endpoint_category, response, parse_response)
 
     def post(self, endpoint: str, endpoint_category: EndpointCategory, json_data: Any, parse_response: ParseResponseFn[T], headers: Optional[Any] = None) -> T:
-        print("headers", self._rest_session.headers)
         response = self._rest_session.post(
             self._get_endpoint_url(endpoint, endpoint_category), json=json_data, headers=headers)
         return self.handle_response(endpoint_category, response, parse_response)
