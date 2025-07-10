@@ -1325,7 +1325,7 @@ class NotbankClient:
         return self._client_connection.request(
             endpoint=Endpoints.GET_DEPOSIT_ADDRESSES,
             endpoint_category=EndpointCategory.NB,
-            request_data=None,
+            request_data=to_nb_dict(request),
             parse_response_fn=lambda x: x,
             request_type=RequestType.GET
         )

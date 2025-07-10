@@ -48,18 +48,19 @@ class RestClientConnection:
         return url
 
     def get(self, endpoint: str, endpoint_category: EndpointCategory, params: Any, parse_response: ParseResponseFn[T]) -> T:
-        response = self._rest_session.get(
-            self._get_endpoint_url(endpoint, endpoint_category), params=params)
+        url = self._get_endpoint_url(endpoint, endpoint_category)
+        response = self._rest_session.get(url, params=params)
         return self.handle_response(endpoint_category, response, parse_response)
 
     def post(self, endpoint: str, endpoint_category: EndpointCategory, json_data: Any, parse_response: ParseResponseFn[T], headers: Optional[Any] = None) -> T:
+        url = self._get_endpoint_url(endpoint, endpoint_category)
         response = self._rest_session.post(
-            self._get_endpoint_url(endpoint, endpoint_category), json=json_data, headers=headers)
+            url, json=json_data, headers=headers)
         return self.handle_response(endpoint_category, response, parse_response)
 
     def delete(self, endpoint: str, endpoint_category: EndpointCategory, params: Any, parse_response: ParseResponseFn[T]) -> T:
-        response = self._rest_session.delete(
-            self._get_endpoint_url(endpoint, endpoint_category), params=params)
+        url = self._get_endpoint_url(endpoint, endpoint_category)
+        response = self._rest_session.delete(url, params=params)
         return self.handle_response(endpoint_category, response, parse_response)
 
     def handle_response(self, endpoint_category: EndpointCategory, response: requests.Response, parse_response: ParseResponseFn[T]) -> T:
