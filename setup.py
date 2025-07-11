@@ -61,6 +61,7 @@ class PyTest(TestCommand):
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
+
 test_requirements = [
     "pytest ==7.3.1",
 ]
@@ -80,7 +81,8 @@ setuptools.setup(
     description="Notbank API client library",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    keywords=["api", "notbank", "cryptomkt", "cryptomarket", "bitcoin", "client"],
+    keywords=["api", "notbank", "cryptomkt",
+              "cryptomarket", "bitcoin", "client"],
     url="https://github.com/notbank-exchange/notbank-python",
     author="Notbank",
     python_requires=">=3.7",
