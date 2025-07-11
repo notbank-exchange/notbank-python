@@ -130,7 +130,6 @@ def get_convert_key_fn(no_pascal_case: List[str], overrides: Dict[str, str], fro
 def from_json_str(cls: Type[T1], json_str: str, overrides: Dict[str, str] = {}) -> Either[NotbankException, T1]:
     try:
         data = json.loads(json_str, use_decimal=True)
-        print(data)
     except json.JSONDecodeError as e:
         return Either.left(NotbankException(ErrorCode.CONFIGURATION_ERROR, f"Failed to parse json. {e}"))
     try:
