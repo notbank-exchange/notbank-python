@@ -10,6 +10,7 @@ from notbank_python_sdk.requests_models.confirm_whitelisted_address_request impo
 from notbank_python_sdk.requests_models.create_bank_account_request import *
 from notbank_python_sdk.requests_models.create_crypto_withdraw_request import *
 from notbank_python_sdk.requests_models.delete_bank_account_request import *
+from notbank_python_sdk.requests_models.delete_whitelisted_address_request import *
 from notbank_python_sdk.requests_models.deposit_address_request import *
 from notbank_python_sdk.requests_models.download_document_slice import *
 from notbank_python_sdk.requests_models.download_document import *
