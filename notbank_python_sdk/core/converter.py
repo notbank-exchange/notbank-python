@@ -70,7 +70,10 @@ def _build_factory(type_hooks: Dict[Type[Any], Any]) -> Callable[[dict], dict]:
     return factory
 
 
-def _to_pascal_case(key: str, exclusions: List[str] = []) -> str:
+def _to_pascal_case(key: str, exclusions: List[str] = [], overrides: Dict[str, str] = {}) -> str:
+    converted_key = overrides.get(key)
+    if converted_key:
+        return converted_key
     pascal_case_key = SPECIAL_CASES_MAP.get(key)
     if pascal_case_key is not None:
         return pascal_case_key
@@ -99,8 +102,9 @@ def to_dict(data, cast: Dict[Type[Any], Any] = {Decimal: lambda x: dec_to_str_st
     return {_to_pascal_case(key): snake_case_dict[key] for key in snake_case_dict}
 
 
-def from_dict(cls: Type[T1], data, no_pascal_case: List[str] = [], from_pascal_case: bool = True) -> T1:
-    convert_key = get_convert_key_fn(no_pascal_case, from_pascal_case)
+def from_dict(cls: Type[T1], data, no_pascal_case: List[str] = [], overrides: Dict[str, str] = {}, from_pascal_case: bool = True) -> T1:
+    convert_key = get_convert_key_fn(
+        no_pascal_case, overrides, from_pascal_case)
     return dacite_from_dict(
         cls,
         data,
@@ -115,20 +119,21 @@ def from_dict(cls: Type[T1], data, no_pascal_case: List[str] = [], from_pascal_c
     )
 
 
-def get_convert_key_fn(no_pascal_case: List[str], from_pascal_case: bool) -> Callable[[str], str]:
+def get_convert_key_fn(no_pascal_case: List[str], overrides: Dict[str, str], from_pascal_case: bool) -> Callable[[str], str]:
     if from_pascal_case:
-        def convert_key(key): return _to_pascal_case(key, no_pascal_case)
+        def convert_key(key): return _to_pascal_case(
+            key, no_pascal_case, overrides)
         return convert_key
     return lambda x: x
 
 
-def from_json_str(cls: Type[T1], json_str: str) -> Either[NotbankException, T1]:
+def from_json_str(cls: Type[T1], json_str: str, overrides: Dict[str, str] = {}) -> Either[NotbankException, T1]:
     try:
         data = json.loads(json_str, use_decimal=True)
     except json.JSONDecodeError as e:
         return Either.left(NotbankException(ErrorCode.CONFIGURATION_ERROR, f"Failed to parse json. {e}"))
     try:
-        instance = from_dict(cls, data)
+        instance = from_dict(cls, data, overrides=overrides)
     except DaciteError as e:
         return Either.left(NotbankException(ErrorCode.CONFIGURATION_ERROR, f"Failed to parse json. {e}"))
     return Either.right(instance)

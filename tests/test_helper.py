@@ -10,6 +10,7 @@ from notbank_python_sdk.requests_models.authenticate_request import Authenticate
 
 TEST_URL = "stgapi.notbank.exchange"
 
+
 @dataclass
 class Credentials:
     public_key: str
@@ -51,7 +52,7 @@ def new_websocket_client_connection():
         lambda: logger.debug("on open"),
         lambda o1, o2: logger.debug("on close"),
         lambda err: logger.debug("error: " + str(err)),
-        lambda msg: None,
+        lambda msg: logger.debug("message in: " + msg),
         lambda msg: logger.debug("message out: "+msg),
         5)
 

@@ -170,10 +170,10 @@ class NotbankClient:
             request_data_dict,
             parse_response_list_fn(response_cls, no_pascal_case, from_pascal_case=False))
 
-    def _get_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], endpoint_category: EndpointCategory = EndpointCategory.AP) -> T2:
+    def _get_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], response_conversion_overrides: Dict[str, str] = {}, endpoint_category: EndpointCategory = EndpointCategory.AP) -> T2:
         request_data_dict = to_dict(request_data)
         return self._client_connection.request(
-            endpoint, endpoint_category, request_data_dict, parse_response_fn(response_cls, no_pascal_case))
+            endpoint, endpoint_category, request_data_dict, parse_response_fn(response_cls, no_pascal_case, overrides=response_conversion_overrides))
 
     def _get_nb_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], endpoint_category: EndpointCategory = EndpointCategory.AP) -> T2:
         request_data_dict = to_nb_dict(request_data)
@@ -265,7 +265,8 @@ class NotbankClient:
         return self._get_data(
             Endpoints.GET_ACCOUNT_INFO,
             request,
-            AccountInfo
+            AccountInfo,
+            response_conversion_overrides={"oms_id": "OMSID"}
         )
 
     def logout(self) -> None:
