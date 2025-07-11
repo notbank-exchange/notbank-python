@@ -61,7 +61,8 @@ from notbank_python_sdk.requests_models.cancel_order import CancelOrder
 from notbank_python_sdk.requests_models.cancel_order_request import CancelOrderRequest
 from notbank_python_sdk.requests_models.cancel_replace_order_request import CancelReplaceOrderRequest
 from notbank_python_sdk.requests_models.cancel_user_report import CancelUserReportRequest
-from notbank_python_sdk.requests_models.confirm_whitelisted_address_request import WhiteListedAddressRequest
+from notbank_python_sdk.requests_models.confirm_whitelisted_address_request import ConfirmWhiteListedAddressRequest, ConfirmWhiteListedAddressRequestInternal
+from notbank_python_sdk.requests_models.delete_whitelisted_address_request import DeleteWhiteListedAddressRequest, DeleteWhiteListedAddressRequestInternal
 from notbank_python_sdk.requests_models.delete_bank_account_request import DeleteBankAccountRequest
 from notbank_python_sdk.requests_models.download_document import DownloadDocumentRequest
 from notbank_python_sdk.requests_models.download_document_slice import DownloadDocumentSliceRequest
@@ -697,13 +698,16 @@ class NotbankClient:
             parse_response_fn=response_fn
         )
 
-    def get_order_book(self, request: OrderBookRequest) -> OrderBook:
+    def get_orderbook(self, request: OrderBookRequest) -> OrderBook:
         """
         https://apidoc.notbank.exchange/#orderbook
         """
         raw_orderbook = self._get_data(
             Endpoints.ORDER_BOOK, request, OrderBookRaw, no_pascal_case=["timestamp", "bids", "asks"])
         return order_book_from_raw(raw_orderbook)
+
+    def get_order_book(self, request: OrderBookRequest) -> OrderBook:
+        return self.get_orderbook(request)
 
     def get_trades(self, request: TradesRequest) -> List[TradeSummary]:
         """
@@ -1262,7 +1266,8 @@ class NotbankClient:
         return self._get_nb_data(
             Endpoints.BANK_ACCOUNTS,
             request,
-            BankAccount
+            BankAccount,
+            endpoint_category=EndpointCategory.NB,
         )
 
     def get_bank_account(self, request: GetBankAccountRequest) -> BankAccount:
@@ -1321,7 +1326,7 @@ class NotbankClient:
         return self._client_connection.request(
             endpoint=Endpoints.GET_DEPOSIT_ADDRESSES,
             endpoint_category=EndpointCategory.NB,
-            request_data=None,
+            request_data=to_nb_dict(request),
             parse_response_fn=lambda x: x,
             request_type=RequestType.GET
         )
@@ -1359,26 +1364,28 @@ class NotbankClient:
             IdResponse
         ).id
 
-    def confirm_whitelisted_address(self, request: WhiteListedAddressRequest) -> None:
+    def confirm_whitelisted_address(self, request: ConfirmWhiteListedAddressRequest) -> None:
         """
         https://apidoc.notbank.exchange/?http#addwhitelistedaddress
         """
         return self._client_connection.request(
             endpoint=Endpoints.WHITELISTED_ADDRESSES + "/" + request.whitelisted_address_id,
             endpoint_category=EndpointCategory.NB,
-            request_data=None,
+            request_data=ConfirmWhiteListedAddressRequestInternal(
+                request.code),
             parse_response_fn=lambda x: None,
             request_type=RequestType.POST
         )
 
-    def delete_whitelisted_address(self, request: WhiteListedAddressRequest) -> None:
+    def delete_whitelisted_address(self, request: DeleteWhiteListedAddressRequest) -> None:
         """
         https://apidoc.notbank.exchange/?http#deletewhitelistedaddress
         """
         return self._client_connection.request(
             endpoint=Endpoints.WHITELISTED_ADDRESSES + "/" + request.whitelisted_address_id,
             endpoint_category=EndpointCategory.NB,
-            request_data=None,
+            request_data=DeleteWhiteListedAddressRequestInternal(
+                str(request.account_id), request.otp),
             parse_response_fn=lambda x: None,
             request_type=RequestType.DELETE
         )

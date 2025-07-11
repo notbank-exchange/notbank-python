@@ -16,7 +16,7 @@ class TestGetBanks(unittest.TestCase):
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
 
-    def test_get_ticker_success(self):
+    def test_get_banks(self):
         response = self.client.get_banks(GetBanksRequest("CL"))
         self.assertIsNotNone(response)
 

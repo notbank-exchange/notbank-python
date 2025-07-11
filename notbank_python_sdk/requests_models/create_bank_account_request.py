@@ -8,7 +8,7 @@ class CreateBankAccountRequest:
     bank: str
     number: str
     kind: str
-    pix_type: Optional[str]
-    agency: Optional[str]
-    dv: Optional[str]
-    province: Optional[str]
+    pix_type: Optional[str] = None
+    agency: Optional[str] = None
+    dv: Optional[str] = None
+    province: Optional[str] = None
