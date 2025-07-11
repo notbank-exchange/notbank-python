@@ -5,4 +5,4 @@ from typing import Optional
 @dataclass
 class GetNetworksTemplatesRequest:
     currency: str
-    network: Optional[str]
+    network: Optional[str] = None

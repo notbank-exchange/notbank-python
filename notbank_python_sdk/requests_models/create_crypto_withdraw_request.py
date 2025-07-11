@@ -9,5 +9,5 @@ class CreateCryptoWithdrawRequest:
     network: str
     address: str
     amount: str
-    memo_or_tag: Optional[str]
-    otp: Optional[str]
+    memo_or_tag: Optional[str] = None
+    otp: Optional[str] = None
