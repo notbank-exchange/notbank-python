@@ -44,7 +44,7 @@ class ResponseHandler:
                 raise NotbankException(ErrorCode.SERVER_ERROR, error_message)
             data = response_data
             if endpoint_category == EndpointCategory.NB:
-                data = response_data
+                data = nb_response.data
             return parse_response(data)
         except MissingValueError as e:
             raise NotbankException(
