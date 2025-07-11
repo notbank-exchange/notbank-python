@@ -44,7 +44,7 @@ class RestClientConnection:
         self._rest_session.close()
 
     def _get_endpoint_url(self, endpoint: str, endpoint_category: EndpointCategory,) -> str:
-        url = self.host + "/" + endpoint_category + "/" + endpoint
+        url = self.host + "/" + endpoint_category.val + "/" + endpoint
         return url
 
     def get(self, endpoint: str, endpoint_category: EndpointCategory, params: Any, parse_response: ParseResponseFn[T]) -> T:

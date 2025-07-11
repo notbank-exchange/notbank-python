@@ -1255,7 +1255,7 @@ class NotbankClient:
             endpoint=Endpoints.BANKS,
             endpoint_category=EndpointCategory.NB_PAGE,
             request_data=to_nb_dict(request),
-            parse_response_fn=parse_response_fn(Banks),
+            parse_response_fn=parse_response_fn(Banks, from_pascal_case=False),
             request_type=RequestType.GET
         )
 
@@ -1278,7 +1278,7 @@ class NotbankClient:
             endpoint=Endpoints.BANK_ACCOUNTS + "/" + request.bank_account_id,
             endpoint_category=EndpointCategory.NB,
             request_data=None,
-            parse_response_fn=parse_response_fn(BankAccount),
+            parse_response_fn=parse_response_fn(BankAccount, from_pascal_case=False),
             request_type=RequestType.GET
 
         )
@@ -1291,7 +1291,7 @@ class NotbankClient:
             endpoint=Endpoints.BANK_ACCOUNTS,
             endpoint_category=EndpointCategory.NB_PAGE,
             request_data=request,
-            parse_response_fn=parse_response_fn(BankAccounts),
+            parse_response_fn=parse_response_fn(BankAccounts, from_pascal_case=False),
             request_type=RequestType.GET
         )
 
@@ -1315,7 +1315,7 @@ class NotbankClient:
             endpoint=Endpoints.BANK_ACCOUNTS,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=parse_response_list_fn(CurrencyNetworkTemplates),
+            parse_response_fn=parse_response_list_fn(CurrencyNetworkTemplates, from_pascal_case=False),
             request_type=RequestType.GET
         )
 
@@ -1350,7 +1350,7 @@ class NotbankClient:
             endpoint=Endpoints.WHITELISTED_ADDRESSES,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=parse_response_list_fn(Address),
+            parse_response_fn=parse_response_list_fn(Address, from_pascal_case=False),
             request_type=RequestType.GET
         )
 
