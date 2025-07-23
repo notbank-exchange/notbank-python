@@ -842,7 +842,8 @@ class NotbankClient:
     def subscribe_trades(
             self,
             request: SubscribeTradesRequest,
-            handler: Callable[[List[PublicTrade]], None]):
+            snapshot_handler: Callable[[List[PublicTrade]], None],
+            update_handler: Callable[[List[PublicTrade]], None]):
         """
         https://apidoc.notbank.exchange/#subscribetrades
         """
@@ -852,7 +853,11 @@ class NotbankClient:
             [Callback(
                 CallbackIdentifier.get(
                     WebSocketEndpoint.SUBSCRIBE_TRADES, request.instrument_id),
-                build_subscription_handler(handler, lambda json_str: public_trade_list_from_json_str(json_str)))],
+                build_subscription_handler(snapshot_handler, lambda json_str: public_trade_list_from_json_str(json_str))),
+             Callback(
+                CallbackIdentifier.get(
+                    WebSocketEndpoint.UPDATE_TRADES, request.instrument_id),
+                build_subscription_handler(update_handler, lambda json_str: public_trade_list_from_json_str(json_str)))],
             lambda x: None)
 
     def subscribe_order_state_events(
@@ -998,6 +1003,8 @@ class NotbankClient:
         self._unsubscribe(WebSocketEndpoint.UNSUBSCRIBE_TRADES, request, [
             CallbackIdentifier.get(
                 WebSocketEndpoint.SUBSCRIBE_TRADES, request.instrument_id),
+            CallbackIdentifier.get(
+                WebSocketEndpoint.UPDATE_TRADES, request.instrument_id),
         ],
             lambda x: None)
 
@@ -1278,7 +1285,8 @@ class NotbankClient:
             endpoint=Endpoints.BANK_ACCOUNTS + "/" + request.bank_account_id,
             endpoint_category=EndpointCategory.NB,
             request_data=None,
-            parse_response_fn=parse_response_fn(BankAccount, from_pascal_case=False),
+            parse_response_fn=parse_response_fn(
+                BankAccount, from_pascal_case=False),
             request_type=RequestType.GET
 
         )
@@ -1291,7 +1299,8 @@ class NotbankClient:
             endpoint=Endpoints.BANK_ACCOUNTS,
             endpoint_category=EndpointCategory.NB_PAGE,
             request_data=request,
-            parse_response_fn=parse_response_fn(BankAccounts, from_pascal_case=False),
+            parse_response_fn=parse_response_fn(
+                BankAccounts, from_pascal_case=False),
             request_type=RequestType.GET
         )
 
@@ -1315,7 +1324,8 @@ class NotbankClient:
             endpoint=Endpoints.BANK_ACCOUNTS,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=parse_response_list_fn(CurrencyNetworkTemplates, from_pascal_case=False),
+            parse_response_fn=parse_response_list_fn(
+                CurrencyNetworkTemplates, from_pascal_case=False),
             request_type=RequestType.GET
         )
 
@@ -1350,7 +1360,8 @@ class NotbankClient:
             endpoint=Endpoints.WHITELISTED_ADDRESSES,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=parse_response_list_fn(Address, from_pascal_case=False),
+            parse_response_fn=parse_response_list_fn(
+                Address, from_pascal_case=False),
             request_type=RequestType.GET
         )
 

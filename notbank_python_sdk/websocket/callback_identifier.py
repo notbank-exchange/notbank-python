@@ -14,6 +14,7 @@ class CallbackIdentifier:
         WebSocketEndpoint.SUBSCRIBE_TICKER: lambda event_name, payload: CallbackIdentifier._get_ticker_name(event_name, payload),
         WebSocketEndpoint.UPDATE_TICKER: lambda event_name, payload: CallbackIdentifier._get_ticker_name(event_name, payload),
         WebSocketEndpoint.SUBSCRIBE_TRADES: lambda event_name, payload: CallbackIdentifier._get_socket_trade_name(event_name, payload),
+        WebSocketEndpoint.UPDATE_TRADES: lambda event_name, payload: CallbackIdentifier._get_socket_trade_name(event_name, payload),
         WebSocketEndpoint.SUBSCRIBE_ORDER_STATE_EVENTS: lambda event_name, payload: CallbackIdentifier._get_order_event_name(event_name, payload),
         WebSocketEndpoint.ACCOUNT_EVENT_TRANSACTION: lambda event_name, payload: CallbackIdentifier._get_account_event_name(event_name, payload),
         WebSocketEndpoint.ACCOUNT_EVENT_WITHDRAW_TICKET_UPDATE: lambda event_name, payload: CallbackIdentifier._get_account_event_name(event_name, payload),

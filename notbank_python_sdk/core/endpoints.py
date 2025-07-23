@@ -106,6 +106,7 @@ class WebSocketEndpoint(str, Enum):
     SUBSCRIBE_LEVEL1 = "SubscribeLevel1"
     UNSUBSCRIBE_LEVEL1 = "UnsubscribeLevel1"
     SUBSCRIBE_TRADES = "SubscribeTrades"
+    UPDATE_TRADES = "TradeDataUpdateEvent"
     UNSUBSCRIBE_TRADES = "UnsubscribeTrades"
     SUBSCRIBE_TICKER = "SubscribeTicker"
     UNSUBSCRIBE_TICKER = "UnsubscribeTicker"

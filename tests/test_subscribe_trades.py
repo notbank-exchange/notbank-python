@@ -15,16 +15,20 @@ class TestSubscribeTrades(unittest.TestCase):
 
     def test_subscribe_with_instrument_id(self):
         snapshot_marker = CallMarker.create()
+        update_marker = CallMarker.create()
 
         self._system_client.subscribe_trades(
             SubscribeTradesRequest(154, 3),
-            lambda trades: snapshot_marker.mark_called())
-        sleep(7)
+            lambda trades: snapshot_marker.mark_called(),
+            lambda trades: update_marker.mark_called())
+        sleep(60)
         self._system_client.unsubscribe_trades(
             UnsubscribeTradesRequest(154))
         self._websocket_connection.close()
         self.assertTrue(snapshot_marker.was_callled(),
                         'snapshot callback was not called')
+        self.assertTrue(update_marker.was_callled(),
+                        'update callback was not called')
 
 
 if __name__ == "__main__":
