@@ -1497,7 +1497,7 @@ class NotbankClient:
             request_type=RequestType.POST
         )
 
-    def transfer_funds(self, request: TransferFundsRequest) -> None:
+    def transfer_funds(self, request: TransferFundsRequest) -> UUID:
         """
         https://apidoc.notbank.exchange/#transferfunds
         """
@@ -1505,7 +1505,7 @@ class NotbankClient:
             endpoint=Endpoints.TRANSFER_FUNDS,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=lambda x: x,
+            parse_response_fn=lambda x: UUID(x),
             request_type=RequestType.POST
         )
 
