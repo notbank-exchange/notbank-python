@@ -1,9 +1,10 @@
 from dataclasses import dataclass
+from uuid import UUID
 
 
 @dataclass
 class ConfirmFiatWithdrawRequest:
-    withdrawal_id: str
+    withdrawal_id: UUID
     attempt_code: str
 
 

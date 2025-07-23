@@ -1487,7 +1487,7 @@ class NotbankClient:
         https://apidoc.notbank.exchange/#confirmfiatwithdraw
         """
         return self._client_connection.request(
-            endpoint=Endpoints.FIAT_WITHDRAW+"/"+request.attempt_code,
+            endpoint=Endpoints.FIAT_WITHDRAW+"/"+str(request.withdrawal_id),
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(
                 ConfirmFiatWithdrawRequestInternal(request.attempt_code)),
