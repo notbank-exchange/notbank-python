@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 from typing import List, Optional
+from uuid import UUID
 from notbank_python_sdk.models.bank import Bank
 
 
 @dataclass
 class BankAccount:
-    id: str
+    id: UUID
     country: str
     bank: Bank
     number: str

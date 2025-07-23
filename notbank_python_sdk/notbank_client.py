@@ -1383,7 +1383,7 @@ class NotbankClient:
             request_type=RequestType.GET
         )
 
-    def add_whitelisted_addresses(self, request: AddWhitelistedAddressRequest) -> str:
+    def add_whitelisted_addresses(self, request: AddWhitelistedAddressRequest) -> UUID:
         """
         https://apidoc.notbank.exchange/?http#addwhitelistedaddress
         """
@@ -1398,7 +1398,8 @@ class NotbankClient:
         https://apidoc.notbank.exchange/?http#addwhitelistedaddress
         """
         return self._client_connection.request(
-            endpoint=Endpoints.WHITELISTED_ADDRESSES + "/" + request.whitelisted_address_id,
+            endpoint=Endpoints.WHITELISTED_ADDRESSES +
+            "/" + str(request.whitelisted_address_id),
             endpoint_category=EndpointCategory.NB,
             request_data=ConfirmWhiteListedAddressRequestInternal(
                 request.code),
@@ -1411,7 +1412,8 @@ class NotbankClient:
         https://apidoc.notbank.exchange/?http#deletewhitelistedaddress
         """
         return self._client_connection.request(
-            endpoint=Endpoints.WHITELISTED_ADDRESSES + "/" + request.whitelisted_address_id,
+            endpoint=Endpoints.WHITELISTED_ADDRESSES +
+            "/" + str(request.whitelisted_address_id),
             endpoint_category=EndpointCategory.NB,
             request_data=DeleteWhiteListedAddressRequestInternal(
                 str(request.account_id), request.otp),
@@ -1431,7 +1433,7 @@ class NotbankClient:
             request_type=RequestType.POST
         )
 
-    def create_crypto_withdraw(self, request: CreateCryptoWithdrawRequest) -> str:
+    def create_crypto_withdraw(self, request: CreateCryptoWithdrawRequest) -> UUID:
         """
         https://apidoc.notbank.exchange/?http#createcriptowithdraw
         """
@@ -1439,7 +1441,7 @@ class NotbankClient:
             endpoint=Endpoints.CREATE_CRIPTO_WITHDRAW,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=lambda x: x,
+            parse_response_fn=lambda x: UUID(x),
             request_type=RequestType.POST
         )
 
