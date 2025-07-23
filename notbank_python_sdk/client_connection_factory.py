@@ -44,7 +44,6 @@ def new_websocket_client_connection(
 
 
 def new_rest_client_connection(url: str = "api.notbank.exchange") -> ClientConnection:
-
     rest_client_connection = RestClientConnection(url)
     return ClientConnection(
         post_request=rest_client_connection.post,

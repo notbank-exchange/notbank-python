@@ -9,7 +9,7 @@ class Wrapper:
         self.wrapped_value = value
 
 
-class EndpointCategory( Enum):
+class EndpointCategory(Enum):
     AP = Wrapper('ap')
     NB = Wrapper('api/nb')
     NB_PAGE = Wrapper('api/nb')
