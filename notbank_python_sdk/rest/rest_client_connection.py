@@ -29,7 +29,6 @@ class RestClientConnection:
             'User-Agent': f'{self.NAME} Python SDK v{self.VERSION}',
         })
         self._update_headers(ap_token)
-        self._two_factor_token: Optional[str] = None
 
     def _get_host_url(self, host: str) -> str:
         return "https://" + host
@@ -45,6 +44,8 @@ class RestClientConnection:
 
     def _get_endpoint_url(self, endpoint: str, endpoint_category: EndpointCategory,) -> str:
         url = self.host + "/" + endpoint_category.val + "/" + endpoint
+        print(url)
+        print(self._rest_session.headers)
         return url
 
     def get(self, endpoint: str, endpoint_category: EndpointCategory, params: Any, parse_response: ParseResponseFn[T]) -> T:
@@ -52,7 +53,7 @@ class RestClientConnection:
         response = self._rest_session.get(url, params=params)
         return self.handle_response(endpoint_category, response, parse_response)
 
-    def post(self, endpoint: str, endpoint_category: EndpointCategory, json_data: Any, parse_response: ParseResponseFn[T], headers: Optional[Any] = None) -> T:
+    def post(self, endpoint: str, endpoint_category: EndpointCategory, json_data: Any, parse_response: ParseResponseFn[T], headers: dict = {}) -> T:
         url = self._get_endpoint_url(endpoint, endpoint_category)
         response = self._rest_session.post(
             url, json=json_data, headers=headers)
@@ -64,7 +65,7 @@ class RestClientConnection:
         return self.handle_response(endpoint_category, response, parse_response)
 
     def handle_response(self, endpoint_category: EndpointCategory, response: requests.Response, parse_response: ParseResponseFn[T]) -> T:
-        if response.status_code < 200 or 300 <= response.status_code:
+        if response.status_code < 200 or 400 <= response.status_code:
             raise NotbankException(
                 ErrorCode.CONFIGURATION_ERROR,
                 f"http error. (code={response.status_code}) " + response.text)
@@ -79,9 +80,9 @@ class RestClientConnection:
             EndpointCategory.AP,
             {},
             lambda response_data: from_dict(AuthenticateResponse, response_data))
-        self._rest_session.headers.clear()
-        if auth_response.requires_2fa:
-            self._two_factor_token = auth_response.two_fa_token
-
+        if not auth_response.authenticated:
+            raise NotbankException(
+                ErrorCode.OPERATION_FAILED,
+                auth_response.errormsg if auth_response.errormsg else "unable to authenticate")
         self._update_headers(ap_token=auth_response.session_token)
         return auth_response
