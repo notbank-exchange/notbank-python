@@ -98,6 +98,15 @@ class Endpoints(str, Enum):
     WHITELISTED_ADDRESSES = "wallet/crypto/whitelist-addresses"
     UPDATE_ONE_STEP_WITHDRAW = "wallet/crypto/whitelist-addresses/one-step/status"
     CREATE_CRIPTO_WITHDRAW = "wallet/crypto/withdrawal"
+    FIAT_DEPOSIT = "wallet/fiat/deposit"
+    GET_OWNERS_FIAT_WITHDRAW = "wallet/fiat/withdrawal/owners"
+    FIAT_WITHDRAW = "wallet/fiat/withdrawal"
+    TRANSFER_FUNDS = "wallet/transfer-funds"
+
+    # quote
+    QUOTES = "quotes"
+    QUOTES_DIRECT = "quotes/direct"
+    QUOTES_INVERSE="quotes/inverse"
 
 
 class WebSocketEndpoint(str, Enum):

@@ -1,11 +1,13 @@
 from decimal import Decimal
 from typing import Any, Callable, List, Optional, Type, TypeVar, Dict
+from uuid import UUID
 import simplejson as json
 from notbank_python_sdk.client_connection import ClientConnection, RequestType
 from notbank_python_sdk.core.endpoint_category import EndpointCategory
 from notbank_python_sdk.core.endpoints import Endpoints, WebSocketEndpoint
 from notbank_python_sdk.core.converter import from_json_str, to_dict, from_dict, to_nb_dict
 from notbank_python_sdk.error import ErrorCode, NotbankException
+from notbank_python_sdk.models.cbu_owner import CbuOwner
 from notbank_python_sdk.models.account_fee import AccountFee
 from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
 from notbank_python_sdk.models.bank import Banks
@@ -21,6 +23,10 @@ from notbank_python_sdk.models.document_slice import DocumentSlice
 from notbank_python_sdk.models.enums import EnumsResponse
 from notbank_python_sdk.models.activity_report import ActivityReport
 from notbank_python_sdk.models.account_trade import AccountTrade
+from notbank_python_sdk.models.quote import Quote
+from notbank_python_sdk.models.transaction import Transactions
+from notbank_python_sdk.models.url_response import UrlResponse
+from notbank_python_sdk.models.uuid_response import UuidResponse
 from notbank_python_sdk.models.withdraw_tickets import WithdrawTicket
 from notbank_python_sdk.models.deposit_ticket import DepositTicket
 from notbank_python_sdk.models.instrument import Instrument
@@ -53,6 +59,7 @@ from notbank_python_sdk.models.account_positions import AccountPosition
 from notbank_python_sdk.models.instrument_statistic import InstrumentStatistic
 from notbank_python_sdk.models.account_info import AccountInfo
 from notbank_python_sdk.models.product import Product
+from notbank_python_sdk.models.withdrawal_id_response import WithdrawalIdResponse
 from notbank_python_sdk.parsing import build_subscription_handler, parse_response_fn, parse_response_list_fn
 from notbank_python_sdk.requests_models.add_whitelisted_address_request import AddWhitelistedAddressRequest
 from notbank_python_sdk.requests_models.authenticate_request import AuthenticateRequest
@@ -61,11 +68,17 @@ from notbank_python_sdk.requests_models.cancel_order import CancelOrder
 from notbank_python_sdk.requests_models.cancel_order_request import CancelOrderRequest
 from notbank_python_sdk.requests_models.cancel_replace_order_request import CancelReplaceOrderRequest
 from notbank_python_sdk.requests_models.cancel_user_report import CancelUserReportRequest
+from notbank_python_sdk.requests_models.confirm_fiat_withdraw_request import ConfirmFiatWithdrawRequest, ConfirmFiatWithdrawRequestInternal
 from notbank_python_sdk.requests_models.confirm_whitelisted_address_request import ConfirmWhiteListedAddressRequest, ConfirmWhiteListedAddressRequestInternal
+from notbank_python_sdk.requests_models.create_direct_quote_request import CreateDirectQuoteRequest
+from notbank_python_sdk.requests_models.create_fiat_deposit_request import CreateFiatDepositRequest
+from notbank_python_sdk.requests_models.create_fiat_withdraw_request import CreateFiatWithdrawRequest
+from notbank_python_sdk.requests_models.create_inverse_quote_request import CreateInverseQuoteRequest
 from notbank_python_sdk.requests_models.delete_whitelisted_address_request import DeleteWhiteListedAddressRequest, DeleteWhiteListedAddressRequestInternal
 from notbank_python_sdk.requests_models.delete_bank_account_request import DeleteBankAccountRequest
 from notbank_python_sdk.requests_models.download_document import DownloadDocumentRequest
 from notbank_python_sdk.requests_models.download_document_slice import DownloadDocumentSliceRequest
+from notbank_python_sdk.requests_models.execute_quote_request import ExecuteQuoteRequest
 from notbank_python_sdk.requests_models.generate_pnl_activity_report import GeneratePnlActivityReportRequest
 from notbank_python_sdk.requests_models.generate_product_delta_activity_report import GenerateProductDeltaActivityReportRequest
 from notbank_python_sdk.requests_models.generate_trade_activity_report import GenerateTradeActivityReportRequest
@@ -79,6 +92,11 @@ from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 from notbank_python_sdk.requests_models.deposit_address_request import DepositAddressRequest
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
 from notbank_python_sdk.requests_models.get_network_templates_request import GetNetworksTemplatesRequest
+from notbank_python_sdk.requests_models.get_owners_fiat_withdraw import GetOwnersFiatWithdrawRequest
+from notbank_python_sdk.requests_models.get_quote_request import GetQuoteRequest
+from notbank_python_sdk.requests_models.get_quotes_request import GetQuotesRequest
+from notbank_python_sdk.requests_models.get_transactions_request import GetTransactionsRequest
+from notbank_python_sdk.requests_models.transfer_funds_request import TransferFundsRequest
 from notbank_python_sdk.requests_models.update_one_step_withdraw_request import UpdateOneStepWithdrawRequest
 from notbank_python_sdk.requests_models.verification_level_config_request import VerificationLevelConfigRequest
 from notbank_python_sdk.requests_models.get_instruments_request import GetInstrumentsRequest
@@ -1298,7 +1316,7 @@ class NotbankClient:
         return self._client_connection.request(
             endpoint=Endpoints.BANK_ACCOUNTS,
             endpoint_category=EndpointCategory.NB_PAGE,
-            request_data=request,
+            request_data=to_nb_dict(request),
             parse_response_fn=parse_response_fn(
                 BankAccounts, from_pascal_case=False),
             request_type=RequestType.GET
@@ -1422,5 +1440,147 @@ class NotbankClient:
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
             parse_response_fn=lambda x: x,
+            request_type=RequestType.POST
+        )
+
+    def create_fiat_deposit(self, request: CreateFiatDepositRequest) -> Optional[str]:
+        """
+        https://apidoc.notbank.exchange/#createfiatdeposit
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.FIAT_DEPOSIT,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                UrlResponse, from_pascal_case=False),
+            request_type=RequestType.POST
+        ).url
+
+    def get_owners_fiat_withdraw(self, request: GetOwnersFiatWithdrawRequest) -> List[CbuOwner]:
+        """
+        https://apidoc.notbank.exchange/#getownersfiatwithdraw
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.GET_OWNERS_FIAT_WITHDRAW,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_list_fn(
+                CbuOwner, from_pascal_case=False),
+            request_type=RequestType.GET
+        )
+
+    def create_fiat_withdraw(self, request: CreateFiatWithdrawRequest) -> Optional[str]:
+        """
+        https://apidoc.notbank.exchange/#getownersfiatwithdraw
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.FIAT_WITHDRAW,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                WithdrawalIdResponse, from_pascal_case=False),
+            request_type=RequestType.POST
+        ).withdrawal_id
+
+    def confirm_fiat_withdraw(self, request: ConfirmFiatWithdrawRequest) -> None:
+        """
+        https://apidoc.notbank.exchange/#confirmfiatwithdraw
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.FIAT_WITHDRAW+"/"+request.attempt_code,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(
+                ConfirmFiatWithdrawRequestInternal(request.attempt_code)),
+            parse_response_fn=lambda x: None,
+            request_type=RequestType.POST
+        )
+
+    def transfer_funds(self, request: TransferFundsRequest) -> None:
+        """
+        https://apidoc.notbank.exchange/#transferfunds
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.TRANSFER_FUNDS,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=lambda x: x,
+            request_type=RequestType.POST
+        )
+
+    def get_transactions(self, request: GetTransactionsRequest) -> Transactions:
+        """
+        https://apidoc.notbank.exchange/#gettransactions
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.TRANSFER_FUNDS,
+            endpoint_category=EndpointCategory.NB_PAGE,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                Transactions, from_pascal_case=False),
+            request_type=RequestType.GET
+        )
+
+    def get_quotes(self, request: GetQuotesRequest) -> List[Quote]:
+        """
+        https://apidoc.notbank.exchange/#getquotes
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.QUOTES,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_list_fn(
+                Quote, from_pascal_case=False),
+            request_type=RequestType.GET
+        )
+
+    def create_direct_quote(self, request: CreateDirectQuoteRequest) -> UUID:
+        """
+        https://apidoc.notbank.exchange/#createdirectquote
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.QUOTES_DIRECT,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                UuidResponse, from_pascal_case=False),
+            request_type=RequestType.POST
+        ).id
+
+    def create_inverse_quote(self, request: CreateInverseQuoteRequest) -> UUID:
+        """
+        https://apidoc.notbank.exchange/#createinversequote
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.QUOTES_INVERSE,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                UuidResponse, from_pascal_case=False),
+            request_type=RequestType.POST
+        ).id
+
+    def get_quote(self, request: GetQuoteRequest) -> Quote:
+        """
+        https://apidoc.notbank.exchange/#getquote
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.QUOTES+"/"+str(request.quote_id),
+            endpoint_category=EndpointCategory.NB,
+            request_data=None,
+            parse_response_fn=parse_response_fn(
+                Quote, from_pascal_case=False),
+            request_type=RequestType.GET
+        )
+
+    def execute_quote(self, request: ExecuteQuoteRequest) -> Quote:
+        """
+        https://apidoc.notbank.exchange/#executequote
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.QUOTES+"/"+str(request.request_id),
+            endpoint_category=EndpointCategory.NB,
+            request_data=None,
+            parse_response_fn=parse_response_fn(
+                Quote, from_pascal_case=False),
             request_type=RequestType.POST
         )
