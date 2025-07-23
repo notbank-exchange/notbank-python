@@ -11,18 +11,18 @@ class TestSubscribeTrades(unittest.TestCase):
     def setUp(self):
         self._websocket_connection = new_websocket_client_connection()
         self._websocket_connection.connect()
-        self._system_client = NotbankClient(self._websocket_connection)
+        self.client = NotbankClient(self._websocket_connection)
 
     def test_subscribe_with_instrument_id(self):
         snapshot_marker = CallMarker.create()
         update_marker = CallMarker.create()
 
-        self._system_client.subscribe_trades(
+        self.client.subscribe_trades(
             SubscribeTradesRequest(154, 3),
             lambda trades: snapshot_marker.mark_called(),
             lambda trades: update_marker.mark_called())
         sleep(60)
-        self._system_client.unsubscribe_trades(
+        self.client.unsubscribe_trades(
             UnsubscribeTradesRequest(154))
         self._websocket_connection.close()
         self.assertTrue(snapshot_marker.was_callled(),
