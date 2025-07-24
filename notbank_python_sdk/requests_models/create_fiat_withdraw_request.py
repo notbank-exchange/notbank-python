@@ -6,9 +6,9 @@ from uuid import UUID
 
 @dataclass
 class CreateFiatWithdrawRequest:
-    account_id: str
+    account_id: int
     payment_method: int
-    currency: int
+    currency: str
     amount: Decimal
     bank_account_id: Optional[UUID] = None
     cbu: Optional[str] = None

@@ -1579,7 +1579,7 @@ class NotbankClient:
         https://apidoc.notbank.exchange/#executequote
         """
         return self._client_connection.request(
-            endpoint=Endpoints.QUOTES+"/"+str(request.request_id),
+            endpoint=Endpoints.QUOTES+"/"+str(request.quote_id),
             endpoint_category=EndpointCategory.NB,
             request_data=None,
             parse_response_fn=parse_response_fn(
