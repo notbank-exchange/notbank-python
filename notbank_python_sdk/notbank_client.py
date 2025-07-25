@@ -888,10 +888,10 @@ class NotbankClient:
         """
         if request.instrument_id is None:
             callback_id = CallbackIdentifier.get(
-                WebSocketEndpoint.SUBSCRIBE_ORDER_STATE_EVENTS, request.account_id)
+                WebSocketEndpoint.ACCOUNT_EVENT_ORDER_STATE, request.account_id)
         else:
             callback_id = CallbackIdentifier.get(
-                WebSocketEndpoint.SUBSCRIBE_ORDER_STATE_EVENTS, request.account_id, request.instrument_id)
+                WebSocketEndpoint.ACCOUNT_EVENT_ORDER_STATE, request.account_id, request.instrument_id)
         self._subscribe(
             WebSocketEndpoint.SUBSCRIBE_ORDER_STATE_EVENTS,
             request,
@@ -1032,10 +1032,10 @@ class NotbankClient:
         """
         if request.instrument_id is None:
             callback_id = CallbackIdentifier.get(
-                WebSocketEndpoint.SUBSCRIBE_ORDER_STATE_EVENTS, request.account_id)
+                WebSocketEndpoint.ACCOUNT_EVENT_ORDER_STATE, request.account_id)
         else:
             callback_id = CallbackIdentifier.get(
-                WebSocketEndpoint.SUBSCRIBE_ORDER_STATE_EVENTS, request.account_id, request.instrument_id)
+                WebSocketEndpoint.ACCOUNT_EVENT_ORDER_STATE, request.account_id, request.instrument_id)
         self._unsubscribe(
             WebSocketEndpoint.UNSUBSCRIBE_TICKER,
             request,
