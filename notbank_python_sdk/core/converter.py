@@ -2,6 +2,7 @@ from enum import Enum
 from decimal import Decimal
 from dataclasses import asdict
 from typing import Any, Callable, Dict, List, Type, TypeVar, Union
+from uuid import UUID
 
 import simplejson as json
 from dacite import Config, DaciteError, from_dict as dacite_from_dict
@@ -113,7 +114,7 @@ def from_dict(cls: Type[T1], data, no_pascal_case: List[str] = [], overrides: Di
             convert_key=convert_key,
             type_hooks={
                 Decimal: lambda x: Decimal(str(x)),
-                float: lambda x: Decimal(str(x))
+                UUID: lambda x: UUID(x)
             }
         )
     )
