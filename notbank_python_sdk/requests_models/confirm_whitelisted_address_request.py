@@ -6,9 +6,11 @@ from uuid import UUID
 @dataclass
 class ConfirmWhiteListedAddressRequest:
     whitelisted_address_id: UUID
-    code: str
+    account_id: int
+    sms_code: str
 
 
 @dataclass
 class ConfirmWhiteListedAddressRequestInternal:
-    code: str
+    account_id: int
+    sms_code: str

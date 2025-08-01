@@ -12,7 +12,8 @@ class TestGetDepositAddresses(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        connection = test_helper.new_rest_client_connection()
+        connection = test_helper.new_rest_client_connection(
+            test_helper.print_message_in, test_helper.print_message_out)
         cls.credentials = test_helper.load_credentials()
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)

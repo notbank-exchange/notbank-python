@@ -1401,10 +1401,10 @@ class NotbankClient:
         """
         return self._client_connection.request(
             endpoint=Endpoints.WHITELISTED_ADDRESSES +
-            "/" + str(request.whitelisted_address_id),
+            "/" + str(request.whitelisted_address_id) + "/verification",
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(ConfirmWhiteListedAddressRequestInternal(
-                request.code)),
+                request.account_id, request.sms_code)),
             parse_response_fn=lambda x: None,
             request_type=RequestType.POST
         )

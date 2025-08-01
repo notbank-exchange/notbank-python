@@ -24,9 +24,9 @@ class TestGetBanks(unittest.TestCase):
           account_id=self.credentials.account_id,
           currency="BTC",
           network="BTC_TEST",
-          address="tb1q8e7md5kg4m5j8lmgyp9caqfhx62mvv6pvd5dqj",
+          address="tb1qrekfjtdrffe7r62fr4hspgka8qmzq0t3wu9z87",
           amount=Decimal("0.001"),
-          otp="906182"
+          otp="994618"
         ))
         self.assertIsNotNone(response)
 
