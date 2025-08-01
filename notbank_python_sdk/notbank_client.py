@@ -96,6 +96,7 @@ from notbank_python_sdk.requests_models.get_owners_fiat_withdraw import GetOwner
 from notbank_python_sdk.requests_models.get_quote_request import GetQuoteRequest
 from notbank_python_sdk.requests_models.get_quotes_request import GetQuotesRequest
 from notbank_python_sdk.requests_models.get_transactions_request import GetTransactionsRequest
+from notbank_python_sdk.requests_models.resend_verification_code_whitelisted_address_request import ResendVerificationCodeWhitelistedAddress, ResendVerificationCodeWhitelistedAddressInternal
 from notbank_python_sdk.requests_models.transfer_funds_request import TransferFundsRequest
 from notbank_python_sdk.requests_models.update_one_step_withdraw_request import UpdateOneStepWithdrawRequest
 from notbank_python_sdk.requests_models.verification_level_config_request import VerificationLevelConfigRequest
@@ -1407,6 +1408,20 @@ class NotbankClient:
                 request.account_id, request.sms_code)),
             parse_response_fn=lambda x: None,
             request_type=RequestType.POST
+        )
+
+    def resend_verification_code_whitelisted_address(self, request: ResendVerificationCodeWhitelistedAddress) -> None:
+        """
+        https://apidoc.notbank.exchange/#resendverificationcodewhitelistedaddress
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.WHITELISTED_ADDRESSES +
+            "/" + str(request.whitelisted_address_id) + "/verification",
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(
+                ResendVerificationCodeWhitelistedAddressInternal(request.account_id)),
+            parse_response_fn=lambda x: None,
+            request_type=RequestType.GET
         )
 
     def delete_whitelisted_address(self, request: DeleteWhiteListedAddressRequest) -> None:
