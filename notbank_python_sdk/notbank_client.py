@@ -1531,7 +1531,7 @@ class NotbankClient:
         https://apidoc.notbank.exchange/#gettransactions
         """
         return self._client_connection.request(
-            endpoint=Endpoints.TRANSFER_FUNDS,
+            endpoint=Endpoints.GET_TRANSACTIONS,
             endpoint_category=EndpointCategory.NB_PAGE,
             request_data=to_nb_dict(request),
             parse_response_fn=parse_response_fn(
