@@ -1,3 +1,4 @@
+from decimal import Decimal
 import unittest
 
 from notbank_python_sdk.notbank_client import NotbankClient
@@ -9,7 +10,8 @@ from tests import test_helper
 class TestGetProduct(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        connection = test_helper.new_rest_client_connection()
+        connection = test_helper.new_rest_client_connection(
+            test_helper.print_message_in, test_helper.print_message_out)
         cls.credentials = test_helper.load_credentials()
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
@@ -29,7 +31,7 @@ class TestGetProduct(unittest.TestCase):
         self.assertEqual(response.product_full_name, "US Dollar")
         self.assertEqual(response.product_type, "NationalCurrency")
         self.assertEqual(response.decimal_places, 2)
-        self.assertEqual(response.tick_size, 0.01)
+        self.assertEqual(response.tick_size, Decimal("0.01"))
         self.assertEqual(response.deposit_enabled, True)
         self.assertEqual(response.withdraw_enabled, True)
         self.assertEqual(response.no_fees, False)

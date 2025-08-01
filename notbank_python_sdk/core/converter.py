@@ -53,6 +53,9 @@ SPECIAL_CASES_MAP = {
     "i": "i",
 }
 
+DEFAULT_CAST: Dict[Type[Any], Any] = {
+    Decimal: lambda x: dec_to_str_stripped(x), UUID: lambda x: str(x)}
+
 
 def _cast_value_or_default(type_hooks: Dict[Type[T1], Callable[[T1], T2]], value: T1) -> Union[T1, T2]:
     cast_fn = type_hooks.get(type(value))
@@ -89,11 +92,11 @@ def to_json_str(data, cast: Dict[Type[Any], Any] = dict()) -> str:
     return json.dumps(json_dict, use_decimal=True)
 
 
-def to_nb_dict(data, cast: Dict[Type[Any], Any] = {Decimal: lambda x: dec_to_str_stripped(x)}) -> dict:
+def to_nb_dict(data, cast: Dict[Type[Any], Any] = DEFAULT_CAST) -> dict:
     return to_dict(data, cast, as_snake_case_dict=True)
 
 
-def to_dict(data, cast: Dict[Type[Any], Any] = {Decimal: lambda x: dec_to_str_stripped(x)}, as_snake_case_dict: bool = False) -> dict:
+def to_dict(data, cast: Dict[Type[Any], Any] = DEFAULT_CAST, as_snake_case_dict: bool = False) -> dict:
     if data is None:
         return {}
     dict_factory = _build_factory(cast)

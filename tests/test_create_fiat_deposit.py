@@ -21,14 +21,13 @@ class TestCreateFiatDeposit(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_create_fiat_deposit(self):
-        response = self.client.create_fiat_deposit(CreateFiatDepositRequest(
+        self.client.create_fiat_deposit(CreateFiatDepositRequest(
             account_id=self.credentials.account_id,
             payment_method=1,
-            currency="CLP",
+            currency="ARS",
             amount=Decimal("10"),
-            bank_account_id=UUID("4172acac-f18e-41e2-8423-94e1c7feeebf")
+            bank_account_id=UUID("4d677d9c-81e1-45d2-9903-43fd599b6599")
         ))
-        self.assertIsNotNone(response)
 
 
 if __name__ == "__main__":

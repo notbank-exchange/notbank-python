@@ -1,6 +1,7 @@
 from typing import Any, Callable, List, Optional, TypeVar
 
 import requests
+from dacite.data import Data
 
 from notbank_python_sdk.error import ErrorCode, NotbankException
 from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
@@ -22,14 +23,14 @@ class RestClientConnection:
     VERSION = "0.0.1"
     _host: str
     _rest_session: requests.Session
-    _peek_message_in: Callable[[dict], None]
+    _peek_message_in: Callable[[str], None]
     _peek_message_out: Callable[[str, Any, Any, str, dict], None]
 
     def __init__(
             self,
             host: str,
             ap_token: Optional[str] = None,
-            peek_message_in: Callable[[dict], None] = lambda a: None,
+            peek_message_in: Callable[[str], None] = lambda a: None,
             peek_message_out: Callable[[str, Any, Any, str, dict], None] = lambda a, b, c, d, e: None,
     ):
         self._host = self._get_host_url(host)
@@ -82,14 +83,12 @@ class RestClientConnection:
         response = self._rest_session.delete(url, json=params)
         return self.handle_response(endpoint_category, response, parse_response)
 
-    def handle_response(self, endpoint_category: EndpointCategory, response: requests.Response, parse_response: ParseResponseFn[T]) -> T:
-        if response.status_code < 200 or 400 <= response.status_code:
-            raise NotbankException(
-                ErrorCode.CONFIGURATION_ERROR,
-                f"http error. (code={response.status_code}) " + response.text)
-        response_data = response.json()
-        self._peek_message_in(response_data)
-        return ResponseHandler.handle_response_data(endpoint_category, parse_response, response_data)
+    def handle_response(self, endpoint_category: EndpointCategory,response : requests.Response, parse_response: ParseResponseFn[T]) -> T:
+        self._peek_message_in(response.text)
+        return ResponseHandler.handle_response_data(
+            endpoint_category,
+            parse_response,
+            response)
 
     def authenticate_user(self, authenticate_request: AuthenticateRequest) -> AuthenticateResponse:
         request_data = Authenticator.convert_data(authenticate_request)

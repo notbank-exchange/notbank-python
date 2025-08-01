@@ -57,7 +57,7 @@ def new_websocket_client_connection():
         5)
 
 
-def print_message_out(httpMethod: str, headers: Any, extra_headers: Any, url: str, body: dict):
+def print_message_out(httpMethod: str, headers: Any, extra_headers: Any, url: str, body: dict) -> None:
     print("\n", "** message out+*")
     print("httpMethod:", httpMethod)
     # print("headers:", headers)
@@ -66,13 +66,13 @@ def print_message_out(httpMethod: str, headers: Any, extra_headers: Any, url: st
     print("body:", body)
 
 
-def print_message_in(body: dict):
+def print_message_in(body: str) -> None:
     print("\n", "** message in**")
     print("body:", body)
 
 
 def new_rest_client_connection(
-    peek_message_in: Callable[[dict], None] = lambda a: None,
+    peek_message_in: Callable[[str], None] = lambda a: None,
     peek_message_out: Callable[[str, Any, Any, str,
                                 dict], None] = lambda a, b, c, d, e: None
 ):

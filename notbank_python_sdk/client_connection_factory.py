@@ -72,7 +72,7 @@ def new_restarting_websocket_client_connection(
 
 def new_rest_client_connection(
     url: str = "api.notbank.exchange",
-    peek_message_in: Callable[[dict], None] = lambda a: None,
+    peek_message_in: Callable[[str], None] = lambda a: None,
     peek_message_out: Callable[[str, Any, Any, str, dict], None] = lambda a, b, c, d, e: None,
 ) -> ClientConnection:
     rest_client_connection = RestClientConnection(
