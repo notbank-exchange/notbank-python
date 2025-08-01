@@ -1,13 +1,12 @@
 import unittest
-from uuid import UUID
-from notbank_python_sdk.requests_models.confirm_whitelisted_address_request import ConfirmWhiteListedAddressRequest
+from notbank_python_sdk.requests_models.add_client_bank_account_request import AddClientBankAccountRequest, BankAccountKind
 
 from tests import test_helper
 
 from notbank_python_sdk.notbank_client import NotbankClient
 
 
-class TestCreateDepositAddress(unittest.TestCase):
+class TestAddClientBankAccount(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -16,11 +15,13 @@ class TestCreateDepositAddress(unittest.TestCase):
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
 
-    def test_create_deposit_address(self):
-        # TODO: run
-        response = self.client.confirm_whitelisted_address(ConfirmWhiteListedAddressRequest(
-            whitelisted_address_id=UUID("11baa35a-aee0-dea9-8528-73075254f9d7"), 
-            code="abc"))
+    def test_add_client_bank_account(self):
+        response = self.client.add_client_bank_account(AddClientBankAccountRequest(
+            country="CL",
+            bank="11",
+            number="123123",
+            kind=BankAccountKind.AHORRO,
+        ))
         self.assertIsNotNone(response)
 
 

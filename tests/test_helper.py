@@ -1,7 +1,7 @@
 import json
 from dataclasses import dataclass
 import logging
-from typing import Optional
+from typing import Any, Callable, Optional
 from notbank_python_sdk.client_connection import ClientConnection
 from notbank_python_sdk.client_connection_factory import (
     new_websocket_client_connection as create_new_websocket_client_connection, new_rest_client_connection as create_new_rest_client_connection)
@@ -57,8 +57,26 @@ def new_websocket_client_connection():
         5)
 
 
-def new_rest_client_connection():
-    return create_new_rest_client_connection(TEST_URL)
+def print_message_out(httpMethod: str, headers: Any, extra_headers: Any, url: str, body: dict):
+    print("\n", "** message out+*")
+    print("httpMethod:", httpMethod)
+    # print("headers:", headers)
+    # print("extra headers:", extra_headers)
+    print("url:", url)
+    print("body:", body)
+
+
+def print_message_in(body: dict):
+    print("\n", "** message in**")
+    print("body:", body)
+
+
+def new_rest_client_connection(
+    peek_message_in: Callable[[dict], None] = lambda a: None,
+    peek_message_out: Callable[[str, Any, Any, str,
+                                dict], None] = lambda a, b, c, d, e: None
+):
+    return create_new_rest_client_connection(TEST_URL, peek_message_in, peek_message_out)
 
 
 class CallMarker:

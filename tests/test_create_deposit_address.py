@@ -1,13 +1,12 @@
 import unittest
-from notbank_python_sdk.requests_models.get_account_info_request import GetAccountInfoRequest
+from notbank_python_sdk.requests_models.deposit_address_request import DepositAddressRequest
 
 from tests import test_helper
 
 from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 
 
-class TestGetBanks(unittest.TestCase):
+class TestCreateDepositAddress(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -16,8 +15,8 @@ class TestGetBanks(unittest.TestCase):
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
 
-    def test_get_banks(self):
-        response = self.client.get_banks(GetBanksRequest("CL"))
+    def test_create_deposit_address(self):
+        response = self.client.create_deposit_address(DepositAddressRequest(self.credentials.account_id, "BTC","BTC_TEST"))
         self.assertIsNotNone(response)
 
 

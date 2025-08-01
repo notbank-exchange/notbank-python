@@ -75,7 +75,7 @@ from notbank_python_sdk.requests_models.create_fiat_deposit_request import Creat
 from notbank_python_sdk.requests_models.create_fiat_withdraw_request import CreateFiatWithdrawRequest
 from notbank_python_sdk.requests_models.create_inverse_quote_request import CreateInverseQuoteRequest
 from notbank_python_sdk.requests_models.delete_whitelisted_address_request import DeleteWhiteListedAddressRequest, DeleteWhiteListedAddressRequestInternal
-from notbank_python_sdk.requests_models.delete_bank_account_request import DeleteBankAccountRequest
+from notbank_python_sdk.requests_models.delete_client_bank_account_request import DeleteClientBankAccountRequest
 from notbank_python_sdk.requests_models.download_document import DownloadDocumentRequest
 from notbank_python_sdk.requests_models.download_document_slice import DownloadDocumentSliceRequest
 from notbank_python_sdk.requests_models.execute_quote_request import ExecuteQuoteRequest
@@ -85,9 +85,9 @@ from notbank_python_sdk.requests_models.generate_trade_activity_report import Ge
 from notbank_python_sdk.requests_models.generate_transaction_activity_report import GenerateTransactionActivityReportRequest
 from notbank_python_sdk.requests_models.get_account_trades import GetAccountTradesRequest
 from notbank_python_sdk.requests_models.fee_request import FeeRequest
-from notbank_python_sdk.requests_models.create_bank_account_request import CreateBankAccountRequest
-from notbank_python_sdk.requests_models.get_bank_account_request import GetBankAccountRequest
-from notbank_python_sdk.requests_models.get_bank_accounts_request import GetBankAccountsRequest
+from notbank_python_sdk.requests_models.add_client_bank_account_request import AddClientBankAccountRequest
+from notbank_python_sdk.requests_models.get_client_bank_account_request import GetClientBankAccountRequest
+from notbank_python_sdk.requests_models.get_client_bank_accounts_request import GetClientBankAccountsRequest
 from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 from notbank_python_sdk.requests_models.deposit_address_request import DepositAddressRequest
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
@@ -193,7 +193,7 @@ class NotbankClient:
         return self._client_connection.request(
             endpoint, endpoint_category, request_data_dict, parse_response_fn(response_cls, no_pascal_case, overrides=response_conversion_overrides))
 
-    def _get_nb_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], endpoint_category: EndpointCategory = EndpointCategory.AP) -> T2:
+    def _get_nb_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], endpoint_category: EndpointCategory = EndpointCategory.NB) -> T2:
         request_data_dict = to_nb_dict(request_data)
         return self._client_connection.request(
             endpoint, endpoint_category, request_data_dict, parse_response_fn(response_cls, no_pascal_case, from_pascal_case=False))
@@ -1284,9 +1284,9 @@ class NotbankClient:
             request_type=RequestType.GET
         )
 
-    def create_bank_account(self, request: CreateBankAccountRequest) -> BankAccount:
+    def add_client_bank_account(self, request: AddClientBankAccountRequest) -> BankAccount:
         """
-        https://apidoc.notbank.exchange/?http#createbankaccount
+        https://apidoc.notbank.exchange/#addclientbankaccount
         """
         return self._get_nb_data(
             Endpoints.BANK_ACCOUNTS,
@@ -1295,12 +1295,13 @@ class NotbankClient:
             endpoint_category=EndpointCategory.NB,
         )
 
-    def get_bank_account(self, request: GetBankAccountRequest) -> BankAccount:
+    def get_client_bank_account(self, request: GetClientBankAccountRequest) -> BankAccount:
         """
-        https://apidoc.notbank.exchange/?http#getbankaccount
+        https://apidoc.notbank.exchange/#getclientbankaccount
         """
         return self._client_connection.request(
-            endpoint=Endpoints.BANK_ACCOUNTS + "/" + request.bank_account_id,
+            endpoint=Endpoints.BANK_ACCOUNTS +
+            "/" + str(request.bank_account_id),
             endpoint_category=EndpointCategory.NB,
             request_data=None,
             parse_response_fn=parse_response_fn(
@@ -1309,9 +1310,9 @@ class NotbankClient:
 
         )
 
-    def get_bank_accounts(self, request: GetBankAccountsRequest) -> BankAccounts:
+    def get_client_bank_accounts(self, request: GetClientBankAccountsRequest) -> BankAccounts:
         """
-        https://apidoc.notbank.exchange/?http#getbankaccounts
+        https://apidoc.notbank.exchange/#getclientbankaccounts
         """
         return self._client_connection.request(
             endpoint=Endpoints.BANK_ACCOUNTS,
@@ -1322,12 +1323,13 @@ class NotbankClient:
             request_type=RequestType.GET
         )
 
-    def delete_bank_account(self, request: DeleteBankAccountRequest) -> None:
+    def delete_client_bank_account(self, request: DeleteClientBankAccountRequest) -> None:
         """
-        https://apidoc.notbank.exchange/?http#getbankaccount
+        https://apidoc.notbank.exchange/#deleteclientbankaccount
         """
         return self._client_connection.request(
-            endpoint=Endpoints.BANK_ACCOUNTS + "/" + request.bank_account_id,
+            endpoint=Endpoints.BANK_ACCOUNTS +
+            "/" + str(request.bank_account_id),
             endpoint_category=EndpointCategory.NB,
             request_data=None,
             parse_response_fn=lambda x: None,
@@ -1339,7 +1341,7 @@ class NotbankClient:
         https://apidoc.notbank.exchange/?http#getnetworkstemplates
         """
         return self._client_connection.request(
-            endpoint=Endpoints.BANK_ACCOUNTS,
+            endpoint=Endpoints.GET_NETWORK_TEMPLATES,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
             parse_response_fn=parse_response_list_fn(
@@ -1395,14 +1397,14 @@ class NotbankClient:
 
     def confirm_whitelisted_address(self, request: ConfirmWhiteListedAddressRequest) -> None:
         """
-        https://apidoc.notbank.exchange/?http#addwhitelistedaddress
+        https://apidoc.notbank.exchange/?http#confirmwhitelistedaddress
         """
         return self._client_connection.request(
             endpoint=Endpoints.WHITELISTED_ADDRESSES +
             "/" + str(request.whitelisted_address_id),
             endpoint_category=EndpointCategory.NB,
-            request_data=ConfirmWhiteListedAddressRequestInternal(
-                request.code),
+            request_data=to_nb_dict(ConfirmWhiteListedAddressRequestInternal(
+                request.code)),
             parse_response_fn=lambda x: None,
             request_type=RequestType.POST
         )
@@ -1415,8 +1417,8 @@ class NotbankClient:
             endpoint=Endpoints.WHITELISTED_ADDRESSES +
             "/" + str(request.whitelisted_address_id),
             endpoint_category=EndpointCategory.NB,
-            request_data=DeleteWhiteListedAddressRequestInternal(
-                str(request.account_id), request.otp),
+            request_data=to_nb_dict(DeleteWhiteListedAddressRequestInternal(
+                account_id=request.account_id, otp=request.otp)),
             parse_response_fn=lambda x: None,
             request_type=RequestType.DELETE
         )

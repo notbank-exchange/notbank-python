@@ -10,4 +10,5 @@ class TransferFundsRequest:
     receiver_account_id: int
     currency_name: str
     amount: Decimal
+    otp: Optional[str] = None
     notes: Optional[str] = None
