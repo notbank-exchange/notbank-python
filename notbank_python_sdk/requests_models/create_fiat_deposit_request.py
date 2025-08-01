@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import Optional
+from uuid import UUID
 
 
 @dataclass
-class CreateCryptoWithdrawRequest:
+class CreateFiatDepositRequest:
     account_id: int
+    payment_method: int
     currency: str
-    network: str
-    address: str
     amount: Decimal
-    memo_or_tag: Optional[str] = None
-    otp: Optional[str] = None
+    bank_account_id: Optional[UUID] = None
+    voucher: Optional[str] = None

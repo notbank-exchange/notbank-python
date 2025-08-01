@@ -22,6 +22,33 @@ def new_websocket_client_connection(
     peek_message_out: Callable[[str], None] = lambda x: None,
     request_timeout: Optional[float] = None,
 ) -> ClientConnection:
+    client_restarter = WebsocketClientConnection.create(
+        url, on_open, on_close, on_failure, peek_message_in, peek_message_out, request_timeout)
+    return ClientConnection(
+        post_request=lambda endpoint, endpoint_category, request_message, parse_response: client_restarter.request(
+            endpoint, endpoint_category, request_message, parse_response),
+        get_request=lambda endpoint, endpoint_category, request_message, parse_response: client_restarter.request(
+            endpoint, endpoint_category, request_message, parse_response),
+        delete_request=_get_not_implemented(
+            "delete request", "WebsocketClientConnection"),
+        subscribe=client_restarter.subscribe,
+        unsubscribe=client_restarter.unsubscribe,
+        authenticate_user=lambda request_message: client_restarter.authenticate_user(
+            request_message),
+        connect=client_restarter.connect,
+        close=client_restarter.close,
+    )
+
+
+def new_restarting_websocket_client_connection(
+    url: str = "api.notbank.exchange",
+    on_open: Callable[[], None] = lambda: None,
+    on_close: Callable[[Any, str], None] = lambda code, message: None,
+    on_failure: Callable[[Exception], None] = lambda e: None,
+    peek_message_in: Callable[[str], None] = lambda x: None,
+    peek_message_out: Callable[[str], None] = lambda x: None,
+    request_timeout: Optional[float] = None,
+) -> ClientConnection:
     client_restarter = WebsocketClientRestarter.create(
         ConnectionData(
             url, on_open, lambda: None, on_close, on_failure, peek_message_in, peek_message_out, request_timeout),
@@ -43,9 +70,13 @@ def new_websocket_client_connection(
     )
 
 
-def new_rest_client_connection(url: str = "api.notbank.exchange") -> ClientConnection:
-
-    rest_client_connection = RestClientConnection(url)
+def new_rest_client_connection(
+    url: str = "api.notbank.exchange",
+    peek_message_in: Callable[[str], None] = lambda a: None,
+    peek_message_out: Callable[[str, Any, Any, str, dict], None] = lambda a, b, c, d, e: None,
+) -> ClientConnection:
+    rest_client_connection = RestClientConnection(
+        url, peek_message_in=peek_message_in, peek_message_out=peek_message_out)
     return ClientConnection(
         post_request=rest_client_connection.post,
         get_request=rest_client_connection.get,

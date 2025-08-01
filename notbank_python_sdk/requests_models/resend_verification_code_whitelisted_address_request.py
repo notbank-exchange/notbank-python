@@ -4,13 +4,11 @@ from uuid import UUID
 
 
 @dataclass
-class ConfirmWhiteListedAddressRequest:
+class ResendVerificationCodeWhitelistedAddress:
     whitelisted_address_id: UUID
     account_id: int
-    sms_code: str
 
 
 @dataclass
-class ConfirmWhiteListedAddressRequestInternal:
+class ResendVerificationCodeWhitelistedAddressInternal:
     account_id: int
-    sms_code: str

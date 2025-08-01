@@ -7,9 +7,9 @@ from notbank_python_sdk.requests_models.cancel_order import *
 from notbank_python_sdk.requests_models.cancel_replace_order_request import *
 from notbank_python_sdk.requests_models.cancel_user_report import *
 from notbank_python_sdk.requests_models.confirm_whitelisted_address_request import *
-from notbank_python_sdk.requests_models.create_bank_account_request import *
+from notbank_python_sdk.requests_models.add_client_bank_account_request import *
 from notbank_python_sdk.requests_models.create_crypto_withdraw_request import *
-from notbank_python_sdk.requests_models.delete_bank_account_request import *
+from notbank_python_sdk.requests_models.delete_client_bank_account_request import *
 from notbank_python_sdk.requests_models.delete_whitelisted_address_request import *
 from notbank_python_sdk.requests_models.deposit_address_request import *
 from notbank_python_sdk.requests_models.download_document_slice import *
@@ -25,8 +25,8 @@ from notbank_python_sdk.requests_models.get_account_instrument_statistics_reques
 from notbank_python_sdk.requests_models.get_account_positions_request import *
 from notbank_python_sdk.requests_models.get_account_trades import *
 from notbank_python_sdk.requests_models.get_account_transactions_request import *
-from notbank_python_sdk.requests_models.get_bank_account_request import *
-from notbank_python_sdk.requests_models.get_bank_accounts_request import *
+from notbank_python_sdk.requests_models.get_client_bank_account_request import *
+from notbank_python_sdk.requests_models.get_client_bank_accounts_request import *
 from notbank_python_sdk.requests_models.get_banks_request import *
 from notbank_python_sdk.requests_models.get_deposit_fee_request import *
 from notbank_python_sdk.requests_models.get_instrument_request import *

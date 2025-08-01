@@ -3,5 +3,5 @@ from uuid import UUID
 
 
 @dataclass
-class IdResponse:
+class UuidResponse:
     id: UUID

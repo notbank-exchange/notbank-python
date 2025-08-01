@@ -3,6 +3,6 @@ from typing import Optional
 
 
 @dataclass
-class GetBankAccountsRequest:
+class GetClientBankAccountsRequest:
     page: Optional[int] = None
     page_size: Optional[int] = None

@@ -3,5 +3,5 @@ from uuid import UUID
 
 
 @dataclass
-class IdResponse:
-    id: UUID
+class GetClientBankAccountRequest:
+    bank_account_id: UUID

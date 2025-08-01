@@ -98,6 +98,16 @@ class Endpoints(str, Enum):
     WHITELISTED_ADDRESSES = "wallet/crypto/whitelist-addresses"
     UPDATE_ONE_STEP_WITHDRAW = "wallet/crypto/whitelist-addresses/one-step/status"
     CREATE_CRIPTO_WITHDRAW = "wallet/crypto/withdrawal"
+    FIAT_DEPOSIT = "wallet/fiat/deposit"
+    GET_OWNERS_FIAT_WITHDRAW = "wallet/fiat/withdrawal/owners"
+    FIAT_WITHDRAW = "wallet/fiat/withdrawal"
+    TRANSFER_FUNDS = "wallet/transfer-funds"
+    GET_TRANSACTIONS = "wallet/transactions"
+
+    # quote
+    QUOTES = "quotes"
+    QUOTES_DIRECT = "quotes/direct"
+    QUOTES_INVERSE = "quotes/inverse"
 
 
 class WebSocketEndpoint(str, Enum):
@@ -106,6 +116,7 @@ class WebSocketEndpoint(str, Enum):
     SUBSCRIBE_LEVEL1 = "SubscribeLevel1"
     UNSUBSCRIBE_LEVEL1 = "UnsubscribeLevel1"
     SUBSCRIBE_TRADES = "SubscribeTrades"
+    UPDATE_TRADES = "TradeDataUpdateEvent"
     UNSUBSCRIBE_TRADES = "UnsubscribeTrades"
     SUBSCRIBE_TICKER = "SubscribeTicker"
     UNSUBSCRIBE_TICKER = "UnsubscribeTicker"

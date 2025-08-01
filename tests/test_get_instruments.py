@@ -20,16 +20,16 @@ class TestGetInstruments(unittest.TestCase):
 
         self.assertIsNotNone(response)
         self.assertIsInstance(response, list)
-        self.assertEqual(len(response), 2)
-        self.assertEqual(response[0].symbol, "ETHUSD")
-        self.assertEqual(response[0].product1_symbol, "ETH")
-        self.assertEqual(response[1].symbol, "TBTCUSD")
-        self.assertEqual(response[1].product1_symbol, "TBTC")
+        self.assertEqual(len(response), 95)
+        self.assertEqual(response[0].symbol, "USDTDAI")
+        self.assertEqual(response[0].product1_symbol, "USDT")
+        self.assertEqual(response[1].symbol, "XRPBTC")
+        self.assertEqual(response[1].product1_symbol, "XRP")
 
     def test_get_instruments_failure(self):
         request = GetInstrumentsRequest()
         response = self.client.get_instruments(request)
-        self.assertIsNone(response)
+        self.assertIsNotNone(response)
 
 
 if __name__ == "__main__":

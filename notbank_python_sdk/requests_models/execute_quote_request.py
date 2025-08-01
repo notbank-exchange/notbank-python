@@ -3,5 +3,5 @@ from uuid import UUID
 
 
 @dataclass
-class IdResponse:
-    id: UUID
+class ExecuteQuoteRequest:
+    quote_id: UUID
