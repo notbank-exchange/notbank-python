@@ -18,7 +18,6 @@ class TestCreateDepositAddress(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_create_deposit_address(self):
-        # TODO: run
         response = self.client.confirm_whitelisted_address(ConfirmWhiteListedAddressRequest(
             whitelisted_address_id=UUID(
                 "ab38462b-e6ec-435c-a67c-e4c3e29f5b72"),
