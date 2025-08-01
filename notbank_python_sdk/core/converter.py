@@ -117,6 +117,7 @@ def from_dict(cls: Type[T1], data, no_pascal_case: List[str] = [], overrides: Di
             convert_key=convert_key,
             type_hooks={
                 Decimal: lambda x: Decimal(str(x)),
+                float: lambda x: Decimal(str(x)),
                 UUID: lambda x: UUID(x)
             }
         )
