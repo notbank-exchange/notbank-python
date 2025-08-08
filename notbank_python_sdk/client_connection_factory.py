@@ -2,8 +2,9 @@ from typing import Any, Callable, Optional
 
 from notbank_python_sdk.client_connection import ClientConnection
 from notbank_python_sdk.rest.rest_client_connection import RestClientConnection
-from notbank_python_sdk.websocket.restarter import ConnectionData, WebsocketClientRestarter
-from notbank_python_sdk.websocket.websocket_client_connection import WebsocketClientConnection
+from notbank_python_sdk.websocket.websocket_restarter.restarter import ConnectionConfiguration, Restarter
+from notbank_python_sdk.websocket.websocket_connection import WebsocketConnection
+from notbank_python_sdk.websocket.websocket_restarter.restarting_websocket_connection import RestartingWebsocketConnection
 
 
 def _get_not_implemented(method_name: str, client_name: str) -> Callable[..., None]:
@@ -22,13 +23,11 @@ def new_websocket_client_connection(
     peek_message_out: Callable[[str], None] = lambda x: None,
     request_timeout: Optional[float] = None,
 ) -> ClientConnection:
-    client_restarter = WebsocketClientConnection.create(
+    client_restarter = WebsocketConnection.create(
         url, on_open, on_close, on_failure, peek_message_in, peek_message_out, request_timeout)
     return ClientConnection(
-        post_request=lambda endpoint, endpoint_category, request_message, parse_response: client_restarter.request(
-            endpoint, endpoint_category, request_message, parse_response),
-        get_request=lambda endpoint, endpoint_category, request_message, parse_response: client_restarter.request(
-            endpoint, endpoint_category, request_message, parse_response),
+        post_request=client_restarter.request,
+        get_request=client_restarter.request,
         delete_request=_get_not_implemented(
             "delete request", "WebsocketClientConnection"),
         subscribe=client_restarter.subscribe,
@@ -49,24 +48,21 @@ def new_restarting_websocket_client_connection(
     peek_message_out: Callable[[str], None] = lambda x: None,
     request_timeout: Optional[float] = None,
 ) -> ClientConnection:
-    client_restarter = WebsocketClientRestarter.create(
-        ConnectionData(
-            url, on_open, lambda: None, on_close, on_failure, peek_message_in, peek_message_out, request_timeout),
-        10
+    restarter = Restarter.create(
+        ConnectionConfiguration(
+            url, on_open, lambda: None, on_close, on_failure, peek_message_in, peek_message_out, request_timeout)
     )
+    restarting_websocket_connection = RestartingWebsocketConnection(restarter)
     return ClientConnection(
-        post_request=lambda endpoint, endpoint_category, request_message, parse_response: client_restarter.get_connection(
-        ).request(endpoint, endpoint_category, request_message, parse_response),
-        get_request=lambda endpoint, endpoint_category, request_message, parse_response: client_restarter.get_connection(
-        ).request(endpoint, endpoint_category, request_message, parse_response),
+        post_request=restarting_websocket_connection.request,
+        get_request=restarting_websocket_connection.request,
         delete_request=_get_not_implemented(
             "delete request", "WebsocketClientConnection"),
-        subscribe=client_restarter.subscribe,
-        unsubscribe=client_restarter.unsubscribe,
-        authenticate_user=lambda request_message: client_restarter.get_connection(
-        ).authenticate_user(request_message),
-        connect=client_restarter.get_connection().connect,
-        close=client_restarter.close,
+        subscribe=restarting_websocket_connection.subscribe,
+        unsubscribe=restarting_websocket_connection.unsubscribe,
+        authenticate_user=restarting_websocket_connection.authenticate_user,
+        connect=restarting_websocket_connection.connect,
+        close=restarting_websocket_connection.close,
     )
 
 

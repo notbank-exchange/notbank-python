@@ -348,6 +348,22 @@ class NotbankClient:
             Product,
         )
 
+    def get_product_by_symbol(self, symbol: str) -> Product:
+        product = self._notbank_client_cache.get_product(symbol)
+        if product is not None:
+            return product
+        products = self.get_products()
+        self._notbank_client_cache.update_products(products)
+        product = self._notbank_client_cache.get_product(symbol)
+        if product is not None:
+            return product
+        raise NotbankException(
+            ErrorCode.RESOURCE_NOT_FOUND,
+            "no instrument found for symbol: {}".format(symbol))
+
+    def get_product_id_by_symbol(self, symbol: str) -> int:
+        return self.get_product_by_symbol(symbol).product_id
+
     def get_verification_level_config(
         self,
         request: VerificationLevelConfigRequest,

@@ -47,7 +47,6 @@ class WebsocketManager:
             on_close=on_close,
             on_open=on_open,
         )
-
         self.thread = Thread(target=self.ws.run_forever)
 
     def connect(self):

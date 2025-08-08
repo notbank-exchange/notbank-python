@@ -20,7 +20,7 @@ from notbank_python_sdk.websocket.websocket_requester import WebsocketRequester
 from notbank_python_sdk.websocket.websocket_response_handler import WebsocketResponseHandler
 
 
-class WebsocketClientConnection:
+class WebsocketConnection:
     _callback_manager: CallbackManager
     _websocket_manager: WebsocketManager
     _websocket_requester: WebsocketRequester
@@ -45,7 +45,7 @@ class WebsocketClientConnection:
                peek_message_in: Callable[[str], None] = lambda x: None,
                peek_message_out: Callable[[str], None] = lambda x: None,
                request_timeout: Optional[float] = None,
-               ) -> 'WebsocketClientConnection':
+               ) -> 'WebsocketConnection':
         callback_manager = CallbackManager.create()
         response_handler = WebsocketResponseHandler.create(
             callback_manager,
@@ -68,7 +68,7 @@ class WebsocketClientConnection:
         websocket_response_handler = WebsocketResponseHandler.create(
             callback_manager,
             on_failure)
-        return WebsocketClientConnection(
+        return WebsocketConnection(
             callback_manager,
             websocket_manager,
             websocket_requester,

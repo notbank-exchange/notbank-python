@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from decimal import Decimal
 from enum import Enum
 from typing import Any, Callable, Generic, Optional, TypeVar
 
@@ -79,9 +80,9 @@ class ResponseHandler:
                 f"notbank sdk badly configured. {e}")
 
     @staticmethod
-    def get_response_data(response):
+    def get_response_data(response: requests.Response):
         try:
-            return response.json()
+            return response.json(parse_float=lambda str_float: Decimal(str_float))
         except requests.JSONDecodeError as e:
             raise NotbankException(
                 ErrorCode.INVALID_RESPONSE,
