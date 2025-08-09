@@ -1,5 +1,6 @@
 import simplejson as json
 from typing import Any, Callable, Optional
+from notbank_python_sdk.core.ap_data_handler import ApDataHandler
 from notbank_python_sdk.core.endpoints import Endpoints
 from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
 from notbank_python_sdk.models.pong import Pong
@@ -119,4 +120,4 @@ class WebsocketConnection:
         if result.is_left():
             raise result.get_left()
         data_dict = json.loads(result.get(), use_decimal=True)
-        return ResponseHandler.handle_response_data(EndpointCategory.AP, parse_response_fn, data_dict)
+        return ApDataHandler.handle_ap_data(parse_response_fn, data_dict)

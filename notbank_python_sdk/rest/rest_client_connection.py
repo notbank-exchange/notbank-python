@@ -85,7 +85,7 @@ class RestClientConnection:
 
     def handle_response(self, endpoint_category: EndpointCategory,response : requests.Response, parse_response: ParseResponseFn[T]) -> T:
         self._peek_message_in(response.text)
-        return ResponseHandler.handle_response_data(
+        return ResponseHandler.handle_response(
             endpoint_category,
             parse_response,
             response)
