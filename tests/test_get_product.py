@@ -1,5 +1,6 @@
 from decimal import Decimal
 import unittest
+from notbank_python_sdk.error import NotbankException
 
 from notbank_python_sdk.notbank_client import NotbankClient
 
@@ -12,8 +13,6 @@ class TestGetProduct(unittest.TestCase):
     def setUpClass(cls):
         connection = test_helper.new_rest_client_connection(
             test_helper.print_message_in, test_helper.print_message_out)
-        cls.credentials = test_helper.load_credentials()
-        test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
 
     def test_get_product_success(self):
@@ -42,13 +41,13 @@ class TestGetProduct(unittest.TestCase):
         """
         Prueba: product_id inválido, no se encuentra el producto.
         """
-        request = GetProductRequest(
-            product_id=999,  # product_id inválido
-        )
-        response = self.client.get_product(request)
-
-        # Verificaciones
-        self.assertIsNone(response)
+        invalid_product_id = 999
+        request = GetProductRequest(product_id=invalid_product_id)
+        try:
+            self.client.get_product(request)
+            self.fail()
+        except NotbankException:
+            pass
 
 
 if __name__ == "__main__":
