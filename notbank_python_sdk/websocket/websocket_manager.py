@@ -47,7 +47,7 @@ class WebsocketManager:
             on_close=on_close,
             on_open=on_open,
         )
-        self.thread = Thread(target=self.ws.run_forever)
+        self.thread = Thread(target=self.ws.run_forever, daemon=True)
 
     def connect(self):
         self.thread.start()
@@ -55,7 +55,7 @@ class WebsocketManager:
             self._connected_signal.get(block=True, timeout=5)
             return
         except Empty:
-            raise NotbankException(ErrorCode.CONFIGURATION_ERROR, "")
+            raise NotbankException(ErrorCode.TIMED_OUT, "unable to connect to server. connection timed out")
 
     def send(self, msg: str) -> None:
         if not self.thread.is_alive():

@@ -42,8 +42,8 @@ from notbank_python_sdk.models.report_writer_result_records import ReportWriterR
 from notbank_python_sdk.models.order import Order
 from notbank_python_sdk.models.ticker import Ticker
 from notbank_python_sdk.models.fee import Fee
-from notbank_python_sdk.models.level1_ticker import Level1Ticker
-from notbank_python_sdk.models.level2_ticker_feed import Level2TickerFeed, level_2_ticker_feed_list_from_json_str
+from notbank_python_sdk.models.level1_ticker import Level1
+from notbank_python_sdk.models.level2_ticker_feed import Level2Feed, level_2_ticker_feed_list_from_json_str
 from notbank_python_sdk.models.order_book import OrderBook, OrderBookRaw, order_book_from_raw
 from notbank_python_sdk.models.pong import Pong
 from notbank_python_sdk.models.send_order import SendOrderResponse
@@ -776,21 +776,21 @@ class NotbankClient:
     def get_level1(
         self,
         request: GetLevel1Request,
-    ) -> Level1Ticker:
+    ) -> Level1:
         """
         https://apidoc.notbank.exchange/#getlevel1
         """
         return self._get_data(
             Endpoints.GET_LEVEL1,
             request,
-            Level1Ticker
+            Level1
         )
 
     def subscribe_level_1(
             self,
             request: SubscribeLevel1Request,
-            snapshot_handler: Callable[[Level1Ticker], None],
-            update_handler: Callable[[Level1Ticker], None]):
+            snapshot_handler: Callable[[Level1], None],
+            update_handler: Callable[[Level1], None]):
         """
         https://apidoc.notbank.exchange/#subscribelevel1
         """
@@ -800,31 +800,36 @@ class NotbankClient:
             [Callback(
                 CallbackIdentifier.get(
                     WebSocketEndpoint.SUBSCRIBE_LEVEL1, request.instrument_id),
-                build_subscription_handler(snapshot_handler, lambda json_str:from_json_str(Level1Ticker, json_str))),
+                build_subscription_handler(snapshot_handler, lambda json_str:from_json_str(Level1, json_str))),
              Callback(
                 CallbackIdentifier.get(
                     WebSocketEndpoint.UPDATE_LEVEL_1, request.instrument_id),
-                build_subscription_handler(update_handler, lambda json_str:from_json_str(Level1Ticker, json_str)))],
+                build_subscription_handler(update_handler, lambda json_str:from_json_str(Level1, json_str)))],
             lambda x: None)
 
     def subscribe_level_2(
         self,
         request: SubscribeLevel2Request,
-            snapshot_handler: Callable[[List[Level2TickerFeed]], None],
-            update_handler: Callable[[List[Level2TickerFeed]], None]):
+            snapshot_handler: Callable[[List[Level2Feed]], None],
+            update_handler: Callable[[List[Level2Feed]], None]):
         """
         https://apidoc.notbank.exchange/#subscribelevel2
         """
+        instrument_id = None
+        if request.instrument_id is not None:
+            instrument_id = request.instrument_id
+        if request.symbol is not None:
+            instrument_id = self.get_instrument_id_by_symbol(request.symbol)
         self._subscribe(
             WebSocketEndpoint.SUBSCRIBE_LEVEL2,
             request,
             [Callback(
                 CallbackIdentifier.get(
-                    WebSocketEndpoint.SUBSCRIBE_LEVEL2, request.instrument_id),
+                    WebSocketEndpoint.SUBSCRIBE_LEVEL2, instrument_id),
                 build_subscription_handler(snapshot_handler, lambda json_str:level_2_ticker_feed_list_from_json_str(json_str))),
              Callback(
                 CallbackIdentifier.get(
-                    WebSocketEndpoint.UPDATE_LEVEL_2, request.instrument_id),
+                    WebSocketEndpoint.UPDATE_LEVEL_2, instrument_id),
                 build_subscription_handler(update_handler, lambda json_str:level_2_ticker_feed_list_from_json_str(json_str)))],
             lambda x: None)
 
