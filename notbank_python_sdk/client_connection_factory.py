@@ -50,7 +50,7 @@ def new_restarting_websocket_client_connection(
 ) -> ClientConnection:
     restarter = Restarter.create(
         ConnectionConfiguration(
-            url, on_open, lambda: None, on_close, on_failure, peek_message_in, peek_message_out, request_timeout)
+            url, on_open, on_close, on_failure, peek_message_in, peek_message_out, request_timeout)
     )
     restarting_websocket_connection = RestartingWebsocketConnection(restarter)
     return ClientConnection(

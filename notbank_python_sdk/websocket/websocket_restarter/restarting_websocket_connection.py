@@ -15,7 +15,7 @@ class RestartingWebsocketConnection:
         self._restarter = restarter
 
     def connect(self) -> None:
-        self._restarter._connect()
+        self._restarter.reconnect()
 
     def close(self) -> None:
         self._restarter.close()
@@ -45,9 +45,3 @@ class RestartingWebsocketConnection:
             self._restarter.get_reauther().update_authenticate_fn(
                 lambda connection: connection.authenticate_user(authenticate_request))
         return authentication_response
-
-    def connect(self) -> None:
-        return self._restarter.reconnect()
-
-    def close(self) -> None:
-        return self._restarter.close()

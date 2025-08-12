@@ -1,6 +1,6 @@
 
 
-from concurrent.futures import Executor
+from concurrent.futures import Executor, ThreadPoolExecutor, TimeoutError
 import logging
 
 from typing import Any, Optional, TypeVar
@@ -35,6 +35,7 @@ class Restarter:
 
     def __init__(
         self,
+        executor: Executor,
         connection: Optional[WebsocketConnection],
         connection_configuration: ConnectionConfiguration,
         pinger: Pinger,
@@ -45,6 +46,7 @@ class Restarter:
     ):
         self._log = logging.getLogger(__name__)
         self._log.setLevel(logging.DEBUG)
+        self._executor = executor
         self._connection = connection
         self._connection_configuration = connection_configuration
         self._pinger = pinger
@@ -55,10 +57,12 @@ class Restarter:
 
     @staticmethod
     def create(connection_configuration: ConnectionConfiguration) -> 'Restarter':
+        executor = ThreadPoolExecutor(1, "notbank restarter pool")
         return Restarter(
+            executor,
             connection=None,
             connection_configuration=connection_configuration,
-            pinger=Pinger.create(),
+            pinger=Pinger(executor, SynchedValue.create(False), 5, 5),
             resubscriber=Resubscriber(),
             reauther=Reauther(),
             requested_close=SynchedValue.create(False),
@@ -134,7 +138,7 @@ class Restarter:
             try:
                 connected_future.result(10)
                 return
-            except TimeoutError:
+            except (TimeoutError, NotbankException):
                 # try again
                 pass
 
@@ -151,5 +155,5 @@ class Restarter:
         self._connect()
         self._reauther.reauthenticate(self._connection)
         self._resubscriber.resubscribe(self._connection)
-        self._pinger.restart(self._connection, self.reconnect)
+        self._pinger.restart(self._connection.ping, self.reconnect)
         self._reconnecting.set(False)
