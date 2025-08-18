@@ -1,7 +1,6 @@
 
 
 from concurrent.futures import Executor, ThreadPoolExecutor, TimeoutError
-import logging
 
 from typing import Any, Optional, TypeVar
 from notbank_python_sdk.error import ErrorCode, NotbankException
@@ -19,11 +18,7 @@ from notbank_python_sdk.websocket.websocket_response_handler import WebsocketRes
 
 T = TypeVar('T')
 
-# TODO: check when the connection could be called and be None
-
-
 class Restarter:
-    _log: logging.Logger
     _executor: Executor
     _connection: Optional[WebsocketConnection]
     _connection_configuration: ConnectionConfiguration
@@ -44,8 +39,6 @@ class Restarter:
         requested_close: SynchedValue[bool],
         reconnecting: SynchedValue[bool],
     ):
-        self._log = logging.getLogger(__name__)
-        self._log.setLevel(logging.DEBUG)
         self._executor = executor
         self._connection = connection
         self._connection_configuration = connection_configuration

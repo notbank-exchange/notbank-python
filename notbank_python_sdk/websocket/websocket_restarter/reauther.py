@@ -1,4 +1,3 @@
-import logging
 from typing import Callable, Optional, TypeVar
 from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
 from notbank_python_sdk.websocket.websocket_connection import WebsocketConnection
@@ -7,13 +6,10 @@ T = TypeVar('T')
 
 
 class Reauther:
-    _log: logging.Logger
     _reauthenticate_connection: Callable[[
         WebsocketConnection], Optional[AuthenticateResponse]]
 
     def __init__(self):
-        self._log = logging.getLogger(__name__)
-        self._log.setLevel(logging.DEBUG)
         self._reauthenticate_connection = lambda x: None
 
     def update_authenticate_fn(self, authenticate_connection: Callable[[WebsocketConnection], Optional[AuthenticateResponse]]):

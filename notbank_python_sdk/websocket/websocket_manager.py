@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-import logging
 from queue import Empty, Queue
 from threading import Thread
 from typing import Any, Callable, Optional
@@ -19,7 +18,6 @@ class Hooks:
 
 
 class WebsocketManager:
-    _log: logging.Logger
     _uri: str
     _connected_signal: Queue
     _peek_message_out: Callable[[str], None]
@@ -33,8 +31,6 @@ class WebsocketManager:
                  host,
                  peek_message_in: Callable[[str], None] = lambda x: None,
                  peek_message_out: Callable[[str], None] = lambda x: None):
-        self._log = logging.getLogger(__name__)
-        self._log.setLevel(logging.INFO)
         self._uri = self._build_url(host)
         self._connected = SynchedValue.create(False)
         self._connected_signal = Queue(1)
@@ -46,11 +42,9 @@ class WebsocketManager:
             handler.handle(message)
 
         def on_error(ws, error):
-            self._log.error("websocket error: " + str(error))
             handler.on_error(error)
 
         def on_close(ws, code: int, message: str):
-            self._log.debug('websocket connection closed')
             handler.on_close(code, message)
 
         def on_open(ws):
