@@ -4,5 +4,5 @@ from typing import Optional
 
 @dataclass
 class GetWhitelistedAddressesRequest:
-    account_id: str
+    account_id: int
     search: Optional[str] = None

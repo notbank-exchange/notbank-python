@@ -1,11 +1,13 @@
 from decimal import Decimal
 from typing import Any, Callable, List, Optional, Type, TypeVar, Dict
+from uuid import UUID
 import simplejson as json
 from notbank_python_sdk.client_connection import ClientConnection, RequestType
 from notbank_python_sdk.core.endpoint_category import EndpointCategory
 from notbank_python_sdk.core.endpoints import Endpoints, WebSocketEndpoint
 from notbank_python_sdk.core.converter import from_json_str, to_dict, from_dict, to_nb_dict
 from notbank_python_sdk.error import ErrorCode, NotbankException
+from notbank_python_sdk.models.cbu_owner import CbuOwner
 from notbank_python_sdk.models.account_fee import AccountFee
 from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
 from notbank_python_sdk.models.bank import Banks
@@ -21,6 +23,10 @@ from notbank_python_sdk.models.document_slice import DocumentSlice
 from notbank_python_sdk.models.enums import EnumsResponse
 from notbank_python_sdk.models.activity_report import ActivityReport
 from notbank_python_sdk.models.account_trade import AccountTrade
+from notbank_python_sdk.models.quote import Quote
+from notbank_python_sdk.models.transaction import Transactions
+from notbank_python_sdk.models.url_response import UrlResponse
+from notbank_python_sdk.models.uuid_response import UuidResponse
 from notbank_python_sdk.models.withdraw_tickets import WithdrawTicket
 from notbank_python_sdk.models.deposit_ticket import DepositTicket
 from notbank_python_sdk.models.instrument import Instrument
@@ -36,8 +42,8 @@ from notbank_python_sdk.models.report_writer_result_records import ReportWriterR
 from notbank_python_sdk.models.order import Order
 from notbank_python_sdk.models.ticker import Ticker
 from notbank_python_sdk.models.fee import Fee
-from notbank_python_sdk.models.level1_ticker import Level1Ticker
-from notbank_python_sdk.models.level2_ticker_feed import Level2TickerFeed, level_2_ticker_feed_list_from_json_str
+from notbank_python_sdk.models.level1_ticker import Level1
+from notbank_python_sdk.models.level2_ticker_feed import Level2Feed, level_2_ticker_feed_list_from_json_str
 from notbank_python_sdk.models.order_book import OrderBook, OrderBookRaw, order_book_from_raw
 from notbank_python_sdk.models.pong import Pong
 from notbank_python_sdk.models.send_order import SendOrderResponse
@@ -53,6 +59,7 @@ from notbank_python_sdk.models.account_positions import AccountPosition
 from notbank_python_sdk.models.instrument_statistic import InstrumentStatistic
 from notbank_python_sdk.models.account_info import AccountInfo
 from notbank_python_sdk.models.product import Product
+from notbank_python_sdk.models.withdrawal_id_response import WithdrawalIdResponse
 from notbank_python_sdk.parsing import build_subscription_handler, parse_response_fn, parse_response_list_fn
 from notbank_python_sdk.requests_models.add_whitelisted_address_request import AddWhitelistedAddressRequest
 from notbank_python_sdk.requests_models.authenticate_request import AuthenticateRequest
@@ -61,24 +68,36 @@ from notbank_python_sdk.requests_models.cancel_order import CancelOrder
 from notbank_python_sdk.requests_models.cancel_order_request import CancelOrderRequest
 from notbank_python_sdk.requests_models.cancel_replace_order_request import CancelReplaceOrderRequest
 from notbank_python_sdk.requests_models.cancel_user_report import CancelUserReportRequest
+from notbank_python_sdk.requests_models.confirm_fiat_withdraw_request import ConfirmFiatWithdrawRequest, ConfirmFiatWithdrawRequestInternal
 from notbank_python_sdk.requests_models.confirm_whitelisted_address_request import ConfirmWhiteListedAddressRequest, ConfirmWhiteListedAddressRequestInternal
+from notbank_python_sdk.requests_models.create_direct_quote_request import CreateDirectQuoteRequest
+from notbank_python_sdk.requests_models.create_fiat_deposit_request import CreateFiatDepositRequest
+from notbank_python_sdk.requests_models.create_fiat_withdraw_request import CreateFiatWithdrawRequest
+from notbank_python_sdk.requests_models.create_inverse_quote_request import CreateInverseQuoteRequest
 from notbank_python_sdk.requests_models.delete_whitelisted_address_request import DeleteWhiteListedAddressRequest, DeleteWhiteListedAddressRequestInternal
-from notbank_python_sdk.requests_models.delete_bank_account_request import DeleteBankAccountRequest
+from notbank_python_sdk.requests_models.delete_client_bank_account_request import DeleteClientBankAccountRequest
 from notbank_python_sdk.requests_models.download_document import DownloadDocumentRequest
 from notbank_python_sdk.requests_models.download_document_slice import DownloadDocumentSliceRequest
+from notbank_python_sdk.requests_models.execute_quote_request import ExecuteQuoteRequest
 from notbank_python_sdk.requests_models.generate_pnl_activity_report import GeneratePnlActivityReportRequest
 from notbank_python_sdk.requests_models.generate_product_delta_activity_report import GenerateProductDeltaActivityReportRequest
 from notbank_python_sdk.requests_models.generate_trade_activity_report import GenerateTradeActivityReportRequest
 from notbank_python_sdk.requests_models.generate_transaction_activity_report import GenerateTransactionActivityReportRequest
 from notbank_python_sdk.requests_models.get_account_trades import GetAccountTradesRequest
 from notbank_python_sdk.requests_models.fee_request import FeeRequest
-from notbank_python_sdk.requests_models.create_bank_account_request import CreateBankAccountRequest
-from notbank_python_sdk.requests_models.get_bank_account_request import GetBankAccountRequest
-from notbank_python_sdk.requests_models.get_bank_accounts_request import GetBankAccountsRequest
+from notbank_python_sdk.requests_models.add_client_bank_account_request import AddClientBankAccountRequest
+from notbank_python_sdk.requests_models.get_client_bank_account_request import GetClientBankAccountRequest
+from notbank_python_sdk.requests_models.get_client_bank_accounts_request import GetClientBankAccountsRequest
 from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 from notbank_python_sdk.requests_models.deposit_address_request import DepositAddressRequest
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
 from notbank_python_sdk.requests_models.get_network_templates_request import GetNetworksTemplatesRequest
+from notbank_python_sdk.requests_models.get_owners_fiat_withdraw import GetOwnersFiatWithdrawRequest
+from notbank_python_sdk.requests_models.get_quote_request import GetQuoteRequest
+from notbank_python_sdk.requests_models.get_quotes_request import GetQuotesRequest
+from notbank_python_sdk.requests_models.get_transactions_request import GetTransactionsRequest
+from notbank_python_sdk.requests_models.resend_verification_code_whitelisted_address_request import ResendVerificationCodeWhitelistedAddress, ResendVerificationCodeWhitelistedAddressInternal
+from notbank_python_sdk.requests_models.transfer_funds_request import TransferFundsRequest
 from notbank_python_sdk.requests_models.update_one_step_withdraw_request import UpdateOneStepWithdrawRequest
 from notbank_python_sdk.requests_models.verification_level_config_request import VerificationLevelConfigRequest
 from notbank_python_sdk.requests_models.get_instruments_request import GetInstrumentsRequest
@@ -175,7 +194,7 @@ class NotbankClient:
         return self._client_connection.request(
             endpoint, endpoint_category, request_data_dict, parse_response_fn(response_cls, no_pascal_case, overrides=response_conversion_overrides))
 
-    def _get_nb_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], endpoint_category: EndpointCategory = EndpointCategory.AP) -> T2:
+    def _get_nb_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], endpoint_category: EndpointCategory = EndpointCategory.NB) -> T2:
         request_data_dict = to_nb_dict(request_data)
         return self._client_connection.request(
             endpoint, endpoint_category, request_data_dict, parse_response_fn(response_cls, no_pascal_case, from_pascal_case=False))
@@ -328,6 +347,22 @@ class NotbankClient:
             GetProductsRequest(),
             Product,
         )
+
+    def get_product_by_symbol(self, symbol: str) -> Product:
+        product = self._notbank_client_cache.get_product(symbol)
+        if product is not None:
+            return product
+        products = self.get_products()
+        self._notbank_client_cache.update_products(products)
+        product = self._notbank_client_cache.get_product(symbol)
+        if product is not None:
+            return product
+        raise NotbankException(
+            ErrorCode.RESOURCE_NOT_FOUND,
+            "no instrument found for symbol: {}".format(symbol))
+
+    def get_product_id_by_symbol(self, symbol: str) -> int:
+        return self.get_product_by_symbol(symbol).product_id
 
     def get_verification_level_config(
         self,
@@ -741,21 +776,21 @@ class NotbankClient:
     def get_level1(
         self,
         request: GetLevel1Request,
-    ) -> Level1Ticker:
+    ) -> Level1:
         """
         https://apidoc.notbank.exchange/#getlevel1
         """
         return self._get_data(
             Endpoints.GET_LEVEL1,
             request,
-            Level1Ticker
+            Level1
         )
 
     def subscribe_level_1(
             self,
             request: SubscribeLevel1Request,
-            snapshot_handler: Callable[[Level1Ticker], None],
-            update_handler: Callable[[Level1Ticker], None]):
+            snapshot_handler: Callable[[Level1], None],
+            update_handler: Callable[[Level1], None]):
         """
         https://apidoc.notbank.exchange/#subscribelevel1
         """
@@ -765,31 +800,36 @@ class NotbankClient:
             [Callback(
                 CallbackIdentifier.get(
                     WebSocketEndpoint.SUBSCRIBE_LEVEL1, request.instrument_id),
-                build_subscription_handler(snapshot_handler, lambda json_str:from_json_str(Level1Ticker, json_str))),
+                build_subscription_handler(snapshot_handler, lambda json_str:from_json_str(Level1, json_str))),
              Callback(
                 CallbackIdentifier.get(
                     WebSocketEndpoint.UPDATE_LEVEL_1, request.instrument_id),
-                build_subscription_handler(update_handler, lambda json_str:from_json_str(Level1Ticker, json_str)))],
+                build_subscription_handler(update_handler, lambda json_str:from_json_str(Level1, json_str)))],
             lambda x: None)
 
     def subscribe_level_2(
         self,
         request: SubscribeLevel2Request,
-            snapshot_handler: Callable[[List[Level2TickerFeed]], None],
-            update_handler: Callable[[List[Level2TickerFeed]], None]):
+            snapshot_handler: Callable[[List[Level2Feed]], None],
+            update_handler: Callable[[List[Level2Feed]], None]):
         """
         https://apidoc.notbank.exchange/#subscribelevel2
         """
+        instrument_id = None
+        if request.instrument_id is not None:
+            instrument_id = request.instrument_id
+        if request.symbol is not None:
+            instrument_id = self.get_instrument_id_by_symbol(request.symbol)
         self._subscribe(
             WebSocketEndpoint.SUBSCRIBE_LEVEL2,
             request,
             [Callback(
                 CallbackIdentifier.get(
-                    WebSocketEndpoint.SUBSCRIBE_LEVEL2, request.instrument_id),
+                    WebSocketEndpoint.SUBSCRIBE_LEVEL2, instrument_id),
                 build_subscription_handler(snapshot_handler, lambda json_str:level_2_ticker_feed_list_from_json_str(json_str))),
              Callback(
                 CallbackIdentifier.get(
-                    WebSocketEndpoint.UPDATE_LEVEL_2, request.instrument_id),
+                    WebSocketEndpoint.UPDATE_LEVEL_2, instrument_id),
                 build_subscription_handler(update_handler, lambda json_str:level_2_ticker_feed_list_from_json_str(json_str)))],
             lambda x: None)
 
@@ -842,7 +882,8 @@ class NotbankClient:
     def subscribe_trades(
             self,
             request: SubscribeTradesRequest,
-            handler: Callable[[List[PublicTrade]], None]):
+            snapshot_handler: Callable[[List[PublicTrade]], None],
+            update_handler: Callable[[List[PublicTrade]], None]):
         """
         https://apidoc.notbank.exchange/#subscribetrades
         """
@@ -852,7 +893,11 @@ class NotbankClient:
             [Callback(
                 CallbackIdentifier.get(
                     WebSocketEndpoint.SUBSCRIBE_TRADES, request.instrument_id),
-                build_subscription_handler(handler, lambda json_str: public_trade_list_from_json_str(json_str)))],
+                build_subscription_handler(snapshot_handler, lambda json_str: public_trade_list_from_json_str(json_str))),
+             Callback(
+                CallbackIdentifier.get(
+                    WebSocketEndpoint.UPDATE_TRADES, request.instrument_id),
+                build_subscription_handler(update_handler, lambda json_str: public_trade_list_from_json_str(json_str)))],
             lambda x: None)
 
     def subscribe_order_state_events(
@@ -865,10 +910,10 @@ class NotbankClient:
         """
         if request.instrument_id is None:
             callback_id = CallbackIdentifier.get(
-                WebSocketEndpoint.SUBSCRIBE_ORDER_STATE_EVENTS, request.account_id)
+                WebSocketEndpoint.ACCOUNT_EVENT_ORDER_STATE, request.account_id)
         else:
             callback_id = CallbackIdentifier.get(
-                WebSocketEndpoint.SUBSCRIBE_ORDER_STATE_EVENTS, request.account_id, request.instrument_id)
+                WebSocketEndpoint.ACCOUNT_EVENT_ORDER_STATE, request.account_id, request.instrument_id)
         self._subscribe(
             WebSocketEndpoint.SUBSCRIBE_ORDER_STATE_EVENTS,
             request,
@@ -998,6 +1043,8 @@ class NotbankClient:
         self._unsubscribe(WebSocketEndpoint.UNSUBSCRIBE_TRADES, request, [
             CallbackIdentifier.get(
                 WebSocketEndpoint.SUBSCRIBE_TRADES, request.instrument_id),
+            CallbackIdentifier.get(
+                WebSocketEndpoint.UPDATE_TRADES, request.instrument_id),
         ],
             lambda x: None)
 
@@ -1007,10 +1054,10 @@ class NotbankClient:
         """
         if request.instrument_id is None:
             callback_id = CallbackIdentifier.get(
-                WebSocketEndpoint.SUBSCRIBE_ORDER_STATE_EVENTS, request.account_id)
+                WebSocketEndpoint.ACCOUNT_EVENT_ORDER_STATE, request.account_id)
         else:
             callback_id = CallbackIdentifier.get(
-                WebSocketEndpoint.SUBSCRIBE_ORDER_STATE_EVENTS, request.account_id, request.instrument_id)
+                WebSocketEndpoint.ACCOUNT_EVENT_ORDER_STATE, request.account_id, request.instrument_id)
         self._unsubscribe(
             WebSocketEndpoint.UNSUBSCRIBE_TICKER,
             request,
@@ -1259,9 +1306,9 @@ class NotbankClient:
             request_type=RequestType.GET
         )
 
-    def create_bank_account(self, request: CreateBankAccountRequest) -> BankAccount:
+    def add_client_bank_account(self, request: AddClientBankAccountRequest) -> BankAccount:
         """
-        https://apidoc.notbank.exchange/?http#createbankaccount
+        https://apidoc.notbank.exchange/#addclientbankaccount
         """
         return self._get_nb_data(
             Endpoints.BANK_ACCOUNTS,
@@ -1270,37 +1317,41 @@ class NotbankClient:
             endpoint_category=EndpointCategory.NB,
         )
 
-    def get_bank_account(self, request: GetBankAccountRequest) -> BankAccount:
+    def get_client_bank_account(self, request: GetClientBankAccountRequest) -> BankAccount:
         """
-        https://apidoc.notbank.exchange/?http#getbankaccount
+        https://apidoc.notbank.exchange/#getclientbankaccount
         """
         return self._client_connection.request(
-            endpoint=Endpoints.BANK_ACCOUNTS + "/" + request.bank_account_id,
+            endpoint=Endpoints.BANK_ACCOUNTS +
+            "/" + str(request.bank_account_id),
             endpoint_category=EndpointCategory.NB,
             request_data=None,
-            parse_response_fn=parse_response_fn(BankAccount, from_pascal_case=False),
+            parse_response_fn=parse_response_fn(
+                BankAccount, from_pascal_case=False),
             request_type=RequestType.GET
 
         )
 
-    def get_bank_accounts(self, request: GetBankAccountsRequest) -> BankAccounts:
+    def get_client_bank_accounts(self, request: GetClientBankAccountsRequest) -> BankAccounts:
         """
-        https://apidoc.notbank.exchange/?http#getbankaccounts
+        https://apidoc.notbank.exchange/#getclientbankaccounts
         """
         return self._client_connection.request(
             endpoint=Endpoints.BANK_ACCOUNTS,
             endpoint_category=EndpointCategory.NB_PAGE,
-            request_data=request,
-            parse_response_fn=parse_response_fn(BankAccounts, from_pascal_case=False),
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                BankAccounts, from_pascal_case=False),
             request_type=RequestType.GET
         )
 
-    def delete_bank_account(self, request: DeleteBankAccountRequest) -> None:
+    def delete_client_bank_account(self, request: DeleteClientBankAccountRequest) -> None:
         """
-        https://apidoc.notbank.exchange/?http#getbankaccount
+        https://apidoc.notbank.exchange/#deleteclientbankaccount
         """
         return self._client_connection.request(
-            endpoint=Endpoints.BANK_ACCOUNTS + "/" + request.bank_account_id,
+            endpoint=Endpoints.BANK_ACCOUNTS +
+            "/" + str(request.bank_account_id),
             endpoint_category=EndpointCategory.NB,
             request_data=None,
             parse_response_fn=lambda x: None,
@@ -1312,10 +1363,11 @@ class NotbankClient:
         https://apidoc.notbank.exchange/?http#getnetworkstemplates
         """
         return self._client_connection.request(
-            endpoint=Endpoints.BANK_ACCOUNTS,
+            endpoint=Endpoints.GET_NETWORK_TEMPLATES,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=parse_response_list_fn(CurrencyNetworkTemplates, from_pascal_case=False),
+            parse_response_fn=parse_response_list_fn(
+                CurrencyNetworkTemplates, from_pascal_case=False),
             request_type=RequestType.GET
         )
 
@@ -1350,11 +1402,12 @@ class NotbankClient:
             endpoint=Endpoints.WHITELISTED_ADDRESSES,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=parse_response_list_fn(Address, from_pascal_case=False),
+            parse_response_fn=parse_response_list_fn(
+                Address, from_pascal_case=False),
             request_type=RequestType.GET
         )
 
-    def add_whitelisted_addresses(self, request: AddWhitelistedAddressRequest) -> str:
+    def add_whitelisted_addresses(self, request: AddWhitelistedAddressRequest) -> UUID:
         """
         https://apidoc.notbank.exchange/?http#addwhitelistedaddress
         """
@@ -1366,15 +1419,30 @@ class NotbankClient:
 
     def confirm_whitelisted_address(self, request: ConfirmWhiteListedAddressRequest) -> None:
         """
-        https://apidoc.notbank.exchange/?http#addwhitelistedaddress
+        https://apidoc.notbank.exchange/?http#confirmwhitelistedaddress
         """
         return self._client_connection.request(
-            endpoint=Endpoints.WHITELISTED_ADDRESSES + "/" + request.whitelisted_address_id,
+            endpoint=Endpoints.WHITELISTED_ADDRESSES +
+            "/" + str(request.whitelisted_address_id) + "/verification",
             endpoint_category=EndpointCategory.NB,
-            request_data=ConfirmWhiteListedAddressRequestInternal(
-                request.code),
+            request_data=to_nb_dict(ConfirmWhiteListedAddressRequestInternal(
+                request.account_id, request.sms_code)),
             parse_response_fn=lambda x: None,
             request_type=RequestType.POST
+        )
+
+    def resend_verification_code_whitelisted_address(self, request: ResendVerificationCodeWhitelistedAddress) -> None:
+        """
+        https://apidoc.notbank.exchange/#resendverificationcodewhitelistedaddress
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.WHITELISTED_ADDRESSES +
+            "/" + str(request.whitelisted_address_id) + "/verification",
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(
+                ResendVerificationCodeWhitelistedAddressInternal(request.account_id)),
+            parse_response_fn=lambda x: None,
+            request_type=RequestType.GET
         )
 
     def delete_whitelisted_address(self, request: DeleteWhiteListedAddressRequest) -> None:
@@ -1382,10 +1450,11 @@ class NotbankClient:
         https://apidoc.notbank.exchange/?http#deletewhitelistedaddress
         """
         return self._client_connection.request(
-            endpoint=Endpoints.WHITELISTED_ADDRESSES + "/" + request.whitelisted_address_id,
+            endpoint=Endpoints.WHITELISTED_ADDRESSES +
+            "/" + str(request.whitelisted_address_id),
             endpoint_category=EndpointCategory.NB,
-            request_data=DeleteWhiteListedAddressRequestInternal(
-                str(request.account_id), request.otp),
+            request_data=to_nb_dict(DeleteWhiteListedAddressRequestInternal(
+                account_id=request.account_id, otp=request.otp)),
             parse_response_fn=lambda x: None,
             request_type=RequestType.DELETE
         )
@@ -1402,7 +1471,7 @@ class NotbankClient:
             request_type=RequestType.POST
         )
 
-    def create_crypto_withdraw(self, request: CreateCryptoWithdrawRequest) -> str:
+    def create_crypto_withdraw(self, request: CreateCryptoWithdrawRequest) -> UUID:
         """
         https://apidoc.notbank.exchange/?http#createcriptowithdraw
         """
@@ -1410,6 +1479,148 @@ class NotbankClient:
             endpoint=Endpoints.CREATE_CRIPTO_WITHDRAW,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=lambda x: x,
+            parse_response_fn=lambda x: UUID(x),
+            request_type=RequestType.POST
+        )
+
+    def create_fiat_deposit(self, request: CreateFiatDepositRequest) -> Optional[str]:
+        """
+        https://apidoc.notbank.exchange/#createfiatdeposit
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.FIAT_DEPOSIT,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                UrlResponse, from_pascal_case=False),
+            request_type=RequestType.POST
+        ).url
+
+    def get_owners_fiat_withdraw(self, request: GetOwnersFiatWithdrawRequest) -> List[CbuOwner]:
+        """
+        https://apidoc.notbank.exchange/#getownersfiatwithdraw
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.GET_OWNERS_FIAT_WITHDRAW,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_list_fn(
+                CbuOwner, from_pascal_case=False),
+            request_type=RequestType.GET
+        )
+
+    def create_fiat_withdraw(self, request: CreateFiatWithdrawRequest) -> Optional[str]:
+        """
+        https://apidoc.notbank.exchange/#getownersfiatwithdraw
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.FIAT_WITHDRAW,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                WithdrawalIdResponse, from_pascal_case=False),
+            request_type=RequestType.POST
+        ).withdrawal_id
+
+    def confirm_fiat_withdraw(self, request: ConfirmFiatWithdrawRequest) -> None:
+        """
+        https://apidoc.notbank.exchange/#confirmfiatwithdraw
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.FIAT_WITHDRAW+"/"+str(request.withdrawal_id),
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(
+                ConfirmFiatWithdrawRequestInternal(request.attempt_code)),
+            parse_response_fn=lambda x: None,
+            request_type=RequestType.POST
+        )
+
+    def transfer_funds(self, request: TransferFundsRequest) -> UUID:
+        """
+        https://apidoc.notbank.exchange/#transferfunds
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.TRANSFER_FUNDS,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=lambda x: UUID(x),
+            request_type=RequestType.POST
+        )
+
+    def get_transactions(self, request: GetTransactionsRequest) -> Transactions:
+        """
+        https://apidoc.notbank.exchange/#gettransactions
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.GET_TRANSACTIONS,
+            endpoint_category=EndpointCategory.NB_PAGE,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                Transactions, from_pascal_case=False),
+            request_type=RequestType.GET
+        )
+
+    def get_quotes(self, request: GetQuotesRequest) -> List[Quote]:
+        """
+        https://apidoc.notbank.exchange/#getquotes
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.QUOTES,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_list_fn(
+                Quote, from_pascal_case=False),
+            request_type=RequestType.GET
+        )
+
+    def create_direct_quote(self, request: CreateDirectQuoteRequest) -> UUID:
+        """
+        https://apidoc.notbank.exchange/#createdirectquote
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.QUOTES_DIRECT,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                UuidResponse, from_pascal_case=False),
+            request_type=RequestType.POST
+        ).id
+
+    def create_inverse_quote(self, request: CreateInverseQuoteRequest) -> UUID:
+        """
+        https://apidoc.notbank.exchange/#createinversequote
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.QUOTES_INVERSE,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                UuidResponse, from_pascal_case=False),
+            request_type=RequestType.POST
+        ).id
+
+    def get_quote(self, request: GetQuoteRequest) -> Quote:
+        """
+        https://apidoc.notbank.exchange/#getquote
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.QUOTES+"/"+str(request.quote_id),
+            endpoint_category=EndpointCategory.NB,
+            request_data=None,
+            parse_response_fn=parse_response_fn(
+                Quote, from_pascal_case=False),
+            request_type=RequestType.GET
+        )
+
+    def execute_quote(self, request: ExecuteQuoteRequest) -> Quote:
+        """
+        https://apidoc.notbank.exchange/#executequote
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.QUOTES+"/"+str(request.quote_id),
+            endpoint_category=EndpointCategory.NB,
+            request_data=None,
+            parse_response_fn=parse_response_fn(
+                Quote, from_pascal_case=False),
             request_type=RequestType.POST
         )

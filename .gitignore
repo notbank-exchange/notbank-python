@@ -370,6 +370,5 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,visualstudiocode,python,macos,pycharm+all
 
-local_notes.md
+local-notes.md
 keys.json
-.todo.md

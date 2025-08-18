@@ -1,6 +1,10 @@
 from dataclasses import dataclass
+from decimal import Decimal
 from enum import Enum
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+
+import requests
+from notbank_python_sdk.core.ap_data_handler import ApDataHandler
 
 from notbank_python_sdk.core.endpoint_category import EndpointCategory
 from notbank_python_sdk.error import ErrorCode, NotbankException, StandardErrorResponse
@@ -24,16 +28,17 @@ class NBResponse(Generic[T]):
 
 class ResponseHandler:
     @staticmethod
-    def handle_response_data(endpoint_category: EndpointCategory, parse_response: Callable[[Any], T], response_data: Data) -> T:
+    def handle_response(endpoint_category: EndpointCategory, parse_response: Callable[[Any], T], response: requests.Response) -> T:
         if endpoint_category == EndpointCategory.AP:
-            return ResponseHandler.handle_ap_response_data(parse_response, response_data)
+            return ResponseHandler.handle_ap_response(parse_response, response)
         if endpoint_category == EndpointCategory.NB or endpoint_category == EndpointCategory.NB_PAGE:
-            return ResponseHandler.handle_nb_response_data(response_data, parse_response, endpoint_category)
+            return ResponseHandler.handle_nb_response(response, parse_response, endpoint_category)
         raise NotbankException(ErrorCode.CONFIGURATION_ERROR,
                                f"unable to handle server response. handler for endpoint category {endpoint_category} not set")
 
     @staticmethod
-    def handle_nb_response_data(response_data: Data, parse_response: Callable[[Any], T], endpoint_category: EndpointCategory) -> T:
+    def handle_nb_response(response: requests.Response, parse_response: Callable[[Any], T], endpoint_category: EndpointCategory) -> T:
+        response_data = ResponseHandler.get_response_data(response)
         try:
             nb_response = dacite_from_dict(
                 NBResponse,
@@ -41,7 +46,8 @@ class ResponseHandler:
                 config=Config(cast=[Enum]))
             if nb_response.status is NBResponseStatus.ERROR:
                 error_message = nb_response.message if nb_response.message else ""
-                raise NotbankException(ErrorCode.SERVER_ERROR, error_message)
+                raise NotbankException(
+                    ErrorCode.SERVER_ERROR, f"(http code={response.status_code}) {error_message}")
             data = response_data
             if endpoint_category == EndpointCategory.NB:
                 data = nb_response.data
@@ -52,19 +58,19 @@ class ResponseHandler:
                 f"notbank sdk badly configured. {e}")
 
     @staticmethod
-    def handle_ap_response_data(parse_response: Callable[[Data], T], response_data: Data) -> T:
-        try:
-            standard_response = dacite_from_dict(
-                StandardErrorResponse,
-                response_data,
-                config=Config(cast=[Enum]))
-            if standard_response.result is False:
-                raise NotbankException.create(standard_response)
-        except MissingValueError:
-            pass
-        try:
-            return parse_response(response_data)
-        except MissingValueError as e:
+    def handle_ap_response(parse_response: Callable[[Data], T], response: requests.Response) -> T:
+        if response.status_code < 200 or 400 <= response.status_code:
             raise NotbankException(
-                ErrorCode.CONFIGURATION_ERROR,
-                f"notbank sdk badly configured. {e}")
+                ErrorCode.SERVER_ERROR,
+                f"http error. (code={response.status_code}) {response.text}")
+        response_data = ResponseHandler.get_response_data(response)
+        return ApDataHandler.handle_ap_data(parse_response, response_data)
+
+    @staticmethod
+    def get_response_data(response: requests.Response):
+        try:
+            return response.json(parse_float=lambda str_float: Decimal(str_float))
+        except requests.JSONDecodeError as e:
+            raise NotbankException(
+                ErrorCode.INVALID_RESPONSE,
+                f"unable to decode json response: {response.text}. {e}")

@@ -1,5 +1,6 @@
 import simplejson as json
 from typing import Any, Callable, Optional
+from notbank_python_sdk.core.ap_data_handler import ApDataHandler
 from notbank_python_sdk.core.endpoints import Endpoints
 from notbank_python_sdk.models.authenticate_response import AuthenticateResponse
 from notbank_python_sdk.models.pong import Pong
@@ -20,7 +21,7 @@ from notbank_python_sdk.websocket.websocket_requester import WebsocketRequester
 from notbank_python_sdk.websocket.websocket_response_handler import WebsocketResponseHandler
 
 
-class WebsocketClientConnection:
+class WebsocketConnection:
     _callback_manager: CallbackManager
     _websocket_manager: WebsocketManager
     _websocket_requester: WebsocketRequester
@@ -45,7 +46,7 @@ class WebsocketClientConnection:
                peek_message_in: Callable[[str], None] = lambda x: None,
                peek_message_out: Callable[[str], None] = lambda x: None,
                request_timeout: Optional[float] = None,
-               ) -> 'WebsocketClientConnection':
+               ) -> 'WebsocketConnection':
         callback_manager = CallbackManager.create()
         response_handler = WebsocketResponseHandler.create(
             callback_manager,
@@ -68,7 +69,7 @@ class WebsocketClientConnection:
         websocket_response_handler = WebsocketResponseHandler.create(
             callback_manager,
             on_failure)
-        return WebsocketClientConnection(
+        return WebsocketConnection(
             callback_manager,
             websocket_manager,
             websocket_requester,
@@ -119,4 +120,4 @@ class WebsocketClientConnection:
         if result.is_left():
             raise result.get_left()
         data_dict = json.loads(result.get(), use_decimal=True)
-        return ResponseHandler.handle_response_data(EndpointCategory.AP, parse_response_fn, data_dict)
+        return ApDataHandler.handle_ap_data(parse_response_fn, data_dict)

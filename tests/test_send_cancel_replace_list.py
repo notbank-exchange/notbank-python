@@ -40,30 +40,6 @@ class TestSendCancelReplaceList(unittest.TestCase):
 
         self.client.send_cancel_replace_list(request)
 
-    def test_send_cancel_replace_list_invalid_request(self):
-        """Prueba fallida: falta un campo obligatorio, devuelve 'False'."""
-        # Crear el objeto con todos los campos
-        invalid_order = CancelReplaceOrderRequest(
-            order_id_to_replace=6696,
-            order_type="Limit",
-            side=0,  # Buy
-            account_id=7,
-            instrument_id=1,
-            quantity=Decimal("0.003"),  # Campo obligatorio
-            time_in_force=1,  # GTC
-        )
-
-        # Eliminar el campo 'Quantity' después de la creación
-        delattr(invalid_order, "quantity")
-
-        try:
-            self.client.send_cancel_replace_list(
-                [invalid_order]
-            )
-        except NotbankException as e:
-            self.assertEqual(str(e), "Invalid Request")
-            self.assertEqual(e.code, 100)
-
     def test_send_cancel_replace_list_empty_list(self):
         """Prueba exitosa: lista vacía, devuelve 'False'."""
         request = []

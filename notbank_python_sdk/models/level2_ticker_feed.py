@@ -9,7 +9,7 @@ import simplejson as json
 
 
 @dataclass
-class Level2TickerFeed:
+class Level2Feed:
     market_data_update_id: int
     number_of_accounts: int
     action_date_time: int
@@ -22,8 +22,8 @@ class Level2TickerFeed:
     side: int
 
 
-def level2_ticker_feed_from_list(json_list: List[Any]) -> Level2TickerFeed:
-    return Level2TickerFeed(
+def level2_ticker_feed_from_list(json_list: List[Any]) -> Level2Feed:
+    return Level2Feed(
         market_data_update_id=json_list[0],
         number_of_accounts=json_list[1],
         action_date_time=json_list[2],
@@ -37,7 +37,7 @@ def level2_ticker_feed_from_list(json_list: List[Any]) -> Level2TickerFeed:
     )
 
 
-def level_2_ticker_feed_list_from_json_str(json_str: str) -> Either[NotbankException, List[Level2TickerFeed]]:
+def level_2_ticker_feed_list_from_json_str(json_str: str) -> Either[NotbankException, List[Level2Feed]]:
     try:
         json_list = json.loads(json_str, use_decimal=True)
         return Either.right([level2_ticker_feed_from_list(item) for item in json_list])

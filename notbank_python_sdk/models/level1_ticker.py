@@ -4,7 +4,7 @@ from typing import Optional
 
 
 @dataclass
-class Level1Ticker:
+class Level1:
     oms_id: int
     instrument_id: int
     best_bid: Decimal

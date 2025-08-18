@@ -9,5 +9,6 @@ class Address:
     label: str
     network: str
     address: str
-    memo: Optional[str]
     verified: bool
+    provider_id: int
+    memo: Optional[str] = None
