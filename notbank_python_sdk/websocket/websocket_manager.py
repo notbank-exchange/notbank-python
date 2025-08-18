@@ -92,7 +92,7 @@ class WebsocketManager:
             self._ws.close()
             self._connected.set(False)
         except Exception as e:
-            self._log.error("unable to close socket: " + str(e))
+            self._hooks.on_error(self._ws, e)
         if self._thread is None:
             return
         self._thread.join(5)
