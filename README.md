@@ -29,7 +29,7 @@ from notbank_python_sdk.error import NotbankException
 from notbank_python_sdk.notbank_client import NotbankClient
 
 try:
-    # an rest client via http
+    # a rest client via http
     rest_connection = new_rest_client_connection()
     client = NotbankClient(rest_connection)
 except NotbankException as e:
@@ -124,3 +124,31 @@ else:
 # close client
 client.close()
 ```
+
+### websocket 
+There are two websocket clients, and can be instanced with the functions `new_websocket_client_connection` and `new_restarting_websocket_client_connection`. 
+
+The restarting websocket will reconnect forever when the connection goes down unexpectedly, re-authenticating if it was authenticated, and re-subscribing to already stablished subscriptions. While reconnecting, calls to the websocket will throw.
+```python
+from notbank_python_sdk.requests_models import *
+from notbank_python_sdk.client_connection_factory import new_websocket_client_connection, new_restarting_websocket_client_connection
+from notbank_python_sdk.error import NotbankException
+from notbank_python_sdk.notbank_client import NotbankClient
+
+try:
+    # a websocket client
+    websocket_connection = new_websocket_client_connection()
+    client = NotbankClient(websocket_connection)
+except NotbankException as e:
+    print(e)
+
+
+
+try:
+    # a restarting websocket client
+    restarting_websocket_connection = new_restarting_websocket_client_connection()
+    client = NotbankClient(restarting_websocket_connection)
+except NotbankException as e:
+    print(e)
+```
+

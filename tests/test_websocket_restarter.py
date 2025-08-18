@@ -5,12 +5,9 @@ import unittest
 
 from notbank_python_sdk.client_connection_factory import new_restarting_websocket_client_connection as create_restarting_websocket_client_connection
 from notbank_python_sdk.requests_models.authenticate_request import AuthenticateRequest
-from notbank_python_sdk.requests_models.get_account_positions_request import GetAccountPositionsRequest
-from notbank_python_sdk.requests_models.subscribe_level1_request import SubscribeLevel1Request
-from notbank_python_sdk.requests_models.subscribe_level2_request import SubscribeLevel2Request
-from notbank_python_sdk.requests_models.unsubscribe_level1_request import UnsubscribeLevel1Request
+
 from notbank_python_sdk.notbank_client import NotbankClient
-from tests.test_helper import CallMarker, load_credentials, new_websocket_client_connection, TEST_URL
+from tests.test_helper import load_credentials, TEST_URL
 
 
 def new_restarting_websocket_client_connection():

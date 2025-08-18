@@ -62,7 +62,7 @@ class Restarter:
             executor,
             connection=None,
             connection_configuration=connection_configuration,
-            pinger=Pinger(executor, SynchedValue.create(False), 5, 5),
+            pinger=Pinger(executor, SynchedValue.create(False), 10, 5),
             resubscriber=Resubscriber(),
             reauther=Reauther(),
             requested_close=SynchedValue.create(False),
