@@ -128,7 +128,7 @@ client.close()
 ### websocket 
 There are two websocket clients, and can be instanced with the functions `new_websocket_client_connection` and `new_restarting_websocket_client_connection`. 
 
-The restarting websocket will reconnect forever when the connection goes down unexpectedly, re-authenticating if it was authenticated, and re-subscribing to already stablished subscriptions. While reconnecting, calls to the websocket will throw.
+The restarting websocket will reconnect forever when the connection goes down unexpectedly, re-authenticating if it was authenticated, and re-subscribing to already stablished subscriptions. While reconnecting, calls to the websocket will throw. For subscriptions, reconnection will call again the snapshot hooks.
 ```python
 from notbank_python_sdk.requests_models import *
 from notbank_python_sdk.client_connection_factory import new_websocket_client_connection, new_restarting_websocket_client_connection

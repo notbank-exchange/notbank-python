@@ -14,8 +14,11 @@ def _get_not_implemented(method_name: str, client_name: str) -> Callable[..., No
     return _not_implemented
 
 
+API_NOTBANK_EXCHANGE = "api.notbank.exchange"
+
+
 def new_websocket_client_connection(
-    url: str = "api.notbank.exchange",
+    url: str = API_NOTBANK_EXCHANGE,
     on_open: Callable[[], None] = lambda: None,
     on_close: Callable[[Any, str], None] = lambda code, message: None,
     on_failure: Callable[[Exception], None] = lambda e: None,
@@ -40,7 +43,7 @@ def new_websocket_client_connection(
 
 
 def new_restarting_websocket_client_connection(
-    url: str = "api.notbank.exchange",
+    url: str = API_NOTBANK_EXCHANGE,
     on_open: Callable[[], None] = lambda: None,
     on_close: Callable[[Any, str], None] = lambda code, message: None,
     on_failure: Callable[[Exception], None] = lambda e: None,
@@ -67,9 +70,10 @@ def new_restarting_websocket_client_connection(
 
 
 def new_rest_client_connection(
-    url: str = "api.notbank.exchange",
+    url: str = API_NOTBANK_EXCHANGE,
     peek_message_in: Callable[[str], None] = lambda a: None,
-    peek_message_out: Callable[[str, Any, Any, str, dict], None] = lambda a, b, c, d, e: None,
+    peek_message_out: Callable[[str, Any, Any, str,
+                                dict], None] = lambda a, b, c, d, e: None,
 ) -> ClientConnection:
     rest_client_connection = RestClientConnection(
         url, peek_message_in=peek_message_in, peek_message_out=peek_message_out)
