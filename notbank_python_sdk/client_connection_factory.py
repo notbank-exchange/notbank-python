@@ -2,8 +2,9 @@ from typing import Any, Callable, Optional
 
 from notbank_python_sdk.client_connection import ClientConnection
 from notbank_python_sdk.rest.rest_client_connection import RestClientConnection
-from notbank_python_sdk.websocket.websocket_restarter.restarter import ConnectionConfiguration, Restarter
+from notbank_python_sdk.websocket.connection_configuration import ConnectionConfiguration
 from notbank_python_sdk.websocket.websocket_connection import WebsocketConnection
+from notbank_python_sdk.websocket.websocket_restarter.restarter import Restarter
 from notbank_python_sdk.websocket.websocket_restarter.restarting_websocket_connection import RestartingWebsocketConnection
 
 
