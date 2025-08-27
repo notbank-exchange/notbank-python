@@ -76,6 +76,7 @@ setuptools.setup(
         "notbank_python_sdk.requests_models",
         "notbank_python_sdk.rest",
         "notbank_python_sdk.websocket",
+        "notbank_python_sdk.websocket.websocket_restarter",
     ],
     include_package_data=True,
     description="Notbank API client library",
