@@ -7,6 +7,8 @@ from notbank_python_sdk.requests_models.cancel_order import *
 from notbank_python_sdk.requests_models.cancel_replace_order_request import *
 from notbank_python_sdk.requests_models.cancel_user_report import *
 from notbank_python_sdk.requests_models.confirm_whitelisted_address_request import *
+from notbank_python_sdk.requests_models.create_fiat_deposit_request import *
+from notbank_python_sdk.requests_models.create_fiat_withdraw_request import *
 from notbank_python_sdk.requests_models.add_client_bank_account_request import *
 from notbank_python_sdk.requests_models.create_crypto_withdraw_request import *
 from notbank_python_sdk.requests_models.delete_client_bank_account_request import *
@@ -84,3 +86,13 @@ from notbank_python_sdk.requests_models.user_devices import *
 from notbank_python_sdk.requests_models.verification_level_config_request import *
 from notbank_python_sdk.requests_models.web_authenticate_user_request import *
 from notbank_python_sdk.requests_models.with_oms_id import *
+from notbank_python_sdk.requests_models.create_inverse_quote_request import *
+from notbank_python_sdk.requests_models.resend_verification_code_whitelisted_address_request import *
+from notbank_python_sdk.requests_models.get_owners_fiat_withdraw import *
+from notbank_python_sdk.requests_models.get_quote_request import *
+from notbank_python_sdk.requests_models.transfer_funds_request import *
+from notbank_python_sdk.requests_models.get_quotes_request import *
+from notbank_python_sdk.requests_models.create_direct_quote_request import *
+from notbank_python_sdk.requests_models.get_transactions_request import *
+from notbank_python_sdk.requests_models.execute_quote_request import *
+from notbank_python_sdk.requests_models.confirm_fiat_withdraw_request import *
