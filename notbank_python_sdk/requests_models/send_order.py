@@ -77,6 +77,7 @@ class SendOrderRequestInternal:
     limit_offset: Optional[Decimal] = None
     display_quantity: Optional[int] = None
     value: Optional[Decimal] = None
+    post_only: Optional[bool] = None
 
     @staticmethod
     def from_send_order_request(order_request: SendOrderRequest) -> 'SendOrderRequestInternal':
