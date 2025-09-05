@@ -19,6 +19,8 @@ class SubscriptionCallbacks:
         if callback is not None:
             return callback
         last_suffix_start = callback_id.rfind("_")
+        if last_suffix_start == -1:
+            return None
         reduced_callback_id = callback_id[0:last_suffix_start]
         return self._callbacks.get(reduced_callback_id)
 
