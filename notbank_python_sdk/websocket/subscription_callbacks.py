@@ -15,7 +15,12 @@ class SubscriptionCallbacks:
         self._callbacks[callback_id] = handler
 
     def get(self, callback_id: str) -> Optional[Callable[[str], None]]:
-        return self._callbacks.get(callback_id)
+        callback = self._callbacks.get(callback_id)
+        if callback is not None:
+            return callback
+        last_suffix_start = callback_id.rfind("_")
+        reduced_callback_id = callback_id[0:last_suffix_start]
+        return self._callbacks.get(reduced_callback_id)
 
     def remove(self, callback_id: str) -> None:
         if callback_id in self._callbacks:
