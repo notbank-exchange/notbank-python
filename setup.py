@@ -68,7 +68,7 @@ test_requirements = [
 
 setuptools.setup(
     name="notbank",
-    version="2.0.3",
+    version="2.1.0",
     packages=[
         "notbank_python_sdk",
         "notbank_python_sdk.core",
