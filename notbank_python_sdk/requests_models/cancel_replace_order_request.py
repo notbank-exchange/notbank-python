@@ -22,3 +22,4 @@ class CancelReplaceOrderRequest(WithOMSId):
     time_in_force: Optional[Union[int, str]] = None
     order_id_oco: Optional[int] = None
     quantity: Optional[Decimal] = None
+    post_only: Optional[bool] = None
