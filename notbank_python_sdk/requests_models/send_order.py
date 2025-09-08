@@ -56,6 +56,7 @@ class SendOrderRequest(WithOMSId):
     limit_offset: Optional[Decimal] = None
     display_quantity: Optional[int] = None
     value: Optional[Decimal] = None
+    post_only: Optional[bool] = None
 
 
 @dataclass
@@ -113,4 +114,5 @@ class SendOrderRequestInternal:
             limit_offset=order_request.limit_offset,
             display_quantity=order_request.display_quantity,
             value=order_request.value,
+            post_only=order_request.post_only
         )
