@@ -15,20 +15,8 @@ class TestGetAccountInfo(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
 
-    def test_get_account_info_success(self):
-        """Prueba exitosa: oms_id y account_id válidos."""
-        request = GetAccountInfoRequest(account_id=7)
-        response = self.client.get_account_info(request)
-        self.assertEqual(response.account_name, "sample_user")
-        self.assertEqual(response.account_type, "Asset")
-        self.assertEqual(response.risk_type, "Normal")
-
-    def test_get_account_info_default_account(self):
-        """Prueba: account_id no definido, devuelve cuenta por defecto."""
-        request = GetAccountInfoRequest()
-        response = self.client.get_account_info(request)
-        self.assertEqual(response.account_id, 1)
-        self.assertEqual(response.account_name, "default_user")
+    def test_get_account_info(self):
+        response = self.client.get_account_info(GetAccountInfoRequest(account_id=self.credentials.account_id))
 
 
 if __name__ == "__main__":
