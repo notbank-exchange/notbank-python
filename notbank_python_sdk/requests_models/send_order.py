@@ -1,41 +1,11 @@
 from dataclasses import dataclass
 from decimal import Decimal
-from enum import IntEnum
 from typing import Optional
 
 from notbank_python_sdk.core.tools import truncate_dec
 from notbank_python_sdk.models.instrument import Instrument
+from notbank_python_sdk.constants import TimeInForce, Side, OrderType, PegPriceType
 from notbank_python_sdk.requests_models.with_oms_id import WithOMSId
-
-
-class TimeInForce(IntEnum):
-    GTC = 1
-    OPG = 2
-    IOC = 3
-    FOK = 4
-    GTX = 5
-    GTD = 6
-
-
-class Side(IntEnum):
-    Buy = 0
-    Sell = 1
-
-
-class OrderType(IntEnum):
-    Market = 1
-    Limit = 2
-    StopMarket = 3
-    StopLimit = 4
-    TrailingStopMarket = 5
-    TrailingStopLimit = 6
-    BlockTrade = 7
-
-
-class PegPriceType(IntEnum):
-    Last = 1
-    Bid = 2
-    Ask = 3
 
 
 @dataclass
