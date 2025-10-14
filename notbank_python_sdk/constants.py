@@ -37,3 +37,8 @@ class PegPriceType(IntEnum):
     LAST = 1
     BID = 2
     ASK = 3
+
+
+class InstrumentState(str, Enum):
+    BOTH = "Both"
+    INACTIVE = "Inactive"
