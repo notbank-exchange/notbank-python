@@ -338,13 +338,14 @@ class NotbankClient:
 
     def get_products(
         self,
+        request: GetProductsRequest = GetProductsRequest(),
     ) -> List[Product]:
         """
         https://apidoc.notbank.exchange/#getproducts
         """
         return self._get_ap_data_list(
             Endpoints.GET_PRODUCTS,
-            GetProductsRequest(),
+            request,
             Product,
         )
 
@@ -926,15 +927,20 @@ class NotbankClient:
             self,
             request: SubscribeAccountEventsRequest,
             *,
-            withdraw_ticket_handler: Optional[Callable[[WithdrawTicket], None]] = None,
-            transaction_handler: Optional[Callable[[AccountTransaction], None]] = None,
+            withdraw_ticket_handler: Optional[Callable[[
+                WithdrawTicket], None]] = None,
+            transaction_handler: Optional[Callable[[
+                AccountTransaction], None]] = None,
             trade_handler: Optional[Callable[[TradeSummary], None]] = None,
             order_handler: Optional[Callable[[Order], None]] = None,
-            deposit_ticket_handler: Optional[Callable[[DepositTicket], None]] = None,
+            deposit_ticket_handler: Optional[Callable[[
+                DepositTicket], None]] = None,
             account_handler: Optional[Callable[[AccountInfo], None]] = None,
             deposit_handler: Optional[Callable[[DepositEvent], None]] = None,
-            cancel_order_reject_event_handler: Optional[Callable[[CancelOrderRejectEvent], None]] = None,
-            balance_handler: Optional[Callable[[AccountPosition], None]] = None,
+            cancel_order_reject_event_handler: Optional[Callable[[
+                CancelOrderRejectEvent], None]] = None,
+            balance_handler: Optional[Callable[[
+                AccountPosition], None]] = None,
     ):
         """
         https://apidoc.notbank.exchange/#subscribeaccountevents
