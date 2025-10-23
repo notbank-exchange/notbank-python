@@ -60,7 +60,7 @@ from notbank_python_sdk.models.instrument_statistic import InstrumentStatistic
 from notbank_python_sdk.models.account_info import AccountInfo
 from notbank_python_sdk.models.product import Product
 from notbank_python_sdk.models.withdrawal_id_response import WithdrawalIdResponse
-from notbank_python_sdk.parsing import build_subscription_handler, parse_response_fn, parse_response_list_fn
+from notbank_python_sdk.parsing import build_subscription_handler, parse_response_fn, parse_response_list_fn, parse_report_response_fn
 from notbank_python_sdk.requests_models.add_whitelisted_address_request import AddWhitelistedAddressRequest
 from notbank_python_sdk.requests_models.authenticate_request import AuthenticateRequest
 from notbank_python_sdk.requests_models.cancel_all_orders import CancelAllOrdersRequest
@@ -173,13 +173,13 @@ class NotbankClient:
         self._client_connection = client_connection
         self._notbank_client_cache = NotbankClientCache()
 
-    def _get_ap_data_list(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = []) -> List[T2]:
+    def _get_ap_data_list(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], overrides: Dict[str, str] = {}) -> List[T2]:
         request_data_dict = to_dict(request_data)
         return self._client_connection.request(
             endpoint,
             EndpointCategory.AP,
             request_data_dict,
-            parse_response_list_fn(response_cls, no_pascal_case))
+            parse_response_list_fn(response_cls, no_pascal_case, overrides=overrides))
 
     def _get_nb_data_list(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = []) -> List[T2]:
         request_data_dict = to_nb_dict(request_data)
@@ -193,6 +193,11 @@ class NotbankClient:
         request_data_dict = to_dict(request_data)
         return self._client_connection.request(
             endpoint, endpoint_category, request_data_dict, parse_response_fn(response_cls, no_pascal_case, overrides=response_conversion_overrides))
+
+    def _get_report_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], response_conversion_overrides: Dict[str, str] = {}, endpoint_category: EndpointCategory = EndpointCategory.AP) -> T2:
+        request_data_dict = to_dict(request_data)
+        return self._client_connection.request(
+            endpoint, endpoint_category, request_data_dict, parse_report_response_fn(response_cls, no_pascal_case, overrides=response_conversion_overrides))
 
     def _get_nb_data(self, endpoint: str, request_data: Any, response_cls: Type[T2], no_pascal_case: List[str] = [], endpoint_category: EndpointCategory = EndpointCategory.NB) -> T2:
         request_data_dict = to_nb_dict(request_data)
@@ -1124,10 +1129,20 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/#generatetradeactivityreport
         """
-        return self._get_data(
+        return self._get_report_data(
             Endpoints.GENERATE_TRADE_ACTIVITY_REPORT,
             request,
             ActivityReport,
+            response_conversion_overrides={
+                "report_flavor": "reportFlavor",
+                "create_time": "createTime",
+                "initial_run_time": "initialRunTime",
+                "interval_start_time": "intervalStartTime",
+                "interval_end_time": "intervalEndTime",
+                "interval_duration": "intervalDuration",
+                "last_instance_id": "lastInstanceId",
+                "account_ids": "accountIds",
+            }
         )
 
     def generate_transaction_activity_report(
@@ -1136,7 +1151,7 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/#generatetransactionactivityreport
         """
-        return self._get_data(
+        return self._get_report_data(
             Endpoints.GENERATE_TRANSACTION_ACTIVITY_REPORT,
             request,
             ActivityReport
@@ -1148,7 +1163,7 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/#generateproductdeltaactivityreport
         """
-        return self._get_data(
+        return self._get_report_data(
             Endpoints.GENERATE_PRODUCT_DELTA_ACTIVITY_REPORT,
             request,
             ActivityReport
@@ -1160,7 +1175,7 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/#generatepnlactivityreport
         """
-        return self._get_data(
+        return self._get_report_data(
             Endpoints.GENERATE_PNL_ACTIVITY_REPORT,
             request,
             ActivityReport,
@@ -1172,7 +1187,7 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/#healthcheck
         """
-        return self._get_data(
+        return self._get_report_data(
             Endpoints.SCHEDULE_TRADE_ACTIVITY_REPORT,
             request,
             ActivityReport
@@ -1184,7 +1199,7 @@ class NotbankClient:
         """
         http://apidoc.notbank.exchange/#scheduletransactionactivityreport
         """
-        return self._get_data(
+        return self._get_report_data(
             Endpoints.SCHEDULE_TRANSACTION_ACTIVITY_REPORT,
             request,
             ActivityReport
@@ -1196,7 +1211,7 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/#scheduleproductdeltaactivityreport
         """
-        return self._get_data(
+        return self._get_report_data(
             Endpoints.SCHEDULE_PRODUCT_DELTA_ACTIVITY_REPORT,
             request,
             ActivityReport
@@ -1208,7 +1223,7 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/#scheduleprofitandlossactivityreport
         """
-        return self._get_data(
+        return self._get_report_data(
             Endpoints.SCHEDULE_PROFIT_AND_LOSS_ACTIVITY_REPORT,
             request,
             ActivityReport
@@ -1232,7 +1247,16 @@ class NotbankClient:
         return self._get_ap_data_list(
             Endpoints.GET_USER_REPORT_WRITER_RESULT_RECORDS,
             request,
-            ReportWriterResultRecords
+            ReportWriterResultRecords,
+            overrides={
+                "urt_ticket_id": "urtTicketId",
+                "descriptor_id": "descriptorId",
+                "result_status": "resultStatus",
+                "report_execution_start_time": "reportExecutionStartTime",
+                "report_execution_complete_time": "reportExecutionCompleteTime",
+                "report_output_file_pathname": "reportOutputFilePathname",
+                "report_descriptive_header": "reportDescriptiveHeader",
+            }
         )
 
     def get_user_report_tickets(self, request: GetUserReportTicketsRequest) -> List[UserReportTicket]:
@@ -1250,28 +1274,25 @@ class NotbankClient:
         https://apidoc.notbank.exchange/#removeuserreportticket
         """
         payload = "{" + request.user_report_ticket_id + "}"
-        return self._do_request(
-            Endpoints.REMOVE_USER_REPORT_TICKET,
-            payload
-        )
+        return self._client_connection.request(Endpoints.REMOVE_USER_REPORT_TICKET, EndpointCategory.AP, payload, lambda x: None)
 
     def get_user_report_tickets_by_status(self, request: GetUserReportTicketsByStatusRequest) -> List[UserReportTicket]:
         """
         https://apidoc.notbank.exchange/#getuserreportticketsbystatus
         """
-        internal_request = convert_to_get_user_report_tickets_by_status_request_internal(
+        request_data = convert_to_get_user_report_tickets_by_status_request_internal(
             request)
-        return self._get_ap_data_list(
+        return self._client_connection.request(
             Endpoints.GET_USER_REPORT_TICKETS_BY_STATUS,
-            internal_request,
-            UserReportTicket
-        )
+            EndpointCategory.AP,
+            request_data,
+            parse_response_list_fn(UserReportTicket))
 
     def download_document(self, request: DownloadDocumentRequest) -> Document:
         """
         https://apidoc.notbank.exchange/#downloaddocument
         """
-        return self._get_data(
+        return self._get_report_data(
             Endpoints.DOWNLOAD_DOCUMENT,
             request,
             Document
@@ -1281,7 +1302,7 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/#downloaddocumentslice
         """
-        return self._get_data(
+        return self._get_report_data(
             Endpoints.DOWNLOAD_DOCUMENT_SLICE,
             request,
             DocumentSlice

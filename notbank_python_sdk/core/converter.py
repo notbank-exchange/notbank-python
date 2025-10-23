@@ -51,6 +51,14 @@ SPECIAL_CASES_MAP = {
     "n": "n",
     "o": "o",
     "i": "i",
+    "report_flavor": "reportFlavor",
+    "create_time": "createTime",
+    "initial_run_time": "initialRunTime",
+    "interval_start_time": "intervalStartTime",
+    "interval_end_time": "intervalEndTime",
+    "interval_duration": "intervalDuration",
+    "last_instance_id": "lastInstanceId",
+    "account_ids": "accountIds",
 }
 
 DEFAULT_CAST: Dict[Type[Any], Any] = {

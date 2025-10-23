@@ -42,3 +42,33 @@ class PegPriceType(IntEnum):
 class InstrumentState(str, Enum):
     BOTH = "Both"
     INACTIVE = "Inactive"
+
+
+class ReportFrequency(str, Enum):
+    ON_DEMAND = "onDemand"
+    HOURLY = "Hourly"
+    DAILY = "Daily"
+    WEEKLY = "Weekly"
+    MONTHLY = "Monthly"
+    ANNUALLY = "Annually"
+
+
+class ReportResultStatus(str, Enum):
+    NOT_STARTED = "NotStarted"
+    NOT_COMPLETE = "NotComplete"
+    ERROR_COMPLETE = "ErrorComplete"
+    SUCCESS_COMPLETE = "SuccessComplete"
+    CANCELLED = "Cancelled"
+
+
+class ReportRequestStatus(str, Enum):
+    SUBMITTED = "Submitted"
+    VALIDATING = "Validating"
+    SCHEDULED = "Scheduled"
+    IN_PROGRESS = "InProgress"
+    COMPLETED = "Completed"
+    ABORTING = "Aborting"
+    ABORTED = "Aborted"
+    USER_CANCELLED = "UserCancelled"
+    SYS_RETIRED = "SysRetired"
+    USER_CANCELLED_PENDING = "UserCancelledPending"

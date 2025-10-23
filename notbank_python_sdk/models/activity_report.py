@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import List, Optional
 
+from notbank_python_sdk.constants import ReportRequestStatus
+
 
 @dataclass
 class ActivityReport:
@@ -11,7 +13,7 @@ class ActivityReport:
     initial_run_time: str
     interval_start_time: str
     interval_end_time: str
-    request_status: str
+    request_status: ReportRequestStatus
     report_frequency: str
     interval_duration: int
     request_id: str

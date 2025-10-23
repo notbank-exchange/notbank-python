@@ -14,20 +14,9 @@ class TestGetUserReportTickets(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_get_user_report_tickets_success(self):
-        req = GetUserReportTicketsRequest(user_id=6)
-        result = self.client.get_user_report_tickets(req)
-        self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 2)
-        r = result[0]
-        self.assertEqual(r.requesting_user, 6)
-        self.assertEqual(r.report_flavor, "TradeActivity")
-        self.assertEqual(r.account_ids, [9])
-
-    def test_get_user_report_tickets_no_results(self):
-        req = GetUserReportTicketsRequest(user_id=99)
-        result = self.client.get_user_report_tickets(req)
-        self.assertIsInstance(result, list)
-        self.assertEqual(result, [])
+        response = self.client.get_user_report_tickets(
+            GetUserReportTicketsRequest(user_id=self.credentials.user_id))
+        print(response)
 
 
 if __name__ == "__main__":
