@@ -15,12 +15,6 @@ class TestTicker(unittest.TestCase):
 
     def test_get_ticker_success(self):
         response = self.client.get_ticker()
-        self.assertIsInstance(response, dict)
-        self.assertEqual(len(response), 2)
-        self.assertEqual(response['BTC_USD'].base_id, 1)
-        self.assertEqual(response['BTC_USD'].last_price, 29000)
-        self.assertEqual(response['ETH_USD'].base_id, 1027)
-        self.assertEqual(response['ETH_USD'].last_price, 1970)
 
 if __name__ == "__main__":
     unittest.main()

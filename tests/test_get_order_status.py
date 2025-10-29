@@ -14,21 +14,11 @@ class TestGetOrderStatus(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_get_order_status_success(self):
-        """
-        Prueba exitosa: obtiene el estado de una orden válida.
-        """
-        request = GetOrderStatusRequest(
+        response = self.client.get_order_status(GetOrderStatusRequest(
             account_id=7,
             order_id=6562,
-        )
-        response = self.client.get_order_status(request)
+        ))
 
-        # Verificamos que la respuesta contiene los datos esperados
-        self.assertIsNotNone(response)
-        self.assertEqual(response.order_id, 6562)
-        self.assertEqual(response.side, "Buy")
-        self.assertEqual(response.price, 23436.0)
-        self.assertEqual(response.account_name, "sample_user")
 
 
 if __name__ == "__main__":

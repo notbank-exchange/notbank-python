@@ -15,7 +15,7 @@ class SendOrderRequest(WithOMSId):
     time_in_force: TimeInForce
     side: Side
     order_type: OrderType
-    quantity: Decimal
+    quantity: Optional[Decimal] = None
     client_order_id: Optional[int] = None
     order_id_oco: Optional[int] = None
     use_display_quantity: Optional[bool] = None

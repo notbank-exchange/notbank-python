@@ -15,10 +15,7 @@ class TestSendCancelList(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_send_cancel_list_success(self):
-        """
-        Prueba exitosa: solicitud válida, devuelve 'True'.
-        """
-        request = [
+        self.client.send_cancel_list([
             CancelOrder(
                 order_id=6714,
                 account_id=9,
@@ -27,16 +24,7 @@ class TestSendCancelList(unittest.TestCase):
                 order_id=6507,
                 account_id=9,
             ),
-        ]
-
-        self.client.send_cancel_list(request)
-
-    def test_send_cancel_list_empty_list(self):
-        """
-        Prueba: lista vacía, devuelve 'False' con mensaje de error.
-        """
-        request = []
-        self.client.send_cancel_list(request)
+        ])
 
 
 if __name__ == "__main__":

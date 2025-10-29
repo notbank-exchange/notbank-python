@@ -104,7 +104,7 @@ from notbank_python_sdk.requests_models.get_instruments_request import GetInstru
 from notbank_python_sdk.requests_models.get_l2_snapshot import GetL2SnapshotRequest
 from notbank_python_sdk.requests_models.get_last_trades import GetLastTradesRequest
 from notbank_python_sdk.requests_models.get_level1_summary import GetLevel1SummaryRequest
-from notbank_python_sdk.requests_models.get_level1_summary_min import GetLevel1SummaryMinRequest
+from notbank_python_sdk.requests_models.get_level1_summary_min import GetLevel1SummaryMinRequest, GetLevel1SummaryMinRequestInternal
 from notbank_python_sdk.requests_models.get_open_orders import GetOpenOrdersRequest
 from notbank_python_sdk.requests_models.get_open_trade_reports import GetOpenTradeReportsRequest
 from notbank_python_sdk.requests_models.get_order_fee_request import GetOrderFeeRequest
@@ -620,10 +620,14 @@ class NotbankClient:
         """
         https://apidoc.notbank.exchange/#getlevel1summarymin
         """
+        internal_request = GetLevel1SummaryMinRequestInternal(
+            json.dumps(request.instrument_ids)
+            if request.instrument_ids is not None
+            else None)
         return self._client_connection.request(
             Endpoints.GET_LEVEL1_SUMMARY_MIN,
             EndpointCategory.AP,
-            to_dict(request),
+            to_dict(internal_request),
             parse_response_fn=level1_ticker_summary_min_list_from_json_list_str,
         )
 
@@ -931,7 +935,6 @@ class NotbankClient:
     def subscribe_account_events(
             self,
             request: SubscribeAccountEventsRequest,
-            *,
             withdraw_ticket_handler: Optional[Callable[[
                 WithdrawTicket], None]] = None,
             transaction_handler: Optional[Callable[[
@@ -944,7 +947,7 @@ class NotbankClient:
             deposit_handler: Optional[Callable[[DepositEvent], None]] = None,
             cancel_order_reject_event_handler: Optional[Callable[[
                 CancelOrderRejectEvent], None]] = None,
-            balance_handler: Optional[Callable[[
+            account_position_handler: Optional[Callable[[
                 AccountPosition], None]] = None,
     ):
         """
@@ -999,11 +1002,11 @@ class NotbankClient:
                     WebSocketEndpoint.ACCOUNT_EVENT_CANCEL_ORDER_REJECT, request.account_id),
                 build_subscription_handler(cancel_order_reject_event_handler, lambda json_str: from_json_str(CancelOrderRejectEvent, json_str)))
             callbacks.append(callback)
-        if balance_handler is not None:
+        if account_position_handler is not None:
             callback = Callback(
                 CallbackIdentifier.get(
                     WebSocketEndpoint.ACCOUNT_EVENT_ACCOUNT_POSITION, request.account_id),
-                build_subscription_handler(balance_handler, lambda json_str: from_json_str(AccountPosition, json_str)))
+                build_subscription_handler(account_position_handler, lambda json_str: from_json_str(AccountPosition, json_str)))
             callbacks.append(callback)
         self._subscribe(
             WebSocketEndpoint.SUBSCRIBE_ACCOUNT_EVENTS,

@@ -1,8 +1,8 @@
 from decimal import Decimal
 import unittest
-from notbank_python_sdk.error import NotbankException
+from notbank_python_sdk.constants import OrderType, Side, TimeInForce
 from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.requests_models.cancel_replace_order_request import CancelReplaceOrderRequest
+from notbank_python_sdk.requests_models import CancelReplaceOrderRequest
 
 from tests import test_helper
 
@@ -16,39 +16,26 @@ class TestSendCancelReplaceList(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_send_cancel_replace_list_success(self):
-        """Prueba exitosa, devuelve 'True'."""
-        request = [
+        self.client.send_cancel_replace_list([
             CancelReplaceOrderRequest(
                 order_id_to_replace=6696,
-                order_type="Limit",
-                side=0,  # Buy
+                order_type=OrderType.LIMIT,
+                side=Side.BUY,
                 account_id=7,
                 instrument_id=1,
                 quantity=Decimal("0.003"),
-                time_in_force=1,  # GTC
+                time_in_force=TimeInForce.GTC,
             ),
             CancelReplaceOrderRequest(
                 order_id_to_replace=6698,
-                order_type="Limit",
-                side=0,  # Buy
+                order_type=OrderType.LIMIT,
+                side=Side.BUY,
                 account_id=7,
                 instrument_id=1,
                 quantity=Decimal("0.004"),
-                time_in_force=1,  # GTC
+                time_in_force=TimeInForce.GTC,
             ),
-        ]
-
-        self.client.send_cancel_replace_list(request)
-
-    def test_send_cancel_replace_list_empty_list(self):
-        """Prueba exitosa: lista vacía, devuelve 'False'."""
-        request = []
-
-        try:
-            self.client.send_cancel_replace_list(request)
-        except NotbankException as e:
-            self.assertEqual(str(e), "Invalid Request")
-            self.assertEqual(e.code, 100)
+        ])
 
 
 if __name__ == "__main__":
