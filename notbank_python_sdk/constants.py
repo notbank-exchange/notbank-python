@@ -107,3 +107,14 @@ class UpdateOneStepWithdrawAction(str, Enum):
 class DepositPaymentMethod(IntEnum):
     BANK_TRANSFER = 1
     WEB_PAY = 2
+
+
+class QuoteMode(str, Enum):
+    DIRECT = "direct"
+    INVERSE = "inverse"
+
+
+class QuoteOperation(IntEnum):
+    BUY = 1
+    SELL = 2
+    CONVERSION = 3
