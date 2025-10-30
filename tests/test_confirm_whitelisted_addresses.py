@@ -1,10 +1,11 @@
 import unittest
 from uuid import UUID
-from notbank_python_sdk.requests_models.confirm_whitelisted_address_request import ConfirmWhiteListedAddressRequest
+
+from notbank_python_sdk.notbank_client import NotbankClient
+from notbank_python_sdk.requests_models import ConfirmWhiteListedAddressRequest
 
 from tests import test_helper
 
-from notbank_python_sdk.notbank_client import NotbankClient
 
 
 class TestCreateDepositAddress(unittest.TestCase):

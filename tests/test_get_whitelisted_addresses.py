@@ -1,8 +1,8 @@
-
-
 import unittest
+
 from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.requests_models.get_whitelisted_addresses_request import GetWhitelistedAddressesRequest
+from notbank_python_sdk.requests_models import GetWhitelistedAddressesRequest
+
 from tests import test_helper
 
 
@@ -17,7 +17,7 @@ class TestCreateDepositAddress(unittest.TestCase):
 
     def test_create_deposit_address(self):
         response = self.client.get_whitelisted_addresses(
-            GetWhitelistedAddressesRequest(self.credentials.account_id))
+            GetWhitelistedAddressesRequest(self.credentials.account_id, search="BTC"))
         self.assertIsNotNone(response)
 
 

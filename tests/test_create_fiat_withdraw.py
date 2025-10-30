@@ -1,16 +1,16 @@
 from decimal import Decimal
-import unittest
 from uuid import UUID
-from notbank_python_sdk.constants import DepositPaymentMethod
-from notbank_python_sdk.requests_models import CreateFiatDepositRequest
 
+import unittest
+
+from notbank_python_sdk.constants import DepositPaymentMethod
+from notbank_python_sdk.requests_models import CreateFiatWithdrawRequest
+from notbank_python_sdk.notbank_client import NotbankClient
 
 from tests import test_helper
 
-from notbank_python_sdk.notbank_client import NotbankClient
 
-
-class TestCreateFiatDeposit(unittest.TestCase):
+class TestGetBanks(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -20,14 +20,15 @@ class TestCreateFiatDeposit(unittest.TestCase):
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
 
-    def test_create_fiat_deposit(self):
-        self.client.create_fiat_deposit(CreateFiatDepositRequest(
+    def test_get_banks(self):
+        response = self.client.create_fiat_withdraw(CreateFiatWithdrawRequest(
             account_id=self.credentials.account_id,
             payment_method=DepositPaymentMethod.BANK_TRANSFER,
-            currency="ARS",
-            amount=Decimal("10"),
-            bank_account_id=UUID("4d677d9c-81e1-45d2-9903-43fd599b6599")
+            currency="CLP",
+            amount=Decimal("1000"),
+            bank_account_id=UUID("43438b99-70a4-4d98-8471-71f5a52b978b"),
         ))
+        self.assertIsNotNone(response)
 
 
 if __name__ == "__main__":

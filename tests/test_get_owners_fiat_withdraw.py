@@ -1,13 +1,13 @@
 import unittest
+from notbank_python_sdk.requests_models import GetOwnersFiatWithdrawRequest
 
-from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.requests_models import DepositAddressRequest
 
 from tests import test_helper
 
+from notbank_python_sdk.notbank_client import NotbankClient
 
 
-class TestGetDepositAddresses(unittest.TestCase):
+class TestCreateFiatDeposit(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -17,11 +17,11 @@ class TestGetDepositAddresses(unittest.TestCase):
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
 
-    def test_get_deposit_addresses(self):
-        response = self.client.get_deposit_addresses(
-            DepositAddressRequest(self.credentials.account_id, "BTC", "BTC_TEST"))
-        self.assertIsNotNone(response)
-    
+    def test_create_fiat_deposit(self):
+        self.client.get_owners_fiat_withdraw(GetOwnersFiatWithdrawRequest(
+            cbu="6845784411100069899422"
+        ))
+
 
 if __name__ == "__main__":
     unittest.main()

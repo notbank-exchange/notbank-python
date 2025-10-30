@@ -1,14 +1,14 @@
+from uuid import UUID
+
 import unittest
 
-from notbank_python_sdk.constants import UpdateOneStepWithdrawAction
 from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.requests_models import UpdateOneStepWithdrawRequest
+from notbank_python_sdk.requests_models import ConfirmFiatWithdrawRequest
 
 from tests import test_helper
 
 
-
-class TestUpdateOneStepWithdraw(unittest.TestCase):
+class TestGetBanks(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -18,10 +18,12 @@ class TestUpdateOneStepWithdraw(unittest.TestCase):
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
 
-    def test_update_one_step_withdraw(self):
-        response = self.client.update_one_step_withdraw(
-            UpdateOneStepWithdrawRequest(self.credentials.account_id, UpdateOneStepWithdrawAction.ENABLE, "044378"))
-        self.assertIsNone(response)
+    def test_get_banks(self):
+        response = self.client.confirm_fiat_withdraw(ConfirmFiatWithdrawRequest(
+          withdrawal_id=UUID("32347216-4a4c-49ee-b0a5-1ad993fe522b"),
+          attempt_code="123456",
+        ))
+        self.assertIsNotNone(response)
 
 
 if __name__ == "__main__":

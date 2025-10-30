@@ -1,9 +1,8 @@
-
-
 import unittest
+
 from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.requests_models.add_whitelisted_address_request import AddWhitelistedAddressRequest
-from notbank_python_sdk.requests_models.get_whitelisted_addresses_request import GetWhitelistedAddressesRequest
+from notbank_python_sdk.requests_models import AddWhitelistedAddressRequest
+
 from tests import test_helper
 
 

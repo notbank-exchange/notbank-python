@@ -1,10 +1,9 @@
 import unittest
-from notbank_python_sdk.requests_models.get_account_info_request import GetAccountInfoRequest
 
 from tests import test_helper
 
 from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
+from notbank_python_sdk.requests_models import GetBanksRequest
 
 
 class TestGetBanks(unittest.TestCase):

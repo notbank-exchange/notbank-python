@@ -4,7 +4,7 @@ from uuid import UUID
 
 
 @dataclass
-class ResendVerificationCodeWhitelistedAddress:
+class ResendVerificationCodeWhitelistedAddressRequest:
     whitelisted_address_id: UUID
     account_id: int
 

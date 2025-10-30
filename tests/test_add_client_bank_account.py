@@ -1,5 +1,6 @@
 import unittest
-from notbank_python_sdk.requests_models.add_client_bank_account_request import AddClientBankAccountRequest, BankAccountKind
+from notbank_python_sdk.constants import BankAccountKind
+from notbank_python_sdk.requests_models import AddClientBankAccountRequest
 
 from tests import test_helper
 
@@ -20,7 +21,7 @@ class TestAddClientBankAccount(unittest.TestCase):
             country="CL",
             bank="11",
             number="123123",
-            kind=BankAccountKind.AHORRO,
+            kind=BankAccountKind.VISTA,
         ))
         self.assertIsNotNone(response)
 

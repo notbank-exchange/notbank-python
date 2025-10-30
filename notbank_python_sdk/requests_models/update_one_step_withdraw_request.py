@@ -1,14 +1,11 @@
 from dataclasses import dataclass
 from enum import Enum
 
-
-class Action(str, Enum):
-    ENABLE = "enable"
-    DISABLE = "disable"
+from notbank_python_sdk.constants import UpdateOneStepWithdrawAction
 
 
 @dataclass
 class UpdateOneStepWithdrawRequest:
     account_id: int
-    action: Action
+    action: UpdateOneStepWithdrawAction
     otp: str

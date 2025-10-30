@@ -1,14 +1,14 @@
 import unittest
+from uuid import UUID
 
-from notbank_python_sdk.constants import UpdateOneStepWithdrawAction
 from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.requests_models import UpdateOneStepWithdrawRequest
+from notbank_python_sdk.requests_models import ResendVerificationCodeWhitelistedAddressRequest
 
 from tests import test_helper
 
 
 
-class TestUpdateOneStepWithdraw(unittest.TestCase):
+class TestCreateDepositAddress(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -18,9 +18,11 @@ class TestUpdateOneStepWithdraw(unittest.TestCase):
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
 
-    def test_update_one_step_withdraw(self):
-        response = self.client.update_one_step_withdraw(
-            UpdateOneStepWithdrawRequest(self.credentials.account_id, UpdateOneStepWithdrawAction.ENABLE, "044378"))
+    def test_create_deposit_address(self):
+        response = self.client.resend_verification_code_whitelisted_address(ResendVerificationCodeWhitelistedAddressRequest(
+            whitelisted_address_id=UUID(
+                "ab38462b-e6ec-435c-a67c-e4c3e29f5b72"),
+            account_id=self.credentials.account_id))
         self.assertIsNone(response)
 
 
