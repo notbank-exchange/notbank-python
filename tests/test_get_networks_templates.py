@@ -1,13 +1,10 @@
 
 import unittest
-from notbank_python_sdk.requests_models.add_client_bank_account_request import AddClientBankAccountRequest
-from notbank_python_sdk.requests_models.get_account_info_request import GetAccountInfoRequest
-from notbank_python_sdk.requests_models.get_network_templates_request import GetNetworksTemplatesRequest
-
-from tests import test_helper
 
 from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
+from notbank_python_sdk.requests_models import GetNetworksTemplatesRequest
+
+from tests import test_helper
 
 
 class TestGetNetworksTemplates(unittest.TestCase):

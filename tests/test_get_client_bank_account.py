@@ -1,7 +1,6 @@
 import unittest
 from uuid import UUID
-from notbank_python_sdk.requests_models.get_account_info_request import GetAccountInfoRequest
-from notbank_python_sdk.requests_models.get_client_bank_account_request import GetClientBankAccountRequest
+from notbank_python_sdk.requests_models import GetClientBankAccountRequest
 
 from tests import test_helper
 

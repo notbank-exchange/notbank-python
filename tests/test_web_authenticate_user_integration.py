@@ -4,7 +4,7 @@ from notbank_python_sdk.notbank_client import NotbankClient
 
 from notbank_python_sdk.core.endpoints import WebSocketEndpoint
 from notbank_python_sdk.models.web_authenticate_user_websocket import WebAuthenticateUserResponse
-from notbank_python_sdk.requests_models.web_authenticate_user_request import WebAuthenticateUserRequest
+from notbank_python_sdk.requests_models import WebAuthenticateUserRequest
 from tests import test_helper
 
 

@@ -14,9 +14,9 @@ class Level1TickerSummaryMin:
     rolling_24hr_px_change_percent: Decimal
 
 
-def level1_ticker_summary_min_list_from_json_list_str(json_list: str) -> List[Level1TickerSummaryMin]:
-    list_of_summaries_lists = json.loads(json_list, use_decimal=True)
-    return [level1_ticker_summary_min_from_str(item) for item in list_of_summaries_lists]
+def level1_ticker_summary_min_list_from_json_list_str(json_list: Any) -> List[Level1TickerSummaryMin]:
+    # list_of_summaries_lists = json.loads(json_list, use_decimal=True)
+    return [level1_ticker_summary_min_from_str(item) for item in json_list]
 
 
 def level1_ticker_summary_min_from_str(json_list: List[Any]) -> Level1TickerSummaryMin:

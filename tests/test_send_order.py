@@ -1,13 +1,14 @@
 from decimal import Decimal
 import random
 import unittest
+from notbank_python_sdk.constants import PegPriceType, OrderType, Side, TimeInForce
 from notbank_python_sdk.models.account_positions import AccountPosition
 from notbank_python_sdk.notbank_client import NotbankClient
 
-from notbank_python_sdk.models.send_order import  SendOrderStatus
-from notbank_python_sdk.requests_models.get_account_positions_request import GetAccountPositionsRequest
-from notbank_python_sdk.requests_models.order_book import OrderBookRequest
-from notbank_python_sdk.requests_models.send_order import OrderType, SendOrderRequest, Side, TimeInForce
+from notbank_python_sdk.models.send_order import SendOrderStatus
+from notbank_python_sdk.requests_models import GetAccountPositionsRequest
+from notbank_python_sdk.requests_models import OrderBookRequest
+from notbank_python_sdk.requests_models import SendOrderRequest
 from tests import test_helper
 
 
@@ -23,16 +24,20 @@ class TestSendOrder(unittest.TestCase):
         instrument = self.client.get_instrument_by_symbol("BTCUSDT")
         order_price = self._get_order_price()
         order_quantity = self._get_order_quantity()
-        request = SendOrderRequest(
+
+        response = self.client.send_order(SendOrderRequest(
             instrument=instrument,
             account_id=self.credentials.account_id,
             time_in_force=TimeInForce.GTD,
-            side=Side.Sell,
+            side=Side.SELL,
             quantity=order_quantity,
             limit_price=order_price,
-            order_type=OrderType.Limit,
-        )
-        response = self.client.send_order(request)
+            order_type=OrderType.LIMIT,
+            peg_price_type=PegPriceType.ASK,
+            use_display_quantity=False,
+            client_order_id=123,
+            order_id_oco=123,       
+        ))
         if response.status == SendOrderStatus.REJECTED:
             # order was rejected
             pass
@@ -68,9 +73,9 @@ class TestSendOrder(unittest.TestCase):
             instrument=instrument,
             account_id=self.credentials.account_id,
             time_in_force=TimeInForce.FOK,
-            side=Side.Sell,
+            side=Side.SELL,
             quantity=Decimal("12"),
-            order_type=OrderType.Market,
+            order_type=OrderType.MARKET,
         )
         response = self.client.send_order(request)
         self.assertEqual(response.status, "Rejected")

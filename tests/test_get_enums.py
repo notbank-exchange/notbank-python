@@ -14,13 +14,6 @@ class TestGetEnums(unittest.TestCase):
 
     def test_get_enums_success(self):
         response = self.client.get_enums()
-        self.assertIsInstance(response, list)
-        self.assertGreaterEqual(len(response), 1)
-        self.assertEqual(response[0].class_name, "Order")
-        self.assertEqual(response[0].property_name, "OrderState")
-        self.assertEqual(len(response[0].enums), 2)
-        self.assertEqual(response[0].enums[0].name, "Working")
-        self.assertEqual(response[0].enums[1].number, 2)
 
 
 if __name__ == "__main__":

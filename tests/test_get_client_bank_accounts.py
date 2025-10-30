@@ -19,7 +19,7 @@ class TestClientGetBankAccounts(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_client_get_bank_accounts(self):
-        response = self.client.get_client_bank_accounts(GetClientBankAccountsRequest())
+        response = self.client.get_client_bank_accounts()
         self.assertIsNotNone(response)
 
 

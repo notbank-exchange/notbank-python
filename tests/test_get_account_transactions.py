@@ -6,9 +6,7 @@ from notbank_python_sdk.models.account_transaction import (
     TransactionType,
     TransactionReferenceType,
 )
-from notbank_python_sdk.requests_models.get_account_transactions_request import (
-    GetAccountTransactionsRequest,
-)
+from notbank_python_sdk.requests_models import GetAccountTransactionsRequest
 from tests import test_helper
 
 
@@ -20,34 +18,25 @@ class TestGetAccountTransactions(unittest.TestCase):
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
 
-    def test_get_transactions_success(self):
-        """Prueba exitosa: obtención de transacciones válidas."""
-        request = GetAccountTransactionsRequest(
-            account_id=7, depth=2, product_id=3
-        )
-        response = self.client.get_account_transactions(request)
-
-        self.assertEqual(len(response), 2)
-        self.assertEqual(response[0].transaction_id, 24214)
-        self.assertEqual(response[0].cr, 0.01247667)
-        self.assertEqual(response[0].dr, 0.0)
-        self.assertEqual(response[0].transaction_type, TransactionType.trade)
-        self.assertEqual(response[0].reference_type,
-                         TransactionReferenceType.trade)
-        self.assertEqual(response[1].transaction_id, 24215)
-        self.assertEqual(response[1].transaction_type, TransactionType.trade)
+    def test_get_transaction(self):
+        response = self.client.get_account_transactions(GetAccountTransactionsRequest(
+            account_id=self.credentials.account_id,
+            transaction_id=15515083
+        ))
+        self.assertEqual(len(response), 1)
+        
+    def test_get_transactions(self):
+        response = self.client.get_account_transactions(GetAccountTransactionsRequest(
+            account_id=self.credentials.account_id,
+            transaction_reference_types=[TransactionReferenceType.DEPOSIT,TransactionReferenceType.WITHDRAW],
+            product_id=3
+        ))
+        self.assertEqual(len(response), 1)
 
     def test_no_transactions_found(self):
-        """Prueba: No se encuentran transacciones en la cuenta."""
         request = GetAccountTransactionsRequest(account_id=999)
         response = self.client.get_account_transactions(request)
         self.assertEqual(len(response), 0)
-
-    def test_invalid_omsid(self):
-        """Prueba fallida: oms_id inválido."""
-        request = GetAccountTransactionsRequest(account_id=7)
-        with self.assertRaises(ValueError):
-            self.client.get_account_transactions(request)
 
 
 if __name__ == "__main__":

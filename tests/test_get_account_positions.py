@@ -1,7 +1,7 @@
 import unittest
 from notbank_python_sdk.notbank_client import NotbankClient
 
-from notbank_python_sdk.requests_models.get_account_positions_request import GetAccountPositionsRequest
+from notbank_python_sdk.requests_models import GetAccountPositionsRequest
 from tests import test_helper
 
 
@@ -14,10 +14,12 @@ class TestGetAccountPositions(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_get_account_positions_success(self):
-        request = GetAccountPositionsRequest(
-            account_id=self.credentials.account_id)
-        account_positions = self.client.get_account_positions(request)
-            
+        response = self.client.get_account_positions(
+            GetAccountPositionsRequest(
+                account_id=self.credentials.account_id,
+                include_pending=True))
+        self.assertTrue(len(response) > 0)
+
 
 # Punto de entrada para ejecutar pruebas
 if __name__ == "__main__":

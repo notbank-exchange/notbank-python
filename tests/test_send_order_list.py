@@ -2,9 +2,9 @@ from decimal import Decimal
 import unittest
 
 from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
+from notbank_python_sdk.requests_models import GetInstrumentRequest
 
-from notbank_python_sdk.requests_models.send_order import OrderType, PegPriceType, SendOrderRequest, Side, TimeInForce
+from notbank_python_sdk.requests_models import OrderType, PegPriceType, SendOrderRequest, Side, TimeInForce
 
 from tests import test_helper
 
@@ -20,21 +20,30 @@ class TestSendOrderList(unittest.TestCase):
     def test_valid_order_list(self):
         """Prueba válida: Lista de órdenes correcta."""
         instrument = self.client.get_instrument(GetInstrumentRequest(2))
-        request = [
+        response = self.client.send_order_list([
             SendOrderRequest(
                 instrument=instrument,
                 account_id=185,
                 time_in_force=TimeInForce.GTC,
-                side=Side.Sell,
+                side=Side.SELL,
                 quantity=Decimal("0.02"),
-                order_type=OrderType.Limit,
-                peg_price_type=PegPriceType.Ask,
+                order_type=OrderType.LIMIT,
+                peg_price_type=PegPriceType.ASK,
+                limit_price=Decimal(23436),
+                use_display_quantity=False,
+            ),
+            SendOrderRequest(
+                instrument=instrument,
+                account_id=185,
+                time_in_force=TimeInForce.GTC,
+                side=Side.SELL,
+                quantity=Decimal("0.05"),
+                order_type=OrderType.LIMIT,
+                peg_price_type=PegPriceType.ASK,
                 limit_price=Decimal(23436),
                 use_display_quantity=False,
             )
-        ]
-
-        response = self.client.send_order_list(request)
+        ])
 
     def test_empty_order_list(self):
         """Prueba inválida: Lista de órdenes vacía."""

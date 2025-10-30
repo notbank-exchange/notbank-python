@@ -1,7 +1,7 @@
 import unittest
 from notbank_python_sdk.notbank_client import NotbankClient
 
-from notbank_python_sdk.requests_models.cancel_user_report import CancelUserReportRequest
+from notbank_python_sdk.requests_models import CancelUserReportRequest
 from tests import test_helper
 
 
@@ -12,15 +12,12 @@ class TestCancelUserReport(unittest.TestCase):
         cls.credentials = test_helper.load_credentials()
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
-        
-    def test_cancel_user_report_success(self):
-        req = CancelUserReportRequest(user_report_id="389f244a-b958-4545-a4a7-61a73205b59e")
-        self.client.cancel_user_report(req)
-        
 
-    def test_cancel_user_report_not_authorized(self):
-        req = CancelUserReportRequest(user_report_id="no-perm-guid")
-        self.client.cancel_user_report(req)
+    def test_cancel_user_report(self):
+        response = self.client.cancel_user_report(CancelUserReportRequest(
+            user_report_id="ff4b0469-17e9-49d5-bffc-ce137508a454"))
+        print(response)
+
 
 if __name__ == "__main__":
     unittest.main()

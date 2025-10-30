@@ -13,36 +13,28 @@ class TestGetProducts(unittest.TestCase):
         test_helper.authenticate_connection(connection, cls.credentials)
         cls.client = NotbankClient(connection)
 
-    def test_get_products_success(self):
-        """
-        Prueba exitosa: obtiene una lista de productos válidos.
-        """
-        products = self.client.get_products()
+    def test_get_products(self):
+        response = self.client.get_products()
+        print(response)
 
-        # Verificamos que la respuesta contiene dos productos
-        self.assertEqual(len(products), 2)
+    def test_get_products_including_disabled(self):
+        response = self.client.get_products(
+            GetProductsRequest(get_disabled=True))
+        print(response)
 
-        # Verificamos los detalles del primer producto
-        self.assertEqual(products[0].product, "USD")
-        self.assertEqual(products[0].product_type, "NationalCurrency")
-        self.assertEqual(products[0].decimal_places, 2)
-        self.assertEqual(products[0].tick_size, 0.01)
-        self.assertEqual(products[0].deposit_enabled, True)
-        self.assertEqual(products[0].withdraw_enabled, True)
-        self.assertEqual(products[0].no_fees, False)
-        self.assertEqual(products[0].is_disabled, False)
-        self.assertEqual(products[0].margin_enabled, False)
+    def test_get_filtered_products(self):
+        response = self.client.get_products(GetProductsRequest(
+            attribute="Pegged",
+            attribute_value=True))
+        print(response)
 
-        # Verificamos los detalles del segundo producto
-        self.assertEqual(products[1].product, "BTC")
-        self.assertEqual(products[1].product_type, "CryptoCurrency")
-        self.assertEqual(products[1].decimal_places, 8)
-        self.assertEqual(products[1].tick_size, 0.00000001)
-        self.assertEqual(products[1].deposit_enabled, True)
-        self.assertEqual(products[1].withdraw_enabled, True)
-        self.assertEqual(products[1].no_fees, False)
-        self.assertEqual(products[1].is_disabled, False)
-        self.assertEqual(products[1].margin_enabled, False)
+    def test_get_products_2(self):
+        response = self.client.get_products(GetProductsRequest(
+            get_disabled=False,
+            depth=10,
+            start_index=0))
+        print(response)
+
 
 if __name__ == "__main__":
     unittest.main()

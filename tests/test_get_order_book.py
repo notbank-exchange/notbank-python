@@ -1,7 +1,7 @@
 import unittest
 
 from notbank_python_sdk.models.order_book import OrderBook
-from notbank_python_sdk.requests_models.order_book import OrderBookRequest
+from notbank_python_sdk.requests_models import OrderBookRequest
 from notbank_python_sdk.notbank_client import NotbankClient
 from tests import test_helper
 from tests.test_helper import new_websocket_client_connection
@@ -22,13 +22,10 @@ class TestOrderBook(unittest.TestCase):
         cls.client.close()
 
     def test_get_order_book(self):
-        request = OrderBookRequest(
+        response = self.client.get_order_book(OrderBookRequest(
             market_pair="BTCUSD",
-            level=-2,
-            depth=10
-        )
-        orderbook = self.client.get_order_book(request)
-        self.assertIsInstance(orderbook, OrderBook)
+            level=1
+        ))
 
 
 if __name__ == "__main__":

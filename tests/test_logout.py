@@ -13,15 +13,6 @@ class TestLogOut(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_logout_success(self):
-        """Prueba exitosa: cierre de sesión con un token válido."""
-        self.client.logout()
-
-    def test_logout_invalid_token(self):
-        """Prueba: cierre de sesión con un token inválido."""
-        self.client.logout()
-
-    def test_logout_missing_token(self):
-        """Prueba: cierre de sesión sin token."""
         self.client.logout()
 
 

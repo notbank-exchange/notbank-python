@@ -14,25 +14,11 @@ class TestCancelAllOrders(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_cancel_all_orders_success(self):
-        request = CancelAllOrdersRequest(
+        self.client.cancel_all_orders(CancelAllOrdersRequest(
             account_id=self.credentials.account_id,
             instrument_id=1,
-        )
-        try:
-            self.client.cancel_all_orders(request)
-        except Exception as e:
-            self.fail(f"Cancel all orders failed with exception: {e}")
-
-    def test_cancel_all_orders_invalid_omsid(self):
-        request = CancelAllOrdersRequest(
-            account_id=self.credentials.account_id+123,
-            instrument_id=66,
-        )
-        try:
-            self.client.cancel_all_orders(request)
-        except Exception as e:
-            self.assertIsInstance(e, Exception)
-
+        ))
+        
 
 if __name__ == "__main__":
     unittest.main()

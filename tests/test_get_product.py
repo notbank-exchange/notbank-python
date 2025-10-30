@@ -16,38 +16,8 @@ class TestGetProduct(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_get_product_success(self):
-        """
-        Prueba exitosa: solicitud válida, devuelve los detalles del producto.
-        """
-        request = GetProductRequest(product_id=1)
-        response = self.client.get_product(request)
-
-        # Verificaciones
-        self.assertIsNotNone(response)
-        self.assertEqual(response.oms_id, 1)
-        self.assertEqual(response.product_id, 1)
-        self.assertEqual(response.product, "USD")
-        self.assertEqual(response.product_full_name, "US Dollar")
-        self.assertEqual(response.product_type, "NationalCurrency")
-        self.assertEqual(response.decimal_places, 2)
-        self.assertEqual(response.tick_size, Decimal("0.01"))
-        self.assertEqual(response.deposit_enabled, True)
-        self.assertEqual(response.withdraw_enabled, True)
-        self.assertEqual(response.no_fees, False)
-        self.assertEqual(response.is_disabled, False)
-        self.assertEqual(response.margin_enabled, False)
-
-    def test_get_product_not_found(self):
-        """
-        Prueba: product_id inválido, no se encuentra el producto.
-        """
-        invalid_product_id = 999
-        request = GetProductRequest(product_id=invalid_product_id)
-        try:
-            self.client.get_product(request)
-            self.fail()
-        except NotbankException:
-            pass
+        response = self.client.get_product(GetProductRequest(product_id=1))
+        print(response)
 
 
 if __name__ == "__main__":

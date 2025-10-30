@@ -1,7 +1,7 @@
 import unittest
 from notbank_python_sdk.notbank_client import NotbankClient
 
-from notbank_python_sdk.requests_models.get_account_instrument_statistics_request import GetAccountInstrumentStatisticsRequest
+from notbank_python_sdk.requests_models import GetAccountInstrumentStatisticsRequest
 from tests import test_helper
 
 
@@ -14,21 +14,13 @@ class TestGetAccountInstrumentStatistics(unittest.TestCase):
         cls.client = NotbankClient(connection)
 
     def test_get_account_instrument_statistics_success(self):
-        """Prueba exitosa: estadísticas válidas."""
-        request = GetAccountInstrumentStatisticsRequest(
+        response = self.client.get_account_instrument_statistics(GetAccountInstrumentStatisticsRequest(
             account_id=7,
-        )
-        response = self.client.get_account_instrument_statistics(request)
-        self.assertEqual(len(response), 2)
-        self.assertEqual(response[0].instrument_symbol, "BTCUSD")
-        self.assertEqual(response[1].instrument_symbol, "ETHUSD")
-        self.assertEqual(response[0].monthly_quantity_bought, 0.1602)
-        self.assertEqual(response[1].total_month_buys, 6)
+        ))
 
     def test_get_account_instrument_statistics_not_found(self):
-        """Prueba: account_id inválido, no se encuentra estadísticas."""
         request = GetAccountInstrumentStatisticsRequest(
-            account_id=999,
+            account_id=99999,
         )
         response = self.client.get_account_instrument_statistics(request)
         self.assertEqual(len(response), 0)

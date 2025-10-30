@@ -1,11 +1,10 @@
 import unittest
-from notbank_python_sdk.requests_models.deposit_address_request import DepositAddressRequest
-from notbank_python_sdk.requests_models.get_account_info_request import GetAccountInfoRequest
+
+from notbank_python_sdk.notbank_client import NotbankClient
+from notbank_python_sdk.requests_models import DepositAddressRequest
 
 from tests import test_helper
 
-from notbank_python_sdk.notbank_client import NotbankClient
-from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 
 
 class TestGetDepositAddresses(unittest.TestCase):

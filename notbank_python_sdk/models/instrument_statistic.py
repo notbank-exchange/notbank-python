@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from decimal import Decimal
+from typing import Optional
 
 
 @dataclass
@@ -23,9 +24,9 @@ class InstrumentStatistic:
     total_month_buys: int
     total_month_sells: int
     notional_conversion_rate: Decimal
-    notional_conversion_symbol: str
     rolling_monthly_start_date: int
     last_trade_id: int
     daily_notional_trade_volume: Decimal
     monthly_notional_trade_volume: Decimal
     yearly_notional_trade_volume: Decimal
+    notional_conversion_symbol: Optional[str] = None
