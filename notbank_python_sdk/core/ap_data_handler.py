@@ -16,7 +16,7 @@ class ApDataHandler:
                 StandardErrorResponse,
                 response_data,
                 config=Config(cast=[Enum]))
-            if standard_response.result is False:
+            if standard_response.result is False and not (standard_response.errormsg == "Operation In Process" and standard_response.errorcode == 107):
                 raise NotbankException.create(standard_response)
         except MissingValueError:
             pass
