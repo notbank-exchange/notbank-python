@@ -24,7 +24,7 @@ from notbank_python_sdk.models.enums import EnumsResponse
 from notbank_python_sdk.models.activity_report import ActivityReport
 from notbank_python_sdk.models.account_trade import AccountTrade
 from notbank_python_sdk.models.quote import Quote
-from notbank_python_sdk.models.transaction import Transactions
+from notbank_python_sdk.models.transaction import Transaction
 from notbank_python_sdk.models.fiat_deposit_response import FiatDepositResponse
 from notbank_python_sdk.models.uuid_response import UuidResponse
 from notbank_python_sdk.models.withdraw_tickets import WithdrawTicket
@@ -1608,7 +1608,7 @@ class NotbankClient:
             request_type=RequestType.POST
         )
 
-    def get_transactions(self, request: GetTransactionsRequest) -> Transactions:
+    def get_transactions(self, request: GetTransactionsRequest) -> List[Transaction]:
         """
         https://apidoc.notbank.exchange/#gettransactions
         """
@@ -1616,8 +1616,8 @@ class NotbankClient:
             endpoint=Endpoints.GET_TRANSACTIONS,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=parse_response_fn(
-                Transactions, from_pascal_case=False),
+            parse_response_fn=parse_response_list_fn(
+                Transaction, from_pascal_case=False),
             request_type=RequestType.GET
         )
 
