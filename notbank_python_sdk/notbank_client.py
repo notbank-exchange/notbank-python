@@ -58,7 +58,7 @@ from notbank_python_sdk.models.account_transaction import AccountTransaction
 from notbank_python_sdk.models.account_positions import AccountPosition
 from notbank_python_sdk.models.instrument_statistic import InstrumentStatistic
 from notbank_python_sdk.models.account_info import AccountInfo
-from notbank_python_sdk.models.subaccount import Subaccount, Subaccounts
+from notbank_python_sdk.models.subaccount import Subaccounts
 from notbank_python_sdk.models.product import Product
 from notbank_python_sdk.models.withdrawal_id_response import WithdrawalIdResponse
 from notbank_python_sdk.models.province import Province
