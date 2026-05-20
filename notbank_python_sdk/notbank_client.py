@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Any, Callable, List, Optional, Type, TypeVar, Dict
+from typing import Any, Callable, List, Optional, Type, TypeVar, Dict, Union
 from uuid import UUID
 import simplejson as json
 from notbank_python_sdk.client_connection import ClientConnection, RequestType
@@ -24,8 +24,8 @@ from notbank_python_sdk.models.enums import EnumsResponse
 from notbank_python_sdk.models.activity_report import ActivityReport
 from notbank_python_sdk.models.account_trade import AccountTrade
 from notbank_python_sdk.models.quote import Quote
-from notbank_python_sdk.models.transaction import Transactions
-from notbank_python_sdk.models.url_response import UrlResponse
+from notbank_python_sdk.models.transaction import Transaction
+from notbank_python_sdk.models.fiat_deposit_response import FiatDepositResponse
 from notbank_python_sdk.models.uuid_response import UuidResponse
 from notbank_python_sdk.models.withdraw_tickets import WithdrawTicket
 from notbank_python_sdk.models.deposit_ticket import DepositTicket
@@ -58,10 +58,13 @@ from notbank_python_sdk.models.account_transaction import AccountTransaction
 from notbank_python_sdk.models.account_positions import AccountPosition
 from notbank_python_sdk.models.instrument_statistic import InstrumentStatistic
 from notbank_python_sdk.models.account_info import AccountInfo
-from notbank_python_sdk.models.subaccount import Subaccount, Subaccounts
+from notbank_python_sdk.models.subaccount import Subaccounts
 from notbank_python_sdk.models.product import Product
-from notbank_python_sdk.models.withdrawal_id_response import WithdrawalIdResponse
+from notbank_python_sdk.models.one_step_withdraw import OneStepWithdraw
+from notbank_python_sdk.models.province import Province
 from notbank_python_sdk.models.register_user_response import RegisterUserResponse
+from notbank_python_sdk.models.withdrawal_id_response import WithdrawalIdResponse
+from notbank_python_sdk.models.yield_product import YieldProduct
 from notbank_python_sdk.parsing import build_subscription_handler, parse_response_fn, parse_response_list_fn, parse_report_response_fn
 from notbank_python_sdk.requests_models.add_whitelisted_address_request import AddWhitelistedAddressRequest
 from notbank_python_sdk.requests_models.authenticate_request import AuthenticateRequest
@@ -78,10 +81,10 @@ from notbank_python_sdk.requests_models.create_fiat_deposit_request import Creat
 from notbank_python_sdk.requests_models.create_fiat_withdraw_request import CreateFiatWithdrawRequest
 from notbank_python_sdk.requests_models.create_inverse_quote_request import CreateInverseQuoteRequest
 from notbank_python_sdk.requests_models.delete_whitelisted_address_request import DeleteWhiteListedAddressRequest, DeleteWhiteListedAddressRequestInternal
-from notbank_python_sdk.requests_models.delete_client_bank_account_request import DeleteClientBankAccountRequest
+from notbank_python_sdk.requests_models.delete_client_bank_account_request import DeleteClientBankAccountRequest, DeleteClientBankAccountRequestInternal
 from notbank_python_sdk.requests_models.download_document import DownloadDocumentRequest
 from notbank_python_sdk.requests_models.download_document_slice import DownloadDocumentSliceRequest
-from notbank_python_sdk.requests_models.execute_quote_request import ExecuteQuoteRequest
+from notbank_python_sdk.requests_models.execute_quote_request import ExecuteQuoteRequest, ExecuteQuoteRequestInternal
 from notbank_python_sdk.requests_models.generate_pnl_activity_report import GeneratePnlActivityReportRequest
 from notbank_python_sdk.requests_models.generate_product_delta_activity_report import GenerateProductDeltaActivityReportRequest
 from notbank_python_sdk.requests_models.generate_trade_activity_report import GenerateTradeActivityReportRequest
@@ -89,14 +92,14 @@ from notbank_python_sdk.requests_models.generate_transaction_activity_report imp
 from notbank_python_sdk.requests_models.get_account_trades import GetAccountTradesRequest
 from notbank_python_sdk.requests_models.fee_request import FeeRequest
 from notbank_python_sdk.requests_models.add_client_bank_account_request import AddClientBankAccountRequest
-from notbank_python_sdk.requests_models.get_client_bank_account_request import GetClientBankAccountRequest
+from notbank_python_sdk.requests_models.get_client_bank_account_request import GetClientBankAccountRequest, GetClientBankAccountRequestInternal
 from notbank_python_sdk.requests_models.get_client_bank_accounts_request import GetClientBankAccountsRequest
 from notbank_python_sdk.requests_models.get_banks_request import GetBanksRequest
 from notbank_python_sdk.requests_models.deposit_address_request import DepositAddressRequest
 from notbank_python_sdk.requests_models.get_instrument_request import GetInstrumentRequest
 from notbank_python_sdk.requests_models.get_network_templates_request import GetNetworksTemplatesRequest
 from notbank_python_sdk.requests_models.get_owners_fiat_withdraw import GetOwnersFiatWithdrawRequest
-from notbank_python_sdk.requests_models.get_quote_request import GetQuoteRequest
+from notbank_python_sdk.requests_models.get_quote_request import GetQuoteRequest, GetQuoteRequestInternal
 from notbank_python_sdk.requests_models.get_quotes_request import GetQuotesRequest
 from notbank_python_sdk.requests_models.get_transactions_request import GetTransactionsRequest
 from notbank_python_sdk.requests_models.resend_verification_code_whitelisted_address_request import ResendVerificationCodeWhitelistedAddressRequest, ResendVerificationCodeWhitelistedAddressInternal
@@ -159,6 +162,11 @@ from notbank_python_sdk.requests_models.get_account_instrument_statistics_reques
 from notbank_python_sdk.requests_models.get_account_info_request import GetAccountInfoRequest
 from notbank_python_sdk.requests_models.get_product_request import GetProductRequest
 from notbank_python_sdk.requests_models.get_products_request import GetProductsRequest
+from notbank_python_sdk.requests_models.get_provinces_request import GetProvincesRequest
+from notbank_python_sdk.requests_models.get_one_step_withdraw_request import GetOneStepWithdrawRequest
+from notbank_python_sdk.requests_models.get_yield_products_request import GetYieldProductsRequest
+from notbank_python_sdk.requests_models.deposit_to_yield_request import DepositToYieldRequest
+from notbank_python_sdk.requests_models.withdraw_from_yield_request import WithdrawFromYieldRequest
 from notbank_python_sdk.requests_models.register_basic_user_request import RegisterBasicUserRequest
 from notbank_python_sdk.requests_models.register_advanced_user_request import RegisterAdvancedUserRequest
 from notbank_python_sdk.notbank_client_cache import NotbankClientCache
@@ -1361,11 +1369,10 @@ class NotbankClient:
             endpoint=Endpoints.BANK_ACCOUNTS +
             "/" + str(request.bank_account_id),
             endpoint_category=EndpointCategory.NB,
-            request_data=None,
+            request_data=to_nb_dict(GetClientBankAccountRequestInternal(user_id=request.user_id)),
             parse_response_fn=parse_response_fn(
                 BankAccount, from_pascal_case=False),
             request_type=RequestType.GET
-
         )
 
     def get_client_bank_accounts(self, request: GetClientBankAccountsRequest= GetClientBankAccountsRequest()) -> BankAccounts:
@@ -1389,7 +1396,7 @@ class NotbankClient:
             endpoint=Endpoints.BANK_ACCOUNTS +
             "/" + str(request.bank_account_id),
             endpoint_category=EndpointCategory.NB,
-            request_data=None,
+            request_data=to_nb_dict(DeleteClientBankAccountRequestInternal(user_id=request.user_id)),
             parse_response_fn=lambda x: None,
             request_type=RequestType.DELETE
         )
@@ -1462,7 +1469,7 @@ class NotbankClient:
             "/" + str(request.whitelisted_address_id) + "/verification",
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(ConfirmWhiteListedAddressRequestInternal(
-                request.account_id, request.sms_code)),
+                account_id=request.account_id, sms_code=request.sms_code, user_id=request.user_id)),
             parse_response_fn=lambda x: None,
             request_type=RequestType.POST
         )
@@ -1476,7 +1483,7 @@ class NotbankClient:
             "/" + str(request.whitelisted_address_id) + "/verification",
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(
-                ResendVerificationCodeWhitelistedAddressInternal(request.account_id)),
+                ResendVerificationCodeWhitelistedAddressInternal(account_id=request.account_id, user_id=request.user_id)),
             parse_response_fn=lambda x: None,
             request_type=RequestType.GET
         )
@@ -1490,7 +1497,7 @@ class NotbankClient:
             "/" + str(request.whitelisted_address_id),
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(DeleteWhiteListedAddressRequestInternal(
-                account_id=request.account_id, otp=request.otp)),
+                account_id=request.account_id, otp=request.otp, user_id=request.user_id)),
             parse_response_fn=lambda x: None,
             request_type=RequestType.DELETE
         )
@@ -1507,30 +1514,44 @@ class NotbankClient:
             request_type=RequestType.POST
         )
 
-    def create_crypto_withdraw(self, request: CreateCryptoWithdrawRequest) -> UUID:
+    def create_crypto_withdraw(self, request: CreateCryptoWithdrawRequest) -> Union[UUID, int]:
         """
         https://apidoc.notbank.exchange/?http#createcriptowithdraw
         """
+        def _parse_response_fn(x):
+            try:
+                return UUID(str(x))
+            except (ValueError, AttributeError):
+                return int(x)
+
         return self._client_connection.request(
             endpoint=Endpoints.CREATE_CRIPTO_WITHDRAW,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=lambda x: UUID(x),
+            parse_response_fn=_parse_response_fn,
             request_type=RequestType.POST
         )
 
-    def create_fiat_deposit(self, request: CreateFiatDepositRequest) -> Optional[str]:
+    def create_fiat_deposit(self, request: CreateFiatDepositRequest) -> Optional[FiatDepositResponse]:
         """
         https://apidoc.notbank.exchange/#createfiatdeposit
+
+        Returns None when the deposit is acknowledged without a redirect (e.g. assisted bank transfer).
+        Returns FiatDepositResponse with url set for payment URL methods.
+        Returns FiatDepositResponse with qr set for QR code methods.
         """
+        def parse_fn(data: Any) -> Optional[FiatDepositResponse]:
+            if data is None:
+                return None
+            return from_dict(FiatDepositResponse, data, from_pascal_case=False)
+
         return self._client_connection.request(
             endpoint=Endpoints.FIAT_DEPOSIT,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=parse_response_fn(
-                UrlResponse, from_pascal_case=False),
+            parse_response_fn=parse_fn,
             request_type=RequestType.POST
-        ).url
+        )
 
     def get_owners_fiat_withdraw(self, request: GetOwnersFiatWithdrawRequest) -> List[CbuOwner]:
         """
@@ -1547,16 +1568,23 @@ class NotbankClient:
 
     def create_fiat_withdraw(self, request: CreateFiatWithdrawRequest) -> Optional[str]:
         """
-        https://apidoc.notbank.exchange/#getownersfiatwithdraw
+        https://apidoc.notbank.exchange/#createfiatwithdraw
+
+        Returns None when withdrawal is acknowledged without confirmation step (non-ARS bank transfer, virtual wallet).
+        Returns UUID withdrawal_id when confirmation is required (ARS bank transfer).
         """
+        def parse_fn(data: Any) -> Optional[WithdrawalIdResponse]:
+            if data is None:
+                return None
+            return from_dict(WithdrawalIdResponse, data, from_pascal_case=False).withdrawal_id
+
         return self._client_connection.request(
             endpoint=Endpoints.FIAT_WITHDRAW,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=parse_response_fn(
-                WithdrawalIdResponse, from_pascal_case=False),
+            parse_response_fn=parse_fn,
             request_type=RequestType.POST
-        ).withdrawal_id
+        )
 
     def confirm_fiat_withdraw(self, request: ConfirmFiatWithdrawRequest) -> None:
         """
@@ -1566,12 +1594,12 @@ class NotbankClient:
             endpoint=Endpoints.FIAT_WITHDRAW+"/"+str(request.withdrawal_id),
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(
-                ConfirmFiatWithdrawRequestInternal(request.attempt_code)),
+                ConfirmFiatWithdrawRequestInternal(attempt_code=request.attempt_code, user_id=request.user_id)),
             parse_response_fn=lambda x: None,
             request_type=RequestType.POST
         )
 
-    def transfer_funds(self, request: TransferFundsRequest) -> UUID:
+    def transfer_funds(self, request: TransferFundsRequest) -> int:
         """
         https://apidoc.notbank.exchange/#transferfunds
         """
@@ -1579,20 +1607,20 @@ class NotbankClient:
             endpoint=Endpoints.TRANSFER_FUNDS,
             endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=lambda x: UUID(x),
+            parse_response_fn=lambda x: int(x),
             request_type=RequestType.POST
         )
 
-    def get_transactions(self, request: GetTransactionsRequest) -> Transactions:
+    def get_transactions(self, request: GetTransactionsRequest) -> List[Transaction]:
         """
         https://apidoc.notbank.exchange/#gettransactions
         """
         return self._client_connection.request(
             endpoint=Endpoints.GET_TRANSACTIONS,
-            endpoint_category=EndpointCategory.NB_PAGE,
+            endpoint_category=EndpointCategory.NB,
             request_data=to_nb_dict(request),
-            parse_response_fn=parse_response_fn(
-                Transactions, from_pascal_case=False),
+            parse_response_fn=parse_response_list_fn(
+                Transaction, from_pascal_case=False),
             request_type=RequestType.GET
         )
 
@@ -1642,7 +1670,7 @@ class NotbankClient:
         return self._client_connection.request(
             endpoint=Endpoints.QUOTES+"/"+str(request.quote_id),
             endpoint_category=EndpointCategory.NB,
-            request_data=None,
+            request_data=to_nb_dict(GetQuoteRequestInternal(user_id=request.user_id)),
             parse_response_fn=parse_response_fn(
                 Quote, from_pascal_case=False),
             request_type=RequestType.GET
@@ -1655,7 +1683,7 @@ class NotbankClient:
         return self._client_connection.request(
             endpoint=Endpoints.QUOTES+"/"+str(request.quote_id),
             endpoint_category=EndpointCategory.NB,
-            request_data=None,
+            request_data=to_nb_dict(ExecuteQuoteRequestInternal(user_id=request.user_id)),
             parse_response_fn=parse_response_fn(
                 Quote, from_pascal_case=False),
             request_type=RequestType.POST
@@ -1686,6 +1714,75 @@ class NotbankClient:
             parse_response_fn=parse_response_fn(
                 Subaccounts, from_pascal_case=False),
             request_type=RequestType.GET
+        )
+
+    # wallet - provinces
+
+    def get_provinces(self, request: GetProvincesRequest) -> List[Province]:
+        """
+        https://apidoc.notbank.exchange/#getprovinces
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.GET_PROVINCES,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=lambda data: [
+                Province(id=int(item[0]), name=item[1]) for item in data],
+            request_type=RequestType.GET
+        )
+
+    # wallet - one step withdraw status
+
+    def get_one_step_withdraw(self, request: GetOneStepWithdrawRequest) -> OneStepWithdraw:
+        """
+        https://apidoc.notbank.exchange/#getonestepwithdraw
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.GET_ONE_STEP_WITHDRAW,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                OneStepWithdraw, from_pascal_case=False),
+            request_type=RequestType.GET
+        )
+
+    # yield
+
+    def get_yield_products(self, request: GetYieldProductsRequest = GetYieldProductsRequest()) -> List[YieldProduct]:
+        """
+        https://apidoc.notbank.exchange/#getyieldproducts
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.YIELD_PRODUCTS,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_list_fn(
+                YieldProduct, from_pascal_case=False),
+            request_type=RequestType.POST
+        )
+
+    def deposit_to_yield(self, request: DepositToYieldRequest) -> int:
+        """
+        https://apidoc.notbank.exchange/#deposittoyield
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.YIELD_DEPOSIT,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=lambda x: int(x),
+            request_type=RequestType.POST
+        )
+
+    def withdraw_from_yield(self, request: WithdrawFromYieldRequest) -> int:
+        """
+        https://apidoc.notbank.exchange/#withdrawfromyield
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.YIELD_WITHDRAW,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=lambda x: int(x),
+            request_type=RequestType.POST
         )
 
     # caas - user registration
