@@ -83,6 +83,9 @@ class Endpoints(str, Enum):
     GET_LEVEL1 = "GetLevel1"
     GET_ENUMS = "GetEnums"
 
+    # caas
+    ACCOUNT_REGISTER = "account/register"
+
     # user
     GET_USER_ACCOUNTS = "GetUserAccounts"
     GET_USER_DEVICES = "GetUserDevices"

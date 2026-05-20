@@ -71,6 +71,8 @@ from notbank_python_sdk.requests_models.modify_order import *
 from notbank_python_sdk.requests_models.oms_fees_request import *
 from notbank_python_sdk.requests_models.oms_fees_request import *
 from notbank_python_sdk.requests_models.order_book import *
+from notbank_python_sdk.requests_models.register_advanced_user_request import *
+from notbank_python_sdk.requests_models.register_basic_user_request import *
 from notbank_python_sdk.requests_models.remove_user_report_ticket import *
 from notbank_python_sdk.requests_models.resend_verification_code_whitelisted_address_request import *
 from notbank_python_sdk.requests_models.schedule_product_delta_activity_report import *

@@ -61,6 +61,7 @@ from notbank_python_sdk.models.account_info import AccountInfo
 from notbank_python_sdk.models.subaccount import Subaccount, Subaccounts
 from notbank_python_sdk.models.product import Product
 from notbank_python_sdk.models.withdrawal_id_response import WithdrawalIdResponse
+from notbank_python_sdk.models.register_user_response import RegisterUserResponse
 from notbank_python_sdk.parsing import build_subscription_handler, parse_response_fn, parse_response_list_fn, parse_report_response_fn
 from notbank_python_sdk.requests_models.add_whitelisted_address_request import AddWhitelistedAddressRequest
 from notbank_python_sdk.requests_models.authenticate_request import AuthenticateRequest
@@ -158,6 +159,8 @@ from notbank_python_sdk.requests_models.get_account_instrument_statistics_reques
 from notbank_python_sdk.requests_models.get_account_info_request import GetAccountInfoRequest
 from notbank_python_sdk.requests_models.get_product_request import GetProductRequest
 from notbank_python_sdk.requests_models.get_products_request import GetProductsRequest
+from notbank_python_sdk.requests_models.register_basic_user_request import RegisterBasicUserRequest
+from notbank_python_sdk.requests_models.register_advanced_user_request import RegisterAdvancedUserRequest
 from notbank_python_sdk.notbank_client_cache import NotbankClientCache
 from notbank_python_sdk.websocket.callback_identifier import CallbackIdentifier
 from notbank_python_sdk.websocket.subscription import Subscription, Unsubscription
@@ -1683,4 +1686,32 @@ class NotbankClient:
             parse_response_fn=parse_response_fn(
                 Subaccounts, from_pascal_case=False),
             request_type=RequestType.GET
+        )
+
+    # caas - user registration
+
+    def register_basic_user(self, request: RegisterBasicUserRequest) -> RegisterUserResponse:
+        """
+        https://docs.notbank.exchange/#register-a-basic-user
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.ACCOUNT_REGISTER,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                RegisterUserResponse, from_pascal_case=False, overrides={"user_id": "userId"}),
+            request_type=RequestType.POST
+        )
+
+    def register_advanced_user(self, request: RegisterAdvancedUserRequest) -> RegisterUserResponse:
+        """
+        https://docs.notbank.exchange/#register-an-advanced-user
+        """
+        return self._client_connection.request(
+            endpoint=Endpoints.ACCOUNT_REGISTER,
+            endpoint_category=EndpointCategory.NB,
+            request_data=to_nb_dict(request),
+            parse_response_fn=parse_response_fn(
+                RegisterUserResponse, from_pascal_case=False, overrides={"user_id": "userId"}),
+            request_type=RequestType.POST
         )
