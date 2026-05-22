@@ -188,13 +188,13 @@ class Gender(IntEnum):
 
 class IdentityType(IntEnum):
     DNI = 1
-    EXTRANJERO = 2
+    FOREIGNER = 2
     NUIP = 3
     NIP = 4
     PEP = 5
     CC = 6
     CE = 7
-    PASAPORTE = 8
+    PASSPORT = 8
 
 
 class Profession(str, Enum):
@@ -296,11 +296,11 @@ class Profession(str, Enum):
 
 
 class CivilStatus(str, Enum):
-    SOLTERO = "soltero"
-    CASADO = "casado"
-    CONVIVIENTE = "conviviente"
-    DIVORCIADO = "divorciado"
-    VIUDO = "viudo"
+    SINGLE = "soltero"
+    MARRIED = "casado"
+    COHABITING = "conviviente"
+    DIVORCED = "divorciado"
+    WIDOWED = "viudo"
 
 
 class ArProvince(IntEnum):

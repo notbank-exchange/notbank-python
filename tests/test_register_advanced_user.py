@@ -26,7 +26,7 @@ class TestRegisterAdvancedUser(unittest.TestCase):
             gender=Gender.MAN,
             birthdate="01/01/1990",
             citizenship="CL",
-            identity_type=IdentityType.PASAPORTE,
+            identity_type=IdentityType.PASSPORT,
             identity_number="P12345678",
             identity_country="CL",
             address_country="CL",
